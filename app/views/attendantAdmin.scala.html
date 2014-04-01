@@ -1,0 +1,32 @@
+@(attendants: List[AlarmAttendant], attendantForm: Form[AlarmAttendant]) 
+@* alarms and alarmForm are the 2 inputs to this template, where 
+alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
+
+@* template can not be started with a comment *@
+
+@import helper._
+
+@main("Attendants") {
+    
+    <h1>@attendants.size() attendant(s)</h1>
+    
+    <dl>
+    @for(attendant <- attendants){
+      <dt>@attendant.id</dt>
+      <dd>@attendant.username</dd>
+      <dd>@form(routes.AttendantControler.deleteAttendant(attendant.id)) { <input type="submit" value="Delete"> }</dd>
+    }
+	</dl>
+
+    
+    <h2>Add a new attendant</h2>
+    
+    @form(routes.AttendantControler.newAttendant()) {
+        
+        @inputText(attendantForm("username")) 
+        
+        <input type="submit" value="Create">
+        
+    }
+    
+}

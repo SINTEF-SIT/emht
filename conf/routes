@@ -1,0 +1,31 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Javascript Routes
+GET     /assets/javascripts/routes          controllers.Application.javascriptRoutes()
+
+# Home page
+GET     /                           controllers.Application.index()
+
+# Alarms          
+GET     /alarms                  controllers.Application.alarms()
+GET     /alarm/:id               controllers.Application.getAlarm(id: Long)
+POST    /alarms                  controllers.Application.newAlarm()
+POST    /alarms/:id/delete       controllers.Application.deleteAlarm(id: Long)
+
+
+# Attendants          
+GET     /attendants                  controllers.AttendantControler.attendants()
+POST    /attendants                  controllers.AttendantControler.newAttendant()
+POST    /attendants/:id/delete       controllers.AttendantControler.deleteAttendant(id: Long)
+
+# ComponentReading          
+GET     /component/:readingType/                  controllers.ComponentReadingController.getReadingsPerType(readingType: String)
+
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+GET     /webjars/*file                    controllers.WebJarAssets.at(file)

@@ -1,0 +1,12 @@
+@* patientInfoFrame Template File *@
+@(alarm: Alarm)
+
+
+@import helper._
+
+@* Caller part *@
+@calleInfoTemplate(alarm.callee)
+
+@* Patient part *@
+@patientInfoTemplate(alarm.patient)
+

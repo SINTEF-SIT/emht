@@ -1,0 +1,15 @@
+
+div.collumnsContainer{ display: table; width:100%;}
+div.collumnsContainer>div:nth-child(1) { width:25%; display: table-cell;}
+div.collumnsContainer>div:nth-child(2) { width:50%; display: table-cell;}
+div.collumnsContainer>div:nth-child(3) { width:25%; display: table-cell;}
+
+
+.alarmListSection {}
+
+.detailsSection {}
+
+.actionSection {}
+
+.alarmListItem { font-style:italic; border-left:10px solid #eee; border-bottom:1px solid #eee;  padding:10px 20px; margin:30px 0; color:#0B1907; }
+

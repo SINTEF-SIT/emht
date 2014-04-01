@@ -1,0 +1,96 @@
+# Callees
+
+ - &callee1 !!models.Callee
+   name:             Rui
+   address:          Munkegata
+   phoneNumber:      1234567890
+   
+# AlarmAttendants
+
+ - &karin !!models.AlarmAttendant
+   username:   Karin
+   
+ - &julio !!models.AlarmAttendant
+   username:   Julio
+   
+# Patients
+
+ - &patient1 !!models.Patient
+    name:            Bryan
+    address:         Munkegata
+    personalNumber: 123456789
+    
+ - &patient2 !!models.Patient
+    name:           Rubens
+    address:        Munkegata
+    personalNumber: 222456789    
+    
+# Sensors
+
+ - &sensor1 !!models.Sensor
+    sensorType:      Fall Sensor
+    patient:         *patient1
+    
+# Component readings
+
+ - &sensorReading1 !!models.ComponentReading
+    readingType:      Battery Level
+    date:             2010-04-16
+    value:            100 
+    component:        *sensor1
+    
+ - &sensorReading2 !!models.ComponentReading
+    readingType:      Battery Level
+    date:             2010-04-17
+    value:            90 
+    component:        *sensor1
+    
+ - &sensorReading3 !!models.ComponentReading
+    readingType:      Battery Level
+    date:             2010-04-18
+    value:            80 
+    component:        *sensor1    
+    
+ - &sensorReading4 !!models.ComponentReading
+    readingType:      Battery Level
+    date:             2010-04-19
+    value:            70
+    component:        *sensor1
+    
+ - &sensorReading5 !!models.ComponentReading
+    readingType:      Battery Level
+    date:             2010-04-20
+    value:            90 
+    component:        *sensor1
+    
+ - &sensorReading6 !!models.ComponentReading
+    readingType:      Battery Level
+    date:             2010-04-21
+    value:            50 
+    component:        *sensor1    
+    
+ - &sensorReading7 !!models.ComponentReading
+    readingType:      Battery Level
+    date:             2010-04-21
+    value:            30 
+    component:        *sensor1
+    
+ - &sensorReading8 !!models.ComponentReading
+    readingType:      Battery Level
+    date:             2010-04-22
+    value:            30 
+    component:        *sensor1
+    
+ - &sensorReading9 !!models.ComponentReading
+    readingType:      Battery Level
+    date:             2010-04-23
+    value:            10 
+    component:        *sensor1
+    
+ - &sensorReading10 !!models.ComponentReading
+    readingType:      Battery Level
+    date:             2010-04-24
+    value:            00 
+    component:        *sensor1    
+    
+    
