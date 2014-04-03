@@ -8,11 +8,13 @@ GET     /assets/javascripts/routes          controllers.Application.javascriptRo
 # Home page
 GET     /                           controllers.Application.index()
 
-# Alarms          
-GET     /alarms                  controllers.Application.alarms()
-GET     /alarm/:id               controllers.Application.getAlarm(id: Long)
-POST    /alarms                  controllers.Application.newAlarm()
-POST    /alarms/:id/delete       controllers.Application.deleteAlarm(id: Long)
+# Alarms
+GET     /openAlarms             controllers.Application.openAlarms()          
+#GET     /alarms                controllers.Application.alarms()
+GET     /pastAlarms/:calleeId   controllers.Application.getPastAlarmsFromCallee(calleeId: Long)
+GET     /alarm/:id              controllers.Application.getAlarm(id: Long)
+POST    /alarm                  controllers.Application.newAlarm()
+POST    /alarm/:id/delete       controllers.Application.deleteAlarm(id: Long)
 
 
 # Attendants          

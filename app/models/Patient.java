@@ -16,6 +16,7 @@ public class Patient extends Model {
 	public Long id;
 	public String name;
 	public String address;
+	public Integer age;
 	
 	@Column(unique=true)
 	public String personalNumber; // TODO: add validation format to the personal Number

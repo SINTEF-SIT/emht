@@ -11,6 +11,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 
 import play.db.ebean.Model;
+import play.mvc.Result;
 
 @Entity
 public class Alarm extends Model { // the model extension serves for having access to Play built-in Ebean helper, such as the Finder
@@ -22,7 +23,6 @@ public class Alarm extends Model { // the model extension serves for having acce
 	
 	@ManyToOne(cascade=CascadeType.ALL)  
 	public Callee callee;
-	public String address;
 	public Date openingTime;
 	public Date closingTime;
 	
@@ -41,6 +41,10 @@ public class Alarm extends Model { // the model extension serves for having acce
 	  public static List<Alarm> all() {
 		  return find.all();
 		}
+	  
+	  public static List<Alarm> allOpenAlarms() {
+		  return find.where().isNull("closingTime").findList();
+		}
 
 	    // assumes that the calle and patient object from the incoming alarm has already
 	    // been saved on the db
@@ -56,6 +60,11 @@ public class Alarm extends Model { // the model extension serves for having acce
 		public static Alarm get(Long id) {
 			  return find.ref(id);
 		}
+		
+	    // TODO: investigate if it makes sense to explicitly tell that im not loading subobjects
+	    public static List<Alarm>  pastAlarmsFromCallee(Long calleeId){
+	    	return find.where().eq("callee.id",calleeId).isNotNull("closingTime").findList();
+	    }
 		  
 	  
 }

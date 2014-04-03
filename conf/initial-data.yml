@@ -2,8 +2,63 @@
 
  - &callee1 !!models.Callee
    name:             Rui
-   address:          Munkegata
+   address:          Munkegata 7
    phoneNumber:      1234567890
+
+ - &callee2 !!models.Callee
+   name:             Rai
+   address:          Prinsengata 7
+   phoneNumber:      2234567890
+
+ - &callee3 !!models.Callee
+   name:             Robert
+   address:          Othilienborg 7
+   phoneNumber:      3234567890
+
+ - &callee4 !!models.Callee
+   name:             Roberto
+   address:          Othilienborg 47
+   phoneNumber:      4234567890
+
+ - &callee5 !!models.Callee
+   name:             Rob
+   address:          Othilienborg 99
+   phoneNumber:      5234567890
+
+ - &callee6 !!models.Callee
+   name:             Filipe
+   address:          Dronningensgata 4
+   phoneNumber:      6234567890
+
+ - &callee7 !!models.Callee
+   name:             Philip
+   address:          Dronningensgata 7
+   phoneNumber:      7234567890
+
+ - &callee8 !!models.Callee
+   name:             Phelps
+   address:          Munkegata 86
+   phoneNumber:      8234567890
+
+ - &callee9 !!models.Callee
+   name:             Phil
+   address:          Munkegata 88
+   phoneNumber:      9234567890
+
+ - &callee10 !!models.Callee
+   name:             Alberto Neto
+   address:          Strindveien 7
+   phoneNumber:      1034567890
+
+ - &callee11 !!models.Callee
+   name:             Alberto Chaves
+   address:          Strindveien 7
+   phoneNumber:      1134567890
+
+ - &callee12 !!models.Callee
+   name:             Ola
+   address:          Strindveien 77
+   phoneNumber:      1234567812
    
 # AlarmAttendants
 
@@ -17,13 +72,152 @@
 
  - &patient1 !!models.Patient
     name:            Bryan
-    address:         Munkegata
+    address:         Munkegata 20
     personalNumber: 123456789
+    age:            22
     
  - &patient2 !!models.Patient
     name:           Rubens
-    address:        Munkegata
-    personalNumber: 222456789    
+    address:        Munkegata 1
+    personalNumber: 223456789    
+    age:            25
+    
+ - &patient3 !!models.Patient
+    name:           Alf
+    address:        Strindveien 1
+    personalNumber: 323456789    
+    age:            54
+    
+ - &patient4 !!models.Patient
+    name:           Pericles
+    address:        Strindveien 54
+    personalNumber: 423456789    
+    age:            54
+    
+ - &patient5 !!models.Patient
+    name:           Peter Parker
+    address:        Munkegata 52
+    personalNumber: 523456789    
+    age:            67
+    
+ - &patient6 !!models.Patient
+    name:           Mary Jane
+    address:        Jonnsvansveien 54
+    personalNumber: 623456789    
+    age:            64
+    
+ - &patient7 !!models.Patient
+    name:           Olav Parker
+    address:        Jonnsvansveien 34
+    personalNumber: 723456789    
+    age:            76
+    
+ - &patient8 !!models.Patient
+    name:           Ilias Parker
+    address:        Jonnsvansveien 13
+    personalNumber: 823456789    
+    age:            34
+    
+    
+ - &patient9 !!models.Patient
+    name:           Ilias Octavius
+    address:        Prinsengate 12
+    personalNumber: 923456789    
+    age:            53
+
+# Alarms
+
+ - &alarm1 !!models.Alarm
+    type:         fire
+    callee:       *callee1
+    patient:      *patient1
+    openingTime:  2014-03-31 11:02:57
+    
+ - &alarm2 !!models.Alarm
+    type:         fall
+    callee:       *callee2
+    patient:      *patient2
+    openingTime:  2014-03-31 11:22:57
+    
+ - &alarm3 !!models.Alarm
+    type:         fire
+    callee:       *callee3
+    patient:      *patient3
+    openingTime:  2014-03-31 11:32:57
+    
+ - &alarm4 !!models.Alarm
+    type:         police
+    callee:       *callee4
+    patient:      *patient4
+    openingTime:  2014-04-01 11:02:57
+    
+ - &alarm5 !!models.Alarm
+    type:         phone
+    callee:       *callee5
+    patient:      *patient5
+    openingTime:  2014-03-31 11:52:57
+    
+ - &alarm6 !!models.Alarm
+    type:         fire
+    callee:       *callee6
+    patient:      *patient6
+    openingTime:  2014-03-31 11:02:57 
+    
+ - &alarm7 !!models.Alarm
+    type:         fire
+    callee:       *callee7
+    patient:      *patient7
+    openingTime:  2014-03-31 12:12:57
+    
+ - &alarm8 !!models.Alarm
+    type:         police
+    callee:       *callee8
+    patient:      *patient8
+    openingTime:  2014-03-31 11:02:00
+    
+ - &alarm9 !!models.Alarm
+    type:         phone
+    callee:       *callee9
+    patient:      *patient9
+    openingTime:  2014-03-31 05:02:57
+
+
+# closed alarms
+
+ - &alarm101 !!models.Alarm
+    type:         fire
+    callee:       *callee1
+    patient:      *patient1
+    openingTime:  2012-03-31 11:02:57
+    closingTime:  2012-03-31 11:06:57
+    
+ - &alarm102 !!models.Alarm
+    type:         fire
+    callee:       *callee1
+    patient:      *patient1
+    openingTime:  2013-03-25 11:02:57
+    closingTime:  2013-03-25 15:06:57
+    
+ - &alarm103 !!models.Alarm
+    type:         fire
+    callee:       *callee1
+    patient:      *patient1
+    openingTime:  2013-03-25 11:02:57
+    closingTime:  2013-05-27 12:26:54
+    
+ - &alarm104 !!models.Alarm
+    type:         fire
+    callee:       *callee1
+    patient:      *patient1
+    openingTime:  2014-01-25 11:02:57
+    closingTime:  2014-01-26 02:26:54
+    
+ - &alarm105 !!models.Alarm
+    type:         fire
+    callee:       *callee1
+    patient:      *patient1
+    openingTime:  2013-10-05 11:02:57
+    closingTime:  2013-10-17 05:23:52   
     
 # Sensors
 

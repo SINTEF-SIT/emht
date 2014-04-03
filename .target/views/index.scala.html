@@ -28,9 +28,9 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     <div> <section class="alarmListSection">
 	    <h2>@alarms.size() alarm(s)</h2>
 	    
-		<div class="list-group">
+		<div class="list-group"> <!--index would reference to the iteration index, but we are not using it--> 
 		@for((alarm,index) <- alarms.zipWithIndex){
-		  <a href="#" onclick="showInfoFromAlarm(@{index});return false;" class="list-group-item active">
+		  <a href="#" onclick="showInfoFromAlarm(@{alarm.id});return false;" class="list-group-item active">
 		    <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
 		    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;Patient @{alarm.patient.personalNumber} </p>
 		  </a>
@@ -42,8 +42,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     
     <div> <section class="detailsSection">
     	<h2>Info</h2>
-    	<div id="details"> </div>
-	     <span id="patientName">Patient Name</span>
+    	<div id="details"/> 
     </section></div> 
     
     <div> <section class="actionSection">
@@ -52,7 +51,6 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	    @form(routes.Application.newAlarm()) {
 	        
 	        @inputText(alarmForm("type")) 
-	        @inputText(alarmForm("address")) 
 	        @inputText(field = alarmForm("callee.phoneNumber"), '_label -> "Callee PhoneNumber") 
 	        @inputText(field = alarmForm("callee.name"), '_label -> "Callee Name") 
 	        @inputText(field = alarmForm("patient.name"), '_label -> "Patient Name")

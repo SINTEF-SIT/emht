@@ -10,12 +10,43 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 @main("Alarm list") {
 
 @* todo: move this         // $("#patientName").text(@{alarms(index).Patient.name}); *@  
-    <script id="showInfoScript" language="javascript" type="text/javascript">
-   function showInfoFromAlarm(index) {
-	   myJsRoutes.controllers.Application.getAlarm(index).ajax({
-         success : function(data) { $("#details").html(data); }
-       });
+    <script id="showInfoScripts" language="javascript" type="text/javascript">
+
+   function populateAlarmInfo(alarmIndex){
+	    
+       myJsRoutes.controllers.Application.getAlarm(alarmIndex).ajax({
+           success : function(data) { $("#details").html(data); }
+         });
+   }
+
+   function selectAlarm(alarmIndex,calleeIndex) {
+
+	   $.getJSON("/pastAlarms/" + calleeIndex,
+		          function(data) {
+		              // TODO: check if the json is full before creating the table
+		              $("#calleeLogTableDiv").empty();
+		              var htmlTable = '<table class="table"><thead><tr><td>date</td><td>hour</td></tr></thead><tbody>';
+		              // TODO: validate the json
+		              // data is a JSON list, so we can iterate over it
+		              var array = data.alarmArray;
+		              for(var i in array){
+						var day = array[i].day;
+						var hour = array[i].hour;
+						htmlTable+= '<tr><td> ' + day + ' </td><td> ' + hour + ' </td></tr>'; 
+					  }
+		              htmlTable+= "</tbody></table>";
+		              $("#calleeLogTableDiv").html(htmlTable);
+		       });
+	   
+	   //populateAlarmInfo(alarmIndex);
+	   $('#callee_info_modal').modal("show");
+	   $('#confirmCalleeModalButton').click(function(e) {
+		   populateAlarmInfo(alarmIndex);
+		});
+			   
     };
+    
+    
 
     </script>
     
@@ -30,7 +61,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	    
 		<div class="list-group"> <!--index would reference to the iteration index, but we are not using it--> 
 		@for((alarm,index) <- alarms.zipWithIndex){
-		  <a href="#" onclick="showInfoFromAlarm(@{alarm.id});return false;" class="list-group-item active">
+		  <a href="#" onclick="selectAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item active">
 		    <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
 		    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;Patient @{alarm.patient.personalNumber} </p>
 		  </a>
@@ -51,7 +82,6 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	    @form(routes.Application.newAlarm()) {
 	        
 	        @inputText(alarmForm("type")) 
-	        @inputText(alarmForm("address")) 
 	        @inputText(field = alarmForm("callee.phoneNumber"), '_label -> "Callee PhoneNumber") 
 	        @inputText(field = alarmForm("callee.name"), '_label -> "Callee Name") 
 	        @inputText(field = alarmForm("patient.name"), '_label -> "Patient Name")
@@ -64,6 +94,21 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     
   </div>
 
+
+               <!-- This is Bootstrap's modal popup plugin. Used to populate the response
+                      by clicking on the button TODO: peharps move it to a template -->
+                      
+                  <div class="modal fade" id="callee_info_modal">
+                  <div class="modal-dialog"><div class="modal-content">
+					  <div class="modal-body" >
+					    Do you want to handle this request?&nbsp;&nbsp;
+					    <a href="#" class="btn" data-dismiss="modal">No</a>
+					    <a href="#" id="confirmCalleeModalButton" class="btn btn-primary" data-dismiss="modal">Yes</a>
+					      <p/>
+					      <div id="calleeLogTableDiv"/>
+					  </div>
+					  </div></div>                               
+                </div>   
 
     
 }

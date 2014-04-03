@@ -15,7 +15,6 @@ create table alarm (
   id                        bigint not null,
   type                      varchar(255),
   callee_id                 bigint,
-  address                   varchar(255),
   opening_time              timestamp,
   closing_time              timestamp,
   alarm_log                 clob,
@@ -51,6 +50,7 @@ create table patient (
   id                        bigint not null,
   name                      varchar(255),
   address                   varchar(255),
+  age                       integer,
   personal_number           varchar(255),
   constraint uq_patient_personal_number unique (personal_number),
   constraint pk_patient primary key (id))
