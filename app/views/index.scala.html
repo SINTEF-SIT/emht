@@ -61,7 +61,10 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	    
 		<div class="list-group"> <!--index would reference to the iteration index, but we are not using it--> 
 		@for((alarm,index) <- alarms.zipWithIndex){
-		  <a href="#" onclick="selectAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item active">
+            
+		    <a href="#" onclick="selectAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item">
+		    <!-- <i class="icon-fire pull-left"></i> -->
+		    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
 		    <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
 		    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;Patient @{alarm.patient.personalNumber} </p>
 		  </a>
