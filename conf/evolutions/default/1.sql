@@ -17,6 +17,7 @@ create table alarm (
   callee_id                 bigint,
   opening_time              timestamp,
   closing_time              timestamp,
+  attendant_id              bigint,
   alarm_log                 clob,
   patient_id                bigint,
   constraint pk_alarm primary key (id))
@@ -25,6 +26,7 @@ create table alarm (
 create table alarm_attendant (
   id                        bigint not null,
   username                  varchar(255),
+  constraint uq_alarm_attendant_username unique (username),
   constraint pk_alarm_attendant primary key (id))
 ;
 
@@ -72,10 +74,12 @@ alter table AALCOMPONENT add constraint fk_AALCOMPONENT_patient_1 foreign key (p
 create index ix_AALCOMPONENT_patient_1 on AALCOMPONENT (patient_id);
 alter table alarm add constraint fk_alarm_callee_2 foreign key (callee_id) references callee (id) on delete restrict on update restrict;
 create index ix_alarm_callee_2 on alarm (callee_id);
-alter table alarm add constraint fk_alarm_patient_3 foreign key (patient_id) references patient (id) on delete restrict on update restrict;
-create index ix_alarm_patient_3 on alarm (patient_id);
-alter table component_reading add constraint fk_component_reading_component_4 foreign key (component_id) references AALCOMPONENT (id) on delete restrict on update restrict;
-create index ix_component_reading_component_4 on component_reading (component_id);
+alter table alarm add constraint fk_alarm_attendant_3 foreign key (attendant_id) references alarm_attendant (id) on delete restrict on update restrict;
+create index ix_alarm_attendant_3 on alarm (attendant_id);
+alter table alarm add constraint fk_alarm_patient_4 foreign key (patient_id) references patient (id) on delete restrict on update restrict;
+create index ix_alarm_patient_4 on alarm (patient_id);
+alter table component_reading add constraint fk_component_reading_component_5 foreign key (component_id) references AALCOMPONENT (id) on delete restrict on update restrict;
+create index ix_component_reading_component_5 on component_reading (component_id);
 
 
 

@@ -1,4 +1,4 @@
-@(alarms: List[Alarm], alarmForm: Form[Alarm]) 
+@(alarms: List[Alarm], alarmForm: Form[Alarm], selectedAlarm: Alarm) 
 @* alarms and alarmForm are the 2 inputs to this template, where 
 alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
@@ -13,10 +13,15 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     <script id="showInfoScripts" language="javascript" type="text/javascript">
 
    function populateAlarmInfo(alarmIndex){
-	    
-       myJsRoutes.controllers.Application.getAlarm(alarmIndex).ajax({
+
+       $("#assignInputAttendant").val("Karin");
+       $("#assignInputAlarm").val(alarmIndex);
+       $("#assignForm").submit();
+	   
+	   //myJsRoutes.controllers.Application.assignAlarm(alarmIndex, "Karin").ajax({});
+   /*    myJsRoutes.controllers.Application.getAlarm(alarmIndex).ajax({
            success : function(data) { $("#details").html(data); }
-         });
+         });*/
    }
 
    function selectAlarm(alarmIndex,calleeIndex) {
@@ -61,22 +66,42 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	    
 		<div class="list-group"> <!--index would reference to the iteration index, but we are not using it--> 
 		@for((alarm,index) <- alarms.zipWithIndex){
-            
-		    <a href="#" onclick="selectAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item">
-		    <!-- <i class="icon-fire pull-left"></i> -->
-		    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
-		    <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
-		    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;Patient @{alarm.patient.personalNumber} </p>
-		  </a>
+            @if(null == alarm.attendant){
+			    <a href="#" onclick="selectAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item">
+			    <!-- <i class="icon-fire pull-left"></i> -->
+			    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
+			    <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
+			    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;Patient @{alarm.patient.personalNumber} </p>
+			  </a>
+			 }
 		 }  
 		</div>
+		<div class="list-group"> <!--index would reference to the iteration index, but we are not using it--> 
+        @for((alarm,index) <- alarms.zipWithIndex){
+            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin")){
+                <a href="#" onclick="selectAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item">
+                <!-- <i class="icon-fire pull-left"></i> -->
+                <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
+                <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
+                <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;Patient @{alarm.patient.personalNumber} </p>
+              </a>
+             }
+         }  
+        </div>
 		
 	</section></div> 
     
     
     <div> <section class="detailsSection">
     	<h2>Info</h2>
-    	<div id="details"/> 
+    	<div id="details"/>
+    	@if(null != selectedAlarm){
+    	    @requestInfoFrame(selectedAlarm);
+    	}
+    	@form(action = routes.Application.assignAlarm(), 'id -> "assignForm") {
+            <input id="assignInputAlarm" type="hidden" name="alarmId" value=""/>
+            <input id="assignInputAttendant" type="hidden" name="attendantUserName" value=""/>		
+		} 
     </section></div> 
     
     <div> <section class="actionSection">

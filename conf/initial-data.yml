@@ -173,12 +173,14 @@
     type:         police
     callee:       *callee8
     patient:      *patient8
+    attendant:    *karin
     openingTime:  2014-03-31 11:02:00
     
  - &alarm9 !!models.Alarm
     type:         phone
     callee:       *callee9
     patient:      *patient9
+    attendant:    *karin
     openingTime:  2014-03-31 05:02:57
 
 

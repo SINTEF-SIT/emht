@@ -27,7 +27,7 @@ public class Application extends Controller {
 
     public static Result  openAlarms(){
     	 return ok(
-    			    views.html.index.render(Alarm.allOpenAlarms(), alarmForm)
+    			    views.html.index.render(Alarm.allOpenAlarms(), alarmForm, null)
     			  );
     }
     
@@ -35,7 +35,7 @@ public class Application extends Controller {
     	  Form<Alarm> filledForm = alarmForm.bindFromRequest(); // create a new form with the request data
     	  if(filledForm.hasErrors()) {
     	    return badRequest(
-    	      views.html.index.render(Alarm.allOpenAlarms(), filledForm)
+    	      views.html.index.render(Alarm.allOpenAlarms(), filledForm, null)
     	    );
     	  } else {
     		  Alarm formAlarm = filledForm.get();
@@ -85,12 +85,27 @@ public class Application extends Controller {
 
     }
     
+    public static Result  assignAlarm(){
+    	DynamicForm dynamicForm = Form.form().bindFromRequest();
+    	String attendantUserName = dynamicForm.get("attendantUserName");
+    	Long alarmId =  Long.parseLong(dynamicForm.get("alarmId"));
+       	AlarmAttendant a = AlarmAttendant.getAttendantFromUsername(attendantUserName);
+    	Alarm alarm = Alarm.assignAttendantToAlarm(alarmId, a);    	
+
+   	 	return ok(
+			    views.html.index.render(Alarm.allOpenAlarms(), alarmForm, alarm)
+			  );
+
+    }
+    
+    
     public static Result javascriptRoutes() {
         response().setContentType("text/javascript");
         return ok(
             Routes.javascriptRouter("myJsRoutes",
                 controllers.routes.javascript.Application.deleteAlarm(),
                 controllers.routes.javascript.Application.getPastAlarmsFromCallee(),
+                controllers.routes.javascript.Application.assignAlarm(),
                 controllers.routes.javascript.Application.getAlarm()
             )
         );

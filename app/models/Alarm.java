@@ -26,6 +26,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 	public Date openingTime;
 	public Date closingTime;
 	
+	@ManyToOne(cascade=CascadeType.ALL)  
+	public AlarmAttendant attendant;
+	
 	@Lob
 	public String alarmLog;
 	
@@ -65,6 +68,13 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    public static List<Alarm>  pastAlarmsFromCallee(Long calleeId){
 	    	return find.where().eq("callee.id",calleeId).isNotNull("closingTime").findList();
 	    }
-		  
+		
+	    public static Alarm assignAttendantToAlarm(Long alarmId, AlarmAttendant attendant){
+	    	Alarm a = find.ref(alarmId);
+	    	a.attendant = attendant;
+	    	a.save();
+	    	// TODO: possibly add checks
+	    	return a;
+	    }
 	  
 }

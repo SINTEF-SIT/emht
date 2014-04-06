@@ -2,6 +2,7 @@ package models;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -13,6 +14,7 @@ public class AlarmAttendant extends Model {
 
 	@Id
 	public Long id;
+	@Column(unique=true)
 	public String username;
 	
 	
@@ -32,5 +34,8 @@ public class AlarmAttendant extends Model {
 				  find.ref(id).delete();
 				}
 			  
+			  public static AlarmAttendant getAttendantFromUsername(String attendantUserName) {
+				  return find.where().eq("username",attendantUserName).findUnique();
+				}
 	
 }
