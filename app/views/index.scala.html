@@ -10,6 +10,8 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 @main("Alarm list") {
 
 @* todo: move this         // $("#patientName").text(@{alarms(index).Patient.name}); *@  
+
+<script type="text/javascript" charset="utf-8" src="@routes.Application.wsJs()"></script>
     <script id="showInfoScripts" language="javascript" type="text/javascript">
 
    function populateAlarmInfo(alarmIndex){
@@ -64,7 +66,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     <div> <section class="alarmListSection">
 	    <h2>@alarms.size() alarm(s)</h2>
 	    
-		<div class="list-group"> <!--index would reference to the iteration index, but we are not using it--> 
+		<div class="list-group" id="unassignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
 		@for((alarm,index) <- alarms.zipWithIndex){
             @if(null == alarm.attendant){
 			    <a href="#" onclick="selectAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item">
@@ -76,7 +78,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			 }
 		 }  
 		</div>
-		<div class="list-group"> <!--index would reference to the iteration index, but we are not using it--> 
+		<div class="list-group" id="assignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
         @for((alarm,index) <- alarms.zipWithIndex){
             @if((null != alarm.attendant) && (alarm.attendant.username == "Karin")){
                 <a href="#" onclick="selectAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item">
@@ -136,7 +138,18 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 					      <div id="calleeLogTableDiv"/>
 					  </div>
 					  </div></div>                               
-                </div>   
+                </div>
+                
+                             <!-- Test modal -->
+                      
+                  <div class="modal fade" id="test_modal">
+                  <div class="modal-dialog"><div class="modal-content">
+                      <div class="modal-body" >
+                        test
+                          <p/>
+                      </div>
+                      </div></div>                               
+                </div>    
 
     
 }

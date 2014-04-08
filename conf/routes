@@ -26,6 +26,9 @@ POST    /attendants/:id/delete       controllers.AttendantControler.deleteAttend
 # ComponentReading          
 GET     /component/:readingType/                  controllers.ComponentReadingController.getReadingsPerType(readingType: String)
 
+# Websockets
+GET     /assets.javascript.ws.js        controllers.Application.wsJs()
+GET     /wsInterface                    controllers.Application.wsInterface()
 
 
 # Map static resources from the /public folder to the /assets URL path

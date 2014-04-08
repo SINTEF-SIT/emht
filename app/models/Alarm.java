@@ -54,6 +54,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 		public static void create(Alarm alarm) {
 			alarm.openingTime = new Date();
 			alarm.save();
+			MyWebSocketManager.notifyNewAlarm(alarm);
 		}
 
 		public static void delete(Long id) {
