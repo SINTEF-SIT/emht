@@ -24,7 +24,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 	@ManyToOne(cascade=CascadeType.ALL)  
 	public Callee callee;
 	public Date openingTime;
-	public Date closingTime;
+	public Date dispatchingTime; // TODO: implement dispatching
+	public Date closingTime; // at the moment we are dispatching and closing all alarms
 	
 	@ManyToOne(cascade=CascadeType.ALL)  
 	public AlarmAttendant attendant;
@@ -75,7 +76,17 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	a.attendant = attendant;
 	    	a.save();
 	    	// TODO: possibly add checks
+	    	// TODO: add websocket call
 	    	return a;
 	    }
 	  
+	    public static Alarm dispatchAlarm(Long alarmId){
+	    	Alarm a = find.ref(alarmId);
+	    	a.dispatchingTime = new Date();
+	    	a.closingTime = new Date();
+	    	a.save(); // at the moment we are dispatching and closing all alarms
+	    	// TODO: possibly add checks
+	    	// TODO: add websocket call
+	    	return a;
+	    }
 }

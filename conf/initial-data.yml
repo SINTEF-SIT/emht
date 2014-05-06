@@ -187,39 +187,44 @@
 # closed alarms
 
  - &alarm101 !!models.Alarm
-    type:         fire
-    callee:       *callee1
-    patient:      *patient1
-    openingTime:  2012-03-31 11:02:57
-    closingTime:  2012-03-31 11:06:57
+    type:            fire
+    callee:          *callee1
+    patient:         *patient1
+    openingTime:     2012-03-31 11:02:57
+    dispatchingTime: 2012-03-31 11:06:57
+    closingTime:     2012-03-31 11:06:57
     
  - &alarm102 !!models.Alarm
-    type:         fire
-    callee:       *callee1
-    patient:      *patient1
-    openingTime:  2013-03-25 11:02:57
-    closingTime:  2013-03-25 15:06:57
+    type:            fire
+    callee:          *callee1
+    patient:         *patient1
+    openingTime:     2013-03-25 11:02:57
+    dispatchingTime: 2013-03-25 15:06:57
+    closingTime:     2013-03-25 15:06:57
     
  - &alarm103 !!models.Alarm
-    type:         fire
-    callee:       *callee1
-    patient:      *patient1
-    openingTime:  2013-03-25 11:02:57
-    closingTime:  2013-05-27 12:26:54
+    type:            fire
+    callee:          *callee1
+    patient:         *patient1
+    openingTime:     2013-03-25 11:02:57
+    dispatchingTime: 2013-05-27 12:26:54
+    closingTime:     2013-05-27 12:26:54
     
  - &alarm104 !!models.Alarm
-    type:         fire
-    callee:       *callee1
-    patient:      *patient1
-    openingTime:  2014-01-25 11:02:57
-    closingTime:  2014-01-26 02:26:54
+    type:            fire
+    callee:          *callee1
+    patient:         *patient1
+    openingTime:     2014-01-25 11:02:57
+    dispatchingTime: 2014-01-26 02:26:54
+    closingTime:     2014-01-26 02:26:54
     
  - &alarm105 !!models.Alarm
-    type:         fire
-    callee:       *callee1
-    patient:      *patient1
-    openingTime:  2013-10-05 11:02:57
-    closingTime:  2013-10-17 05:23:52   
+    type:             fire
+    callee:           *callee1
+    patient:          *patient1
+    openingTime:      2013-10-05 11:02:57
+    dispatchingTime:  2013-10-17 05:23:52
+    closingTime:      2013-10-17 05:23:52   
     
 # Sensors
 

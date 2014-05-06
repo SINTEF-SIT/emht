@@ -53,7 +53,10 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			   
     };
     
-    
+    function populateActionButtonsWithAlarm(alarmIndex,calleeIndex) {
+
+                
+     };
 
     </script>
     
@@ -62,9 +65,16 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     	<h1> EMHT </h1>
     </header>
 
- <div class="collumnsContainer">    
-    <div> <section class="alarmListSection">
-	    <h2>@alarms.size() alarm(s)</h2>
+ <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4"><h1>Open Alarms</h1></div>
+        <div class="col-md-4"><h1>Info</h1></div>
+        <div class="col-md-4"><h1>Actions and Closing</h1></div>
+    </div>
+    <div class="row">
+     <section class="col-md-4 alarmListSection">
+
+	    <!-- <h2>@alarms.size() alarm(s)</h2>-->
 	    
 		<div class="list-group" id="unassignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
 		@for((alarm,index) <- alarms.zipWithIndex){
@@ -78,6 +88,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			 }
 		 }  
 		</div>
+		<h2>My Alarms</h2>
 		<div class="list-group" id="assignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
         @for((alarm,index) <- alarms.zipWithIndex){
             @if((null != alarm.attendant) && (alarm.attendant.username == "Karin")){
@@ -91,36 +102,28 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
          }  
         </div>
 		
-	</section></div> 
+	</section>
     
     
-    <div> <section class="detailsSection">
-    	<h2>Info</h2>
+    <section class="col-md-4 detailsSection">
+
     	<div id="details"/>
     	@if(null != selectedAlarm){
-    	    @requestInfoFrame(selectedAlarm);
+    	    @requestInfoFrame(selectedAlarm)
     	}
     	@form(action = routes.Application.assignAlarm(), 'id -> "assignForm") {
             <input id="assignInputAlarm" type="hidden" name="alarmId" value=""/>
             <input id="assignInputAttendant" type="hidden" name="attendantUserName" value=""/>		
 		} 
-    </section></div> 
+    </section> 
     
-    <div> <section class="actionSection">
- 		<h2>Add a new alarm</h2>
-	    
-	    @form(routes.Application.newAlarm()) {
-	        
-	        @inputText(alarmForm("type")) 
-	        @inputText(field = alarmForm("callee.phoneNumber"), '_label -> "Callee PhoneNumber") 
-	        @inputText(field = alarmForm("callee.name"), '_label -> "Callee Name") 
-	        @inputText(field = alarmForm("patient.name"), '_label -> "Patient Name")
-	        @inputText(field = alarmForm("patient.personalNumber"), '_label -> "Patient Personal Number")
-	        
-	        <input type="submit" value="Create">
-	        
-	    }
-    </section></div> 
+     <section id="dispatchArea" class="col-md-4  dispatchSection">
+        @if(null != selectedAlarm){
+            @dispatchFrame(selectedAlarm)
+        }
+    </section>
+    
+
     
   </div>
 

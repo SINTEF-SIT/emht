@@ -16,6 +16,7 @@ create table alarm (
   type                      varchar(255),
   callee_id                 bigint,
   opening_time              timestamp,
+  dispatching_time          timestamp,
   closing_time              timestamp,
   attendant_id              bigint,
   alarm_log                 clob,

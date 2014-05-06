@@ -16,6 +16,7 @@ GET     /alarm/:id              controllers.Application.getAlarm(id: Long)
 POST    /alarm                  controllers.Application.newAlarm()
 POST    /alarm/:id/delete       controllers.Application.deleteAlarm(id: Long)
 POST    /assignAlarm/           controllers.Application.assignAlarm()
+POST    /dispatchAlarm/         controllers.Application.dispatchAlarm()
 
 
 # Attendants          

@@ -99,6 +99,17 @@ public class Application extends Controller {
 
     }
     
+    public static Result  dispatchAlarm(){
+    	DynamicForm dynamicForm = Form.form().bindFromRequest();
+    	Long alarmId =  Long.parseLong(dynamicForm.get("alarmId"));
+    	Alarm alarm = Alarm.dispatchAlarm(alarmId);    	
+
+   	 	return ok(
+			    views.html.index.render(Alarm.allOpenAlarms(), alarmForm, alarm)
+			  );
+
+    }
+    
     
     public static Result javascriptRoutes() {
         response().setContentType("text/javascript");
