@@ -1,6 +1,7 @@
 package controllers;
 
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -8,6 +9,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import core.Global;
+import core.MyWebSocketManager;
 
 import models.*;
 import play.*;
@@ -27,17 +31,25 @@ public class Application extends Controller {
     }
 
     public static Result  openAlarms(){
+    	List<Alarm> object = Global.alarmList.getAlarmList();
+    	/*System.out.println("test "); 
+    	// debugging loop
+    	Iterator<Alarm> iterator = object.iterator();
+    	while (iterator.hasNext()) {
+    		Alarm a  = iterator.next();
+    		System.out.println("Adding alarm " + a.id + "with expiry flag as " + a.expired); 
+    	}*/
+    	
+    	Content html = views.html.index.render(object, alarmForm, null);
     	 return ok(
-    			    views.html.index.render(Alarm.allOpenAlarms(), alarmForm, null)
+    			    html
     			  );
     }
     
     public static Result  newAlarm(){
     	  Form<Alarm> filledForm = alarmForm.bindFromRequest(); // create a new form with the request data
     	  if(filledForm.hasErrors()) {
-    	    return badRequest(
-    	      views.html.index.render(Alarm.allOpenAlarms(), filledForm, null)
-    	    );
+    	    return redirect(routes.Application.openAlarms());
     	  } else {
     		  Alarm formAlarm = filledForm.get();
     		if(null != formAlarm.callee && null != formAlarm.patient){
@@ -59,9 +71,9 @@ public class Application extends Controller {
     	  return redirect(routes.Application.openAlarms());
     }
     
-    public static Result  getAlarm(Long id){
+    public static Result  getOpenAlarm(Long id){
    	 	return ok(
-			    views.html.requestInfoFrame.render(Alarm.get(id))
+			    views.html.requestInfoFrame.render(Global.alarmList.list.get(id))
 			  );
     }
     
@@ -92,9 +104,9 @@ public class Application extends Controller {
     	Long alarmId =  Long.parseLong(dynamicForm.get("alarmId"));
        	AlarmAttendant a = AlarmAttendant.getAttendantFromUsername(attendantUserName);
     	Alarm alarm = Alarm.assignAttendantToAlarm(alarmId, a);    	
-
+    	List<Alarm> l = Global.alarmList.getAlarmList();
    	 	return ok(
-			    views.html.index.render(Alarm.allOpenAlarms(), alarmForm, alarm)
+			    views.html.index.render(l, alarmForm, alarm)
 			  );
 
     }
@@ -103,9 +115,9 @@ public class Application extends Controller {
     	DynamicForm dynamicForm = Form.form().bindFromRequest();
     	Long alarmId =  Long.parseLong(dynamicForm.get("alarmId"));
     	Alarm alarm = Alarm.dispatchAlarm(alarmId);    	
-
+    	List<Alarm> l = Global.alarmList.getAlarmList();
    	 	return ok(
-			    views.html.index.render(Alarm.allOpenAlarms(), alarmForm, alarm)
+			    views.html.index.render(l, alarmForm, alarm)
 			  );
 
     }
@@ -118,7 +130,7 @@ public class Application extends Controller {
                 controllers.routes.javascript.Application.deleteAlarm(),
                 controllers.routes.javascript.Application.getPastAlarmsFromCallee(),
                 controllers.routes.javascript.Application.assignAlarm(),
-                controllers.routes.javascript.Application.getAlarm()
+                controllers.routes.javascript.Application.getOpenAlarm()
             )
         );
     }

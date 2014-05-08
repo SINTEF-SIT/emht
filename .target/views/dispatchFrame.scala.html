@@ -1,0 +1,51 @@
+@* dispatchFrame Template File *@
+@(alarm: Alarm)
+
+
+@import helper._
+
+ <script id="dispatchFrameScripts" language="javascript" type="text/javascript">
+
+/* right now all the buttons just close the alarm and do not register anything else*/
+
+/* on load function */
+$(function(){
+
+	$(".dispatch-btn").click(function(e) {
+	    $("#dispatchForm").submit();
+	});
+
+
+}); 
+
+</script>
+
+
+    <div class="row">
+        <h3>Distress Numbers</h3>
+        <div class="well well-sm">
+                <div class="dispatcherTags">Police
+                <button type="button" class="btn btn-default dispatch-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-btn">Send</button></div>
+        </div>
+        <div class="well well-sm">
+                <div class="dispatcherTags">AMK
+                <button type="button" class="btn btn-default dispatch-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-btn">Send</button></div>
+        </div>
+        <div class="well well-sm">
+                <div class="dispatcherTags">Fireman
+                <button type="button" class="btn btn-default dispatch-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-btn">Send</button></div>
+        </div>
+        <div class="well well-sm">
+                <div class="dispatcherTags">Alarm Central Ambulance
+                <button type="button" class="btn btn-default dispatch-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-btn">Send</button></div>
+        </div>
+        
+        @form(action = routes.Application.dispatchAlarm(), 'id -> "dispatchForm") {
+            <input id="dispatchInputAlarm" type="hidden" name="alarmId" value="@{alarm.id}"/>
+        } 
+        
+    </div>

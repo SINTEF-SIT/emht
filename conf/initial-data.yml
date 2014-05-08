@@ -177,7 +177,7 @@
     openingTime:  2014-03-31 11:02:00
     
  - &alarm9 !!models.Alarm
-    type:         phone
+    type:         elder
     callee:       *callee9
     patient:      *patient9
     attendant:    *karin
