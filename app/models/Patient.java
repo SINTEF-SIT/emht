@@ -49,4 +49,13 @@ public class Patient extends Model {
 					return pat;
 				}
 				
+				public static List<Patient> patientFromAddress(String address){
+					if (null == address || address.isEmpty())
+						return null;
+					else{
+						List<Patient> list = find.where().ieq("address", address).findList();
+						 return list;
+					}
+				}
+				
 }

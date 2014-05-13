@@ -125,49 +125,116 @@
     personalNumber: 923456789    
     age:            53
 
+ - &patient10 !!models.Patient
+   name:             Rui
+   address:          Munkegata 7
+   personalNumber:   1234567890
+   age:              53
+
+ - &patient11 !!models.Patient
+   name:             Rai
+   address:          Prinsengata 7
+   personalNumber:   2234567890
+   age:              53
+
+ - &patient12 !!models.Patient
+   name:             Robert
+   address:          Othilienborg 7
+   personalNumber:   3234567890
+   age:              53
+
+ - &patient13 !!models.Patient
+   name:             Roberto
+   address:          Othilienborg 47
+   personalNumber:   4234567890
+   age:              53
+
+ - &patient14 !!models.Patient
+   name:             Rob
+   address:          Othilienborg 99
+   personalNumber:   5234567890
+   age:              53
+
+ - &patient15 !!models.Patient
+   name:             Filipe
+   address:          Dronningensgata 4
+   personalNumber:   6234567890
+   age:              53
+
+ - &patient16 !!models.Patient
+   name:             Philip
+   address:          Dronningensgata 7
+   personalNumber:   7234567890
+   age:              53
+
+ - &patient17 !!models.Patient
+   name:             Phelps
+   address:          Munkegata 86
+   personalNumber:   8234567890
+   age:              53
+
+ - &patient18 !!models.Patient
+   name:             Phil
+   address:          Munkegata 88
+   personalNumber:   9234567890
+   age:              53
+
+ - &patient19 !!models.Patient
+   name:             Alberto Neto
+   address:          Strindveien 7
+   personalNumber:   1034567890
+   age:              53
+
+ - &patient20 !!models.Patient
+   name:             Alberto Chaves
+   address:          Strindveien 7
+   personalNumber:   1134567890
+   age:              53
+
+ - &patient21 !!models.Patient
+   name:             Ola
+   address:          Strindveien 77
+   personalNumber:   1234567812    
+   age:              53
+
 # Alarms
 
  - &alarm1 !!models.Alarm
     type:         fire
     callee:       *callee1
-    patient:      *patient1
     openingTime:  2014-03-31 11:02:57
     
  - &alarm2 !!models.Alarm
     type:         fall
     callee:       *callee2
-    patient:      *patient2
     openingTime:  2014-03-31 11:22:57
     
  - &alarm3 !!models.Alarm
     type:         fire
     callee:       *callee3
-    patient:      *patient3
     openingTime:  2014-03-31 11:32:57
     
  - &alarm4 !!models.Alarm
     type:         police
     callee:       *callee4
-    patient:      *patient4
     openingTime:  2014-04-01 11:02:57
     
  - &alarm5 !!models.Alarm
     type:         phone
     callee:       *callee5
-    patient:      *patient5
     openingTime:  2014-03-31 11:52:57
     
  - &alarm6 !!models.Alarm
     type:         fire
     callee:       *callee6
-    patient:      *patient6
     openingTime:  2014-03-31 11:02:57 
     
  - &alarm7 !!models.Alarm
     type:         fire
     callee:       *callee7
-    patient:      *patient7
     openingTime:  2014-03-31 12:12:57
+
+# assigned alarms
     
  - &alarm8 !!models.Alarm
     type:         police

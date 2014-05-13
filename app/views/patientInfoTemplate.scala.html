@@ -1,17 +1,35 @@
 
-@(patient: Patient)
+@(callee: Callee, patient: Patient)
+
+ <script language="javascript" type="text/javascript">
+
+$(function(){
+	var address = $('#calleeAddress').attr("value");
+	retrivePatientsByAddress(address);
+	
+
+}); 
+
+        
+    
+
+</script>
 
 
     <div class="row">
             <div class="well well-sm">
                 <h4 >
-                    Patient</h4>
+                    Patient Information</h4>
                 <p>
+                @if(null != patient){
                     <i class="glyphicon glyphicon-user"></i>  @patient.name
                     <br />
                     <i class="glyphicon glyphicon-home"></i>  @patient.address
                     <br />
                     <u>Personal Number</u>:  @patient.personalNumber
                     <br />
+                }else{
+                    <div id="dynamicPatientInfo"/>
+                }
             </div>
     </div>

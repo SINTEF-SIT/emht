@@ -31,6 +31,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 	public Date dispatchingTime; // TODO: implement dispatching
 	public Date closingTime; // at the moment we are dispatching and closing all alarms
 	
+	public String occuranceAddress; // address of where the incident took place
+	
 	@Transient 
 	public boolean expired = false; 
 	

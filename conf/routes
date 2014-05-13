@@ -18,6 +18,7 @@ POST    /alarm/:id/delete       controllers.Application.deleteAlarm(id: Long)
 POST    /assignAlarm/           controllers.Application.assignAlarm()
 POST    /dispatchAlarm/         controllers.Application.dispatchAlarm()
 
+GET     /patientsByAddress/:address controllers.Application.getPatientsByAddress(address: String)
 
 # Attendants          
 GET     /attendants                  controllers.AttendantControler.attendants()

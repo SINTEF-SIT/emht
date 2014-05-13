@@ -98,6 +98,29 @@ public class Application extends Controller {
 
     }
     
+    public static Result  getPatientsByAddress(String address){
+    	List<Patient> patientList = Patient.patientFromAddress(address);
+    	
+		ObjectNode result = Json.newObject();
+
+		ArrayNode patientArray = new ArrayNode(JsonNodeFactory.instance);
+		if(null != patientList){
+	    	for (Patient temp : patientList) {
+	    		ObjectNode  patient = Json.newObject();
+				patient.put("id", temp.id);
+				patient.put("name", temp.name);
+				patient.put("persoNumber", temp.personalNumber);
+				patient.put("address", temp.address);
+				patient.put("age", temp.age);
+				patientArray.add(patient);
+	    	}
+		}
+    	result.put("patientArray",patientArray);
+    	return ok(result);
+
+    }
+    
+    
     public static Result  assignAlarm(){
     	DynamicForm dynamicForm = Form.form().bindFromRequest();
     	String attendantUserName = dynamicForm.get("attendantUserName");

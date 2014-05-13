@@ -18,6 +18,7 @@ create table alarm (
   opening_time              timestamp,
   dispatching_time          timestamp,
   closing_time              timestamp,
+  occurance_address         varchar(255),
   attendant_id              bigint,
   alarm_log                 clob,
   patient_id                bigint,
