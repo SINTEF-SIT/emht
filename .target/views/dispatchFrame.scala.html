@@ -11,9 +11,11 @@
 /* on load function */
 $(function(){
 
-	$(".dispatch-btn").click(function(e) {
-	    $("#dispatchForm").submit();
-	});
+
+// the code below would set the buttons to dispatch the action, but it was decided not to do so...
+//	$(".dispatch-btn").click(function(e) {
+//	    $("#dispatchForm").submit();
+//	});
 
 
 }); 
@@ -45,7 +47,9 @@ $(function(){
         </div>
         
         @form(action = routes.Application.dispatchAlarm(), 'id -> "dispatchForm") {
+            @if(null != alarm){
             <input id="dispatchInputAlarm" type="hidden" name="alarmId" value="@{alarm.id}"/>
+            }
         } 
         
     </div>

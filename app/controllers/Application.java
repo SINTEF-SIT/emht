@@ -120,6 +120,31 @@ public class Application extends Controller {
 
     }
     
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result  insertPatientFromJson(){
+    	  JsonNode json = request().body().asJson();
+  	      Patient p = new Patient();
+    	  p.name = json.findPath("name").textValue();
+    	  p.personalNumber = json.findPath("persoNumber").textValue();
+		  p.address = json.findPath("address").textValue();
+		  p.age = json.findPath("age").asInt();
+    	  if(p.personalNumber == null) {
+    	    return badRequest("Missing parameter [personal Number]"); // TODO: render this
+    	  } else {
+    		  Patient retObj = Patient.getOrCreate(p); // inserts on the db and return the db instance (which will include the id of the patient)
+	    		ObjectNode  patient = Json.newObject();
+				patient.put("id", retObj.id);
+				patient.put("name", retObj.name);
+				patient.put("persoNumber", retObj.personalNumber);
+				patient.put("address", retObj.address);
+				patient.put("age", retObj.age);
+    		  return ok(patient);
+    	  }
+
+    }
+    
+    
+    
     
     public static Result  assignAlarm(){
     	DynamicForm dynamicForm = Form.form().bindFromRequest();
@@ -145,6 +170,8 @@ public class Application extends Controller {
 
     }
     
+
+    
     
     public static Result javascriptRoutes() {
         response().setContentType("text/javascript");
@@ -153,6 +180,7 @@ public class Application extends Controller {
                 controllers.routes.javascript.Application.deleteAlarm(),
                 controllers.routes.javascript.Application.getPastAlarmsFromCallee(),
                 controllers.routes.javascript.Application.assignAlarm(),
+                controllers.routes.javascript.Application.insertPatientFromJson(),
                 controllers.routes.javascript.Application.getOpenAlarm()
             )
         );

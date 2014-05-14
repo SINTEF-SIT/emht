@@ -1,17 +1,50 @@
 
-@(patient: Patient)
+@(callee: Callee, patient: Patient)
+
+ <script language="javascript" type="text/javascript">
+
+$(function(){
+	var calleeAddress = $('#calleeAddress').attr("value");
+	retrivePatientsByAddress(calleeAddress);
+
+}); 
+
+   
+
+</script>
 
 
     <div class="row">
             <div class="well well-sm">
                 <h4 >
-                    Patient</h4>
+                    Patient Information</h4>
                 <p>
+                @if(null != patient){
                     <i class="glyphicon glyphicon-user"></i>  @patient.name
                     <br />
                     <i class="glyphicon glyphicon-home"></i>  @patient.address
                     <br />
                     <u>Personal Number</u>:  @patient.personalNumber
                     <br />
+                }else{
+                    <div id="dynamicPatientInfo"/>
+                }
             </div>
     </div>
+    
+    
+    
+                   <!-- Add patient modal -->
+                      
+              <div class="modal fade" id="add_patient_modal">
+                  <div class="modal-dialog"><div class="modal-content">
+                      <div class="modal-body" >
+                        <h2> Add Patient </h2>
+                        <u>Name:</u> <input type="text" class="form-control" id="modalInputPatientName">
+                        <u>Address:</u> <input type="text" class="form-control" id="modalInputPatientAddress"> 
+                        <u>Personal Number:</u> <input type="text" class="form-control" id="modalInputPatientNumber"> 
+                        <u>Age:</u> <input type="text" class="form-control" id="modalInputPatientAge">  
+                        <a href="#" id="addPatientModalButton" class="btn btn-primary" data-dismiss="modal">Save Patient Data</a>
+                      </div>
+                  </div></div>                               
+                </div>

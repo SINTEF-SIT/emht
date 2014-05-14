@@ -14,19 +14,19 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 <script type="text/javascript" charset="utf-8" src="@routes.Application.wsJs()"></script>
     <script id="showInfoScripts" language="javascript" type="text/javascript">
 
-   function populateAlarmInfo(alarmIndex){
+   function assignAlarm(alarmIndex){
 
        $("#assignInputAttendant").val("Karin");
        $("#assignInputAlarm").val(alarmIndex);
        $("#assignForm").submit();
-	   
+	    
 	   //myJsRoutes.controllers.Application.assignAlarm(alarmIndex, "Karin").ajax({});
    /*    myJsRoutes.controllers.Application.getOpenAlarm(alarmIndex).ajax({
            success : function(data) { $("#details").html(data); }
          });*/
    }
 
-   function selectAlarm(alarmIndex,calleeIndex) {
+   function selectOpenAlarm(alarmIndex,calleeIndex) {
 
 	   $.getJSON("/pastAlarms/" + calleeIndex,
 		          function(data) {
@@ -48,16 +48,17 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	   //populateAlarmInfo(alarmIndex);
 	   $('#callee_info_modal').modal("show");
 	   $('#confirmCalleeModalButton').click(function(e) {
-		   populateAlarmInfo(alarmIndex);
+		   assignAlarm(alarmIndex);
 		});
 			   
     };
     
-
+    function selectMyAlarm(alarmIndex) {
+    	assignAlarm(alarmIndex); // TODO: change this to a simple select of alarm instead of assign
+     };
 
 
     </script>
-    
 
     <header>
     	<h1> EMHT </h1>
@@ -65,42 +66,43 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
  <div class="container-fluid">
     <div class="row">
-        <div class="col-md-4"><h1>Open Alarms</h1></div>
-        <div class="col-md-4"><h1>Info</h1></div>
-        <div class="col-md-4"><h1>Actions and Closing</h1></div>
+        <div class="col-md-3"><h2 class="selected_arrow_box">&nbsp Alarms</h2></div>
+        <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Registration</h2></div>
+        <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Assessment</h2></div>
+        <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Actions and Closing</h2></div>
     </div>
     <div class="row">
-     <section class="col-md-4 alarmListSection">
+     <section class="col-md-3 alarmListSection">
 
 	    <!-- <h2>@alarms.size() alarm(s)</h2>-->
-	    
+	    <h3>Open Alarms</h3>
 		<div class="list-group" id="unassignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
 		@for((alarm,index) <- alarms.zipWithIndex){
             @if(null == alarm.attendant){
-			    <a href="#" id="Alarm@{alarm.id}"  onclick="selectAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item">
+			    <a href="#" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item">
 			    <!-- <i class="icon-fire pull-left"></i> -->
 			    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
 			    @if(null != alarm.expired && true == alarm.expired){
 			        <img src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left" width="48" height="48"/>
 			    }
 			    <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
-			    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;Patient @{alarm.patient.personalNumber} </p>
+			    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
 			  </a>
 			 }
 		 }  
 		</div>
-		<h2>My Alarms</h2>
+		<h3>My Alarms</h3>
 		<div class="list-group" id="assignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
         @for((alarm,index) <- alarms.zipWithIndex){
             @if((null != alarm.attendant) && (alarm.attendant.username == "Karin")){
-                <a href="#" id="Alarm@{alarm.id}" onclick="selectAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item">
+                <a href="#" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item">
                 <!-- <i class="icon-fire pull-left"></i> -->
                 <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
                                 @if(null != alarm.expired && true == alarm.expired){
                     <img src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left" width="48" height="48"/>
                 }
                 <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
-                <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;Patient @{alarm.patient.personalNumber} </p>
+                <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
               </a>
              }
          }  
@@ -109,7 +111,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	</section>
     
     
-    <section class="col-md-4 detailsSection">
+    <section class="col-md-3 detailsSection">
 
     	<div id="details"/>
     	@if(null != selectedAlarm){
@@ -119,12 +121,14 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
             <input id="assignInputAlarm" type="hidden" name="alarmId" value=""/>
             <input id="assignInputAttendant" type="hidden" name="attendantUserName" value=""/>		
 		} 
-    </section> 
+    </section>
+     <section class="col-md-3 assesmentSection">
+
+        <div id="details"/>
+    </section>  
     
-     <section id="dispatchArea" class="col-md-4  dispatchSection">
-        @if(null != selectedAlarm){
-            @dispatchFrame(selectedAlarm)
-        }
+     <section id="dispatchArea" class="col-md-3  dispatchSection">
+          @dispatchFrame(selectedAlarm)
     </section>
     
 
@@ -147,7 +151,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 					  </div></div>                               
                 </div>
                 
-                             <!-- Test modal -->
+                             <!-- Test modal
                       
                   <div class="modal fade" id="test_modal">
                   <div class="modal-dialog"><div class="modal-content">
@@ -156,7 +160,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                           <p/>
                       </div>
                       </div></div>                               
-                </div>    
+                </div>    --> 
 
     
 }
