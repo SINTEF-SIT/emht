@@ -15,7 +15,7 @@ $(function(){
         	switch (action) {
             case "addAlarm":
                 var alarm = data.alarm;
-                var listItem = '<a href="#" id="Alarm' + alarm.id  + '"  onclick="selectAlarm(' + alarm.id + ',' + alarm.callee.id + ');return false;" class="list-group-item">' +
+                var listItem = '<a href="#" id="Alarm' + alarm.id  + '"  onclick="selectOpenAlarm(' + alarm.id + ',' + alarm.callee.id + ');return false;" class="list-group-item">' +
                       '<img src="/assets/images/' + alarm.type + '.png" class="img-thumbnail pull-left" width="48" height="48"/>' +
                       '<h4 class="list-group-item-heading">' + alarm.id + ' of type '+ alarm.type  +' </h4>' + 
                       '<p class="list-group-item-text">Callee '+ alarm.callee.phoneNumber + '</p>';

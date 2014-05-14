@@ -41,7 +41,7 @@ function openAddPatientModal() {
 
                                   // building Patient Details
                                   var patientDetails = '<u>Adress:</u>  <span id="patientAddress"/><br><u>Personal Number:</u>  <span id="patientPersoNum"/><br>' +
-                                  '<u>Age:</u>  <span id="patientAge"/><br><p><p><u>Patient Location:</u>';
+                                  '<u>Age:</u>  <span id="patientAge"/><br><input id="patientId" type="hidden"><p><p><u>Patient Location:</u>';
                                   patientDetails+= '<span class="checkbox inline"><label><input id="sameAddressCheckbox" type="checkbox"> Same address as residence</label>' +
                                   '</span>'; // adds checkbox
                                   patientDetails+= '<input type="text" class="form-control" id="incidentAddress" placeholder="Other Address">';
@@ -73,6 +73,7 @@ function openAddPatientModal() {
 		$('#patientPersoNum').text(personNumber);
 		$('#patientAddress').text(address);
 		$('#patientAge').text(age);
+		$('#patientId').val(patientId);
 
 	    $('#patientDropDown').find('.selection').text(patientName);
 	    //$('#patientDropDown').find('.selection').value(patientName);
@@ -110,5 +111,68 @@ function openAddPatientModal() {
 	function fillUnknownPatient(){
 		populatePatient("","Unknown Patient","","","");
 	}
+	
+	function closeCaseAtRegistration(){
+
+		var form = $('<form></form>');
+	    form.attr("method", "post");
+	    form.attr("action", "../addPatientAndNoteAndClose");
+
+	    var patientId = $('#dynamicPatientInfo').find('#patientId').val();
+	    var notes = $('#patientRegistrationNotesBox').val();
+	    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
+	    var parameters = {};
+	    parameters['patientId'] = patientId;
+	    parameters['notes'] = notes;
+	    parameters['alarmId'] = alarmId;
+	    
+	    $.each(parameters, function(key, value) {
+	        var field = $('<input></input>');
+
+	        field.attr("type", "hidden");
+	        field.attr("name", key);
+	        field.attr("value", value);
+
+	        form.append(field);
+	    });
+
+	    // The form needs to be a part of the document in
+	    // order for us to be able to submit it.
+	    $(document.body).append(form);
+	    form.submit();
+		return;
+	}
+
+	// TODO: create subfunction to reduce overlapp between this and the above function
+	function fromRegistrationToAssesment(){
+		   var form = $('<form></form>');
+		    form.attr("method", "post");
+		    form.attr("action", "../addPatientAndNoteAndGoForward");
+
+		    var patientId = $('#dynamicPatientInfo').find('#patientId').val();
+		    var notes = $('#patientRegistrationNotesBox').val();
+		    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
+		    var parameters = {};
+		    parameters['patientId'] = patientId;
+		    parameters['notes'] = notes;
+		    parameters['alarmId'] = alarmId;
+		    
+		    $.each(parameters, function(key, value) {
+		        var field = $('<input></input>');
+
+		        field.attr("type", "hidden");
+		        field.attr("name", key);
+		        field.attr("value", value);
+
+		        form.append(field);
+		    });
+
+		    // The form needs to be a part of the document in
+		    // order for us to be able to submit it.
+		    $(document.body).append(form);
+		    form.submit();  
+	}
+
+
 	
 

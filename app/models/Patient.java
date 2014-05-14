@@ -58,4 +58,9 @@ public class Patient extends Model {
 					}
 				}
 				
+				public static Patient getFromId(Long id) {
+					Patient p = find.where().eq("id", id).findUnique(); 
+					return p; 
+				}
+				
 }

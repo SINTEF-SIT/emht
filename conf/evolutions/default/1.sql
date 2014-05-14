@@ -21,6 +21,7 @@ create table alarm (
   occurance_address         varchar(255),
   attendant_id              bigint,
   alarm_log                 clob,
+  notes                     clob,
   patient_id                bigint,
   constraint pk_alarm primary key (id))
 ;

@@ -21,6 +21,9 @@ POST    /dispatchAlarm/         controllers.Application.dispatchAlarm()
 GET     /patientsByAddress/:address     controllers.Application.getPatientsByAddress(address: String)
 POST    /patient/new                    controllers.Application.insertPatientFromJson()
 
+POST   /addPatientAndNoteAndClose       controllers.Application.addPatientAndNoteAndClose()
+POST   /addPatientAndNoteAndGoForward   controllers.Application.addPatientAndGoForward()
+
 # Attendants          
 GET     /attendants                  controllers.AttendantControler.attendants()
 POST    /attendants                  controllers.AttendantControler.newAttendant()

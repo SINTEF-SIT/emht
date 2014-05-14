@@ -3,6 +3,7 @@ package controllers;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -52,9 +53,9 @@ public class Application extends Controller {
     	    return redirect(routes.Application.openAlarms());
     	  } else {
     		  Alarm formAlarm = filledForm.get();
-    		if(null != formAlarm.callee && null != formAlarm.patient){
+    		if(null != formAlarm.callee){
     			formAlarm.callee = Callee.getOrCreate(formAlarm.callee);
-    			formAlarm.patient = Patient.getOrCreate(formAlarm.patient);
+    			//formAlarm.patient = Patient.getOrCreate(formAlarm.patient);
     			Alarm.create(formAlarm);//
     		}	
     		else{
@@ -143,6 +144,34 @@ public class Application extends Controller {
 
     }
     
+
+    
+    // TODO: possibly reduce redundant code between functions by creating a sub function
+    public static Result  addPatientAndNoteAndClose(){
+        
+    	DynamicForm dynamicForm = Form.form().bindFromRequest();
+        long patientId = Long.parseLong((dynamicForm.get("patientId")));
+        String notes = dynamicForm.get("notes");
+        long alarmId = Long.parseLong(dynamicForm.get("alarmId"));
+        
+        
+        Alarm.setPatientNoteAndClose(alarmId, patientId, notes);
+
+    	return redirect(routes.Application.openAlarms()); 
+    }    
+    
+    public static Result  addPatientAndGoForward(){
+    	DynamicForm dynamicForm = Form.form().bindFromRequest();
+        long patientId = Long.parseLong((dynamicForm.get("patientId")));
+        String notes = dynamicForm.get("notes");
+        long alarmId = Long.parseLong(dynamicForm.get("alarmId"));
+        Alarm a = Alarm.setPatientAndNote(alarmId, patientId, notes);
+
+    	List<Alarm> l = Global.alarmList.getAlarmList();
+   	 	return ok(
+			    views.html.index.render(l, alarmForm, a)
+			  );
+    }   
     
     
     

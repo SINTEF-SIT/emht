@@ -42,6 +42,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 	@Lob
 	public String alarmLog;
 	
+	@Lob
+	public String notes;
+	
 	@ManyToOne(cascade=CascadeType.ALL)
 	public Patient patient;
 	
@@ -100,11 +103,35 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	a.dispatchingTime = new Date();
 	    	a.closingTime = new Date();
 	    	a.save(); // at the moment we are dispatching and closing all alarms
+
+	    	return a;
+	    }
+	    
+	    public static Alarm setPatientAndNote(Long alarmId,Long patientId, String note){
+	    	Alarm a = find.ref(alarmId);
+	    	Patient p = Patient.getFromId(patientId);
+	    	a.notes = note; 
+	    	a.patient = p;
+	    	a.save(); // at the moment we are dispatching and closing all alarms
+	    	return a;
+	    }
+	    
+	    public static Alarm setPatientNoteAndClose(Long alarmId,Long patientId, String note){
+	    	Alarm a = find.ref(alarmId);
+	    	Patient p = Patient.getFromId(patientId);
+	    	a.notes = note; 
+	    	a.patient = p;
+	    	Alarm.closeAlarm(a);
+	    	a.save(); // at the moment we are dispatching and closing all alarms
+	    	return a;
+	    }
+	    
+	    private static void closeAlarm(Alarm a){
+	    	a.closingTime = new Date();
 	    	// since we are already closing the alarm, we will automatically remove it from the list
 	    	// in the future TODO: we should rather repalce the hash item and delete when the item is closed
-	    	Global.alarmList.list.remove(alarmId); 
+	    	Global.alarmList.list.remove(a.id); 
 	    	// TODO: possibly add checks
 	    	// TODO: add websocket call
-	    	return a;
 	    }
 }
