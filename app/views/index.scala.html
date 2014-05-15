@@ -68,18 +68,20 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     <div class="row">
         @if(null == selectedAlarm){
             <div class="col-md-3"><h2 class="selected_arrow_box">&nbsp Alarms</h2></div>
+            <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Registration</h2></div>
+            <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Assessment</h2></div>
         }else{
             <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Alarms</h2></div>
             @if(null == selectedAlarm.patient){
                 <div class="col-md-3"><h2 class="selected_arrow_box">&nbsp Registration</h2></div>
                 <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Assessment</h2></div>
-                <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Actions and Closing</h2></div>
             }else{
                 <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Registration</h2></div>
                 <div class="col-md-3"><h2 class="selected_arrow_box">&nbsp Assessment</h2></div>
-                <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Actions and Closing</h2></div>            
+   
             }
         }
+       <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Actions and Closing</h2></div>         
 
     </div>
     <div class="row">
@@ -143,7 +145,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
      <section class="col-md-3 assesmentSection">
         <div id="details"/>
         @if(null != selectedAlarm && null != selectedAlarm.patient){
-               <h2>Assessment</h2>
+               <img src="/assets/images/mockedAssesment.png" class="img-responsive"/>
         }
         
     </section>  
