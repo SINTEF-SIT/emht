@@ -1,12 +1,10 @@
 
-@(callee: Callee, patient: Patient)
 
  <script language="javascript" type="text/javascript">
 
 $(function(){
-	var calleeAddress = $('#calleeAddress').attr("value");
-	retrivePatientsByAddress(calleeAddress);
-
+	var calleeAddress = $('#calleeAddress').text();
+	
 }); 
 
    
@@ -14,21 +12,12 @@ $(function(){
 </script>
 
 
-    <div class="row">
+    <div id="patientBox" class="row">
             <div class="well well-sm">
                 <h4 >
                     Patient Information</h4>
                 <p>
-                @if(null != patient){
-                    <i class="glyphicon glyphicon-user"></i>  @patient.name
-                    <br />
-                    <i class="glyphicon glyphicon-home"></i>  @patient.address
-                    <br />
-                    <u>Personal Number</u>:  @patient.personalNumber
-                    <br />
-                }else{
                     <div id="dynamicPatientInfo"/>
-                }
             </div>
     </div>
     

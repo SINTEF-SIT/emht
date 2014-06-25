@@ -83,7 +83,11 @@ public class Alarm extends Model { // the model extension serves for having acce
 		
 	    // TODO: investigate if it makes sense to explicitly tell that im not loading subobjects
 	    public static List<Alarm>  pastAlarmsFromCallee(Long calleeId){
-	    	return find.where().eq("callee.id",calleeId).isNotNull("closingTime").findList();
+	    	return find.where().eq("callee.id",calleeId).isNotNull("closingTime").orderBy("openingTime desc").findList();
+	    }
+	    // TODO: investigate if it makes sense to explicitly tell that im not loading subobjects
+	    public static List<Alarm>  pastAlarmsFromPatient(Long patientId){
+	    	return find.where().eq("patient.id",patientId).isNotNull("closingTime").orderBy("openingTime desc").findList();
 	    }
 		
 	    public static Alarm assignAttendantToAlarm(Long alarmId, AlarmAttendant attendant){
@@ -107,15 +111,16 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	return a;
 	    }
 	    
-	    public static Alarm setPatientAndNote(Long alarmId,Long patientId, String note){
+	    /*public static Alarm setPatientAndNote(Long alarmId,Long patientId, String note){
 	    	Alarm a = find.ref(alarmId);
 	    	Patient p = Patient.getFromId(patientId);
 	    	a.notes = note; 
 	    	a.patient = p;
 	    	a.save(); // at the moment we are dispatching and closing all alarms
 	    	return a;
-	    }
+	    }*/
 	    
+	    /*
 	    public static Alarm setPatientNoteAndClose(Long alarmId,Long patientId, String note){
 	    	Alarm a = find.ref(alarmId);
 	    	Patient p = Patient.getFromId(patientId);
@@ -124,14 +129,45 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	Alarm.closeAlarm(a);
 	    	a.save(); // at the moment we are dispatching and closing all alarms
 	    	return a;
+	    }*/
+	    
+	    // receives some data in the dummy object a, and updates the data from A
+	    // which is not yet in the database into an mirror from the DB object to
+	    // be saved by the function calling this one
+	    // the dummy object must contain at least the alarm id
+	    private static Alarm updateFromDummy(Alarm dummy){
+	    	Alarm a = Alarm.get(dummy.id);
+	    	if(null != dummy.patient){
+	    		if(null == a.patient || (a.patient.id != dummy.patient.id)){ // no patient assigned to alarm, or different patient assgined
+	    			Patient p = Patient.getFromId(dummy.patient.id);
+	    			a.patient = p;
+	    		}
+	    	}
+	    	if(null != dummy.notes) // Im assuming Ill alwasy update the notes
+	    		a.notes = dummy.notes; 
+	    	
+	    	if(null != dummy.closingTime)
+	    		a.notes = dummy.notes; 
+	    	
+	    	return a;	
 	    }
 	    
-	    private static void closeAlarm(Alarm a){
-	    	a.closingTime = new Date();
+	    public static void saveAlarm(Alarm dummy){
+	    	Alarm a = Alarm.updateFromDummy(dummy);
+	    	a.save();
+	    	return;
+	    }
+	    
+	    public static void closeAlarm(Alarm dummy){
+	    	dummy.closingTime = new Date();
+	    	
 	    	// since we are already closing the alarm, we will automatically remove it from the list
 	    	// in the future TODO: we should rather repalce the hash item and delete when the item is closed
-	    	Global.alarmList.list.remove(a.id); 
+	    	Global.alarmList.list.remove(dummy.id);
+	    	
+	    	Alarm a = Alarm.updateFromDummy(dummy);
 	    	// TODO: possibly add checks
 	    	// TODO: add websocket call
+	    	a.save();
 	    }
 }

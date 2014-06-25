@@ -7,13 +7,35 @@ function openAddPatientModal() {
             
  };
 
+ 
+ /* retrieve the callee and populate it */
+ function  populateCalleFromAlarm(calleeId){
+     $.getJSON("/callee/" + calleeId,
+             function(data) {
+                 // TODO: check if the json is full before creating the table		    	 
+		         var calleeId = data.id;
+		         var calleeName = data.name;
+		         var calleePhone = data.phoneNumber;
+		         var calleeAddress = data.address;
+    	 
+                 $("#calleeName").text(calleeName);
+                 $("#calleeAddress").text(calleeAddress);
+                 $("#calleePhone").text(calleePhone);
+                 $("#calleeBox").show();
+                 
+
+          });
+
+     return;
+ }
+ 
 
   /* retrieve possible patients based on the address */
- function retrivePatientsByAddress(adress) {
+ function retrivePatientsByAddress(alarmIndex) {
 
 	 if( $('#dynamicPatientInfo').length == 1){ //check if we have the dynamic data
 		  
-			       $.getJSON("/patientsByAddress/" + adress,
+			       $.getJSON("/prospectPatient/" + alarmIndex,
 			                  function(data) {
 			                      // TODO: check if the json is full before creating the table
 			                      $("#dynamicPatientInfo").empty();
@@ -35,7 +57,7 @@ function openAddPatientModal() {
                                   if( $.isArray(array) && array.length != 0){
                                 	  patientDropDownBox += '<li class="divider"></li>';
                                   }
-                                  patientDropDownBox += '<li><a onclick="openAddPatientModal();" href="#">Add Patient</a></li>'
+                                  patientDropDownBox += '<li><a onclick="openAddPatientModal();" href="#">Other Patient...</a></li>'
                                   patientDropDownBox += '<li><a onclick="fillUnknownPatient();" href="#">Unknown Patient</a></li>'
                                   patientDropDownBox += '</ul></span>';
 
@@ -46,6 +68,8 @@ function openAddPatientModal() {
                                   '</span>'; // adds checkbox
                                   patientDetails+= '<input type="text" class="form-control" id="incidentAddress" placeholder="Other Address">';
 
+                                  patientDetails+= '<h5>Patient Logs</h5><table class="table table-bordered" id="patientLogTable"><thead><tr><td>date</td><td>hour</td><td>type</td></tr></thead><tbody></tbody></table>';
+                                  
                                   var identity = '<div class="checkbox"><label><input id="unknownIdentityCheckbox" type="checkbox"> Unknown Identity</label></div><br>';
                                   
                                   dynamicPatientBlock += patientDropDownBox + '<br>' + patientDetails + '<br>';// + identity;
@@ -61,6 +85,8 @@ function openAddPatientModal() {
 			                    	    	$("#incidentAddress").val("Other Address");
 			                    	    }
 			                    	});
+			                      
+			                      $("#patientBox").show();
 
 			               });
 
@@ -75,6 +101,27 @@ function openAddPatientModal() {
 		$('#patientAge').text(age);
 		$('#patientId').val(patientId);
 
+		// empty existing table
+		$("#patientLogTable > tbody").html("");
+		
+		if(null != patientId){
+	       $.getJSON("/pastAlarmsFromPatient/" + patientId,
+	    		   function(data) {
+	    	   		  if(null!= data && null != data.alarmArray){
+		    	   		  // data is a JSON list, so we can iterate over it
+			              var array = data.alarmArray;
+			              for(var i in array){
+							var day = array[i].day;
+							var hour = array[i].hour;
+							var type = array[i].type;
+							htmlRow= '<tr><td> ' + day + ' </td><td> ' + hour + ' </td><td> ' + type + ' </td></tr>';
+							$("#patientLogTable > tbody").prepend(htmlRow);
+						  }
+	       			}
+	       });
+		}
+		
+
 	    $('#patientDropDown').find('.selection').text(patientName);
 	    //$('#patientDropDown').find('.selection').value(patientName);
 	    return;
@@ -86,21 +133,21 @@ function openAddPatientModal() {
 		var number = $('#modalInputPatientNumber').val();
 		var age = $('#modalInputPatientAge').val();
 		
-		var patient = {
+		var inputPatient = {
 	            'name' : name,
 	            'address' : address,
 	            'persoNumber' : number,
 	            'age' : age
 	          };
 		myJsRoutes.controllers.Application.insertPatientFromJson().ajax({
-	            data : JSON.stringify(patient),
+	            data : JSON.stringify(inputPatient),
 	            contentType : 'application/json',
-	            success : function (patient) {
+	            success : function (outpuPatient) {
 	              // add it to list
-	              var patientListItem =  '<li><a onclick="populatePatient(\'' + patient.id + '\',\'' + patient.name + '\',\'' + patient.persoNumber + '\',\'' + patient.address +
-                  '\',\'' + patient.age + '\');" href="#">' + patient.name +'</a></li>'
+	              var patientListItem =  '<li><a onclick="populatePatient(\'' + outpuPatient.id + '\',\'' + outpuPatient.name + '\',\'' + outpuPatient.persoNumber + '\',\'' + outpuPatient.address +
+                  '\',\'' + outpuPatient.age + '\');" href="#">' + outpuPatient.name +'</a></li>'
 	              $('#patientDropDownList').prepend(patientListItem);
-	              populatePatient(patient.id,patient.name,patient.persoNumber,patient.address,patient.age);
+	              populatePatient(outpuPatient.id,outpuPatient.name,outpuPatient.persoNumber,outpuPatient.address,outpuPatient.age);
 	              
 	            }// end of success
 	    });// end of ajax call
@@ -112,65 +159,60 @@ function openAddPatientModal() {
 		populatePatient("","Unknown Patient","","","");
 	}
 	
-	function closeCaseAtRegistration(){
-
-		var form = $('<form></form>');
-	    form.attr("method", "post");
-	    form.attr("action", "../addPatientAndNoteAndClose");
-
+	
+	// simple function that just gets the data from the assessment page and package it
+	// into a json object
+	function getUpdatedAlarmFromAssesmentPage(){
 	    var patientId = $('#dynamicPatientInfo').find('#patientId').val();
 	    var notes = $('#patientRegistrationNotesBox').val();
 	    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
-	    var parameters = {};
-	    parameters['patientId'] = patientId;
-	    parameters['notes'] = notes;
-	    parameters['alarmId'] = alarmId;
-	    
-	    $.each(parameters, function(key, value) {
-	        var field = $('<input></input>');
 
-	        field.attr("type", "hidden");
-	        field.attr("name", key);
-	        field.attr("value", value);
+	    var updatedAlarm = {
+            'alarmId' : alarmId,
+            'notes' : notes,
+             'patient' : {
+            	 'patientId' : patientId
+             }
+	    };
+		return updatedAlarm;
+	}
+	
+	
+	function closeCaseAtRegistration(){
 
-	        form.append(field);
-	    });
+		var updatedAlarm = getUpdatedAlarmFromAssesmentPage();
 
-	    // The form needs to be a part of the document in
-	    // order for us to be able to submit it.
-	    $(document.body).append(form);
-	    form.submit();
-		return;
+		myJsRoutes.controllers.Application.closeCase().ajax({
+	            data : JSON.stringify(updatedAlarm),
+	            contentType : 'application/json',
+	            success : function (data) {
+	            	// TODO: possibly move some of this to a function
+	            	highlightArrowHeader("receptionArrowHeader");
+	            	var currentSelected = $('.list-group-item.active.alarmItem');
+	            	currentSelected.remove();
+	        	   $("#patientBox").hide();
+	        	   $("#calleeBox").hide();
+	        	    $('#notesDiv').hide();
+	            	
+	            }// end of success
+	    });// end of ajax call
+
 	}
 
-	// TODO: create subfunction to reduce overlapp between this and the above function
 	function fromRegistrationToAssesment(){
-		   var form = $('<form></form>');
-		    form.attr("method", "post");
-		    form.attr("action", "../addPatientAndNoteAndGoForward");
+		var updatedAlarm = getUpdatedAlarmFromAssesmentPage();
 
-		    var patientId = $('#dynamicPatientInfo').find('#patientId').val();
-		    var notes = $('#patientRegistrationNotesBox').val();
-		    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
-		    var parameters = {};
-		    parameters['patientId'] = patientId;
-		    parameters['notes'] = notes;
-		    parameters['alarmId'] = alarmId;
-		    
-		    $.each(parameters, function(key, value) {
-		        var field = $('<input></input>');
-
-		        field.attr("type", "hidden");
-		        field.attr("name", key);
-		        field.attr("value", value);
-
-		        form.append(field);
-		    });
-
-		    // The form needs to be a part of the document in
-		    // order for us to be able to submit it.
-		    $(document.body).append(form);
-		    form.submit();  
+		myJsRoutes.controllers.Application.saveCase().ajax({
+	            data : JSON.stringify(updatedAlarm),
+	            contentType : 'application/json',
+	            success : function (data) {
+	            	// TODO: possibly move some of this to a function
+	            	highlightArrowHeader("assesmentArrowHeader");
+	         	   $("#assesment").show();
+	        	    $('#notesDiv').hide();
+	        	    // TODO: possibly move and repurpose the div
+	            }// end of success
+	    });// end of ajax call
 	}
 
 

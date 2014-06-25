@@ -1,4 +1,4 @@
-@(alarms: List[Alarm], alarmForm: Form[Alarm], selectedAlarm: Alarm) 
+@(alarms: List[Alarm], alarmForm: Form[Alarm]) 
 @* alarms and alarmForm are the 2 inputs to this template, where 
 alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
@@ -9,37 +9,45 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
 @main("Alarm list") {
 
-@* todo: move this         // $("#patientName").text(@{alarms(index).Patient.name}); *@  
 
 <script type="text/javascript" charset="utf-8" src="@routes.Application.wsJs()"></script>
     <script id="showInfoScripts" language="javascript" type="text/javascript">
 
-   function assignAlarm(alarmIndex){
+   /*function assignAlarm(alarmIndex){
 
        $("#assignInputAttendant").val("Karin");
        $("#assignInputAlarm").val(alarmIndex);
        $("#assignForm").submit();
 	    
-	   //myJsRoutes.controllers.Application.assignAlarm(alarmIndex, "Karin").ajax({});
-   /*    myJsRoutes.controllers.Application.getOpenAlarm(alarmIndex).ajax({
-           success : function(data) { $("#details").html(data); }
-         });*/
-   }
+   }*/
+
+   // on start
+   $(document).ready(function(){
+	   $("#assesment").hide();
+	   $("#patientBox").hide();
+	   $("#calleeBox").hide();
+	    $('#notesDiv').hide();
+
+       $("#closeCaseFromPatientRegButton").click(closeCaseAtRegistration);
+       $("#goToAssesmentButton").click(fromRegistrationToAssesment);
+	    
+	 });
 
    function selectOpenAlarm(alarmIndex,calleeIndex) {
 
-	   $.getJSON("/pastAlarms/" + calleeIndex,
+	   $.getJSON("/pastAlarmsFromCalle/" + calleeIndex,
 		          function(data) {
 		              // TODO: check if the json is full before creating the table
 		              $("#calleeLogTableDiv").empty();
-		              var htmlTable = '<table class="table"><thead><tr><td>date</td><td>hour</td></tr></thead><tbody>';
+		              var htmlTable = '<table class="table"><thead><tr><td>date</td><td>hour</td><td>type</td></tr></thead><tbody>';
 		              // TODO: validate the json
 		              // data is a JSON list, so we can iterate over it
 		              var array = data.alarmArray;
 		              for(var i in array){
 						var day = array[i].day;
 						var hour = array[i].hour;
-						htmlTable+= '<tr><td> ' + day + ' </td><td> ' + hour + ' </td></tr>'; 
+						var type = array[i].type;
+						htmlTable+= '<tr><td> ' + day + ' </td><td> ' + hour + ' </td><td> ' + type + ' </td></tr>'; 
 					  }
 		              htmlTable+= "</tbody></table>";
 		              $("#calleeLogTableDiv").html(htmlTable);
@@ -65,38 +73,25 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     </header>
 
  <div class="container-fluid">
-    <div class="row">
-        @if(null == selectedAlarm){
-            <div class="col-md-3"><h2 class="selected_arrow_box">&nbsp Alarms</h2></div>
-            <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Registration</h2></div>
-            <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Assessment</h2></div>
-        }else{
-            <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Alarms</h2></div>
-            @if(null == selectedAlarm.patient){
-                <div class="col-md-3"><h2 class="selected_arrow_box">&nbsp Registration</h2></div>
-                <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Assessment</h2></div>
-            }else{
-                <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Registration</h2></div>
-                <div class="col-md-3"><h2 class="selected_arrow_box">&nbsp Assessment</h2></div>
-   
-            }
-        }
-       <div class="col-md-3"><h2 class="nonselected_arrow_box">&nbsp Actions and Closing</h2></div>         
-
+    <div class="row" id="arrowHeaders">
+            <div class="col-md-3"><h2 id="receptionArrowHeader" class="selected_arrow_box">&nbsp Alarm Reception</h2></div>
+            <div class="col-md-3"><h2 id="registrationArrowHeader" class="nonselected_arrow_box">&nbsp Registration</h2></div>
+            <div class="col-md-3"><h2 id="assesmentArrowHeader" class="nonselected_arrow_box">&nbsp Assessment</h2></div>
+            <div class="col-md-3"><h2 id="closingArrowHeader" class="nonselected_arrow_box">&nbsp Actions and Closing</h2></div>
     </div>
     <div class="row">
      <section class="col-md-3 alarmListSection">
 
 	    <!-- <h2>@alarms.size() alarm(s)</h2>-->
-	    <h3>Open Alarms</h3>
+	    <h3>Unassigned Alarms</h3>
 		<div class="list-group" id="unassignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
 		@for((alarm,index) <- alarms.zipWithIndex){
             @if(null == alarm.attendant){
-			    <a href="#" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item">
+			    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
 			    <!-- <i class="icon-fire pull-left"></i> -->
 			    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
 			    @if(null != alarm.expired && true == alarm.expired){
-			        <img src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left" width="48" height="48"/>
+			        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 			    }
 			    <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
 			    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
@@ -108,15 +103,11 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 		<div class="list-group" id="assignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
         @for((alarm,index) <- alarms.zipWithIndex){
             @if((null != alarm.attendant) && (alarm.attendant.username == "Karin")){
-                @if((null != selectedAlarm) && (null != selectedAlarm.id) && (alarm.id == selectedAlarm.id) ){
-                    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item active">
-                }else{
-                    <a href="#" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item">
-                }
+                    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
                 <!-- <i class="icon-fire pull-left"></i> -->
                 <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
                                 @if(null != alarm.expired && true == alarm.expired){
-                    <img src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left" width="48" height="48"/>
+                    <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
                 }
                 <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
                 <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
@@ -131,27 +122,25 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     <section class="col-md-3 detailsSection">
 
     	<div id="details"/>
-    	@if(null != selectedAlarm){
-    	    @requestInfoFrame(selectedAlarm)
-    	    @if(null == selectedAlarm.patient){
-    	       @notesAndCloseTemplate()
-    	    }
-    	}
-    	@form(action = routes.Application.assignAlarm(), 'id -> "assignForm") {
-            <input id="assignInputAlarm" type="hidden" name="alarmId" value=""/>
-            <input id="assignInputAttendant" type="hidden" name="attendantUserName" value=""/>		
-		} 
+
+    	    @requestInfoFrame()
     </section>
      <section class="col-md-3 assesmentSection">
-        <div id="details"/>
-        @if(null != selectedAlarm && null != selectedAlarm.patient){
+        <div id="assesment" />
+			 <ul class="nav nav-tabs">
+			  <li class="active"><a href="#nmiTab" data-toggle="tab">NMI</a></li>
+			  <li><a href="#sensorTab" data-toggle="tab">Sensor</a></li>
+			  <li><a href="#infoTab" data-toggle="tab">OBS!</a></li>
+			</ul>
                <img src="/assets/images/mockedAssesment.png" class="img-responsive"/>
-        }
-        
+               <section id="NMI content" >
+				    <label><input type="checkbox"> Check me out 1</label>
+				    <label><input type="checkbox"> Check me out 2</label>    
+			  </section>
     </section>  
     
      <section id="dispatchArea" class="col-md-3  dispatchSection">
-          @dispatchFrame(selectedAlarm)
+          @dispatchFrame()
     </section>
     
 

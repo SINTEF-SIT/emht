@@ -23,7 +23,7 @@ $(function(){
                 break;
             case "addTimeNotification":
                 
-            	var clockImage = '<img src="/assets/images/clock.png" class="img-thumbnail pull-left" width="48" height="48"/>';
+            	var clockImage = '<img src="/assets/images/clock.png" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>';
             	var alarm = $("#Alarm" + data.alarmId).children(":first").after(clockImage); // find list item and add the timer after its type symbol
             	
                 break;

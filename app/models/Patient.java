@@ -1,13 +1,17 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import core.Global;
+
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder;
+
 
 @Entity
 public class Patient extends Model {
@@ -62,5 +66,22 @@ public class Patient extends Model {
 					Patient p = find.where().eq("id", id).findUnique(); 
 					return p; 
 				}
+				
+				// this function will return: the patient of the Alarm + everybody that lives in the
+				// same address of the callee
+				public static List<Patient> prospectPatientsFromAlarm(Long id){
+					Alarm a = Alarm.get(id);
+					List<Patient> list = new ArrayList<Patient>();
+					String calleeAdr = a.callee.address;
+
+					if (null != calleeAdr && (calleeAdr.isEmpty() == false)) // if we have the callee address
+						list.addAll(find.where().ieq("address", calleeAdr).findList());// add all patients in that address
+					if(null != a.patient && (a.patient.address.equalsIgnoreCase(calleeAdr) == false)) // if the alarm has an assigned patinet which has not been already added to the list
+						list.add(a.patient);
+					
+						return list;
+					
+				}
+				
 				
 }

@@ -1,28 +1,28 @@
 # Callees
 
  - &callee1 !!models.Callee
-   name:             Rui
+   name:             Rui Barbosa
    address:          Munkegata 7
    phoneNumber:      1234567890
 
  - &callee2 !!models.Callee
-   name:             Rai
-   address:          Prinsengata 7
+   name:             Rai Silva
+   address:          Munkegata 7
    phoneNumber:      2234567890
 
  - &callee3 !!models.Callee
-   name:             Robert
-   address:          Othilienborg 7
+   name:             Robert Steven
+   address:          Munkegata 7
    phoneNumber:      3234567890
 
  - &callee4 !!models.Callee
-   name:             Roberto
+   name:             Roberto Baggio
    address:          Othilienborg 47
    phoneNumber:      4234567890
 
  - &callee5 !!models.Callee
-   name:             Rob
-   address:          Othilienborg 99
+   name:             Rob Williams
+   address:          Othilienborg 47
    phoneNumber:      5234567890
 
  - &callee6 !!models.Callee
@@ -126,34 +126,34 @@
     age:            53
 
  - &patient10 !!models.Patient
-   name:             Rui
+   name:             Rui Barbosa
    address:          Munkegata 7
    personalNumber:   1234567890
    age:              53
 
  - &patient11 !!models.Patient
-   name:             Rai
-   address:          Prinsengata 7
+   name:             Rai Silva
+   address:          Munkegata 7
    personalNumber:   2234567890
    age:              53
 
  - &patient12 !!models.Patient
-   name:             Robert
-   address:          Othilienborg 7
+   name:             Robert Steven
+   address:          Munkegata 7
    personalNumber:   3234567890
-   age:              53
+   age:              25
 
  - &patient13 !!models.Patient
-   name:             Roberto
+   name:             Roberto Baggio
    address:          Othilienborg 47
    personalNumber:   4234567890
-   age:              53
+   age:              76
 
  - &patient14 !!models.Patient
-   name:             Rob
-   address:          Othilienborg 99
+   name:             Rob Williams
+   address:          Othilienborg 47
    personalNumber:   5234567890
-   age:              53
+   age:              82
 
  - &patient15 !!models.Patient
    name:             Filipe
@@ -226,12 +226,12 @@
     
  - &alarm6 !!models.Alarm
     type:         fire
-    callee:       *callee6
+    callee:       *callee1
     openingTime:  2014-03-31 11:02:57 
     
  - &alarm7 !!models.Alarm
     type:         fire
-    callee:       *callee7
+    callee:       *callee4
     openingTime:  2014-03-31 12:12:57
 
 # assigned alarms
@@ -256,42 +256,58 @@
  - &alarm101 !!models.Alarm
     type:            fire
     callee:          *callee1
-    patient:         *patient1
+    patient:         *patient11
     openingTime:     2012-03-31 11:02:57
     dispatchingTime: 2012-03-31 11:06:57
     closingTime:     2012-03-31 11:06:57
     
  - &alarm102 !!models.Alarm
     type:            fire
-    callee:          *callee1
-    patient:         *patient1
+    callee:          *callee2
+    patient:         *patient11
     openingTime:     2013-03-25 11:02:57
     dispatchingTime: 2013-03-25 15:06:57
     closingTime:     2013-03-25 15:06:57
     
  - &alarm103 !!models.Alarm
-    type:            fire
-    callee:          *callee1
-    patient:         *patient1
+    type:            fall
+    callee:          *callee3
+    patient:         *patient11
     openingTime:     2013-03-25 11:02:57
     dispatchingTime: 2013-05-27 12:26:54
     closingTime:     2013-05-27 12:26:54
     
  - &alarm104 !!models.Alarm
-    type:            fire
+    type:            elder
     callee:          *callee1
-    patient:         *patient1
+    patient:         *patient11
     openingTime:     2014-01-25 11:02:57
     dispatchingTime: 2014-01-26 02:26:54
     closingTime:     2014-01-26 02:26:54
     
  - &alarm105 !!models.Alarm
-    type:             fire
+    type:             police
     callee:           *callee1
-    patient:          *patient1
+    patient:          *patient11
     openingTime:      2013-10-05 11:02:57
     dispatchingTime:  2013-10-17 05:23:52
     closingTime:      2013-10-17 05:23:52   
+    
+ - &alarm106 !!models.Alarm
+    type:             elder
+    callee:           *callee4
+    patient:          *patient14
+    openingTime:      2013-12-05 11:02:57
+    dispatchingTime:  2013-12-17 05:23:52
+    closingTime:      2013-12-17 05:23:52   
+    
+ - &alarm107 !!models.Alarm
+    type:             elder
+    callee:           *callee5
+    patient:          *patient13
+    openingTime:      2013-11-05 11:02:57
+    dispatchingTime:  2013-11-17 05:23:52
+    closingTime:      2013-11-17 05:23:52           
     
 # Sensors
 

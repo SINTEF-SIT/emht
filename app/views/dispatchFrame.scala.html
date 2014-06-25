@@ -1,5 +1,4 @@
 @* dispatchFrame Template File *@
-@(alarm: Alarm)
 
 
 @import helper._
@@ -46,10 +45,5 @@ $(function(){
                 <button type="button" class="btn btn-default dispatch-btn">Send</button></div>
         </div>
         
-        @form(action = routes.Application.dispatchAlarm(), 'id -> "dispatchForm") {
-            @if(null != alarm){
-            <input id="dispatchInputAlarm" type="hidden" name="alarmId" value="@{alarm.id}"/>
-            }
-        } 
         
     </div>

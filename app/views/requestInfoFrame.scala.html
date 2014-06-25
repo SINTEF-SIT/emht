@@ -1,13 +1,17 @@
 @* patientInfoFrame Template File *@
-@(alarm: Alarm)
 
 
 @import helper._
 
 @* Caller part *@
-@calleInfoTemplate(alarm.callee)
+@calleInfoTemplate()
 
 @* Patient part *@
-@patientInfoTemplate(alarm.callee,alarm.patient)
+@patientInfoTemplate()
 
-
+<div id="notesDiv">
+    <u>Notes:</u>
+    <textarea id="patientRegistrationNotesBox" class="form-control" rows="5"></textarea>
+    <button id="closeCaseFromPatientRegButton" type="button" class="btn btn-default">Save and Close Case</button>
+    <button id="goToAssesmentButton" type="button" class="btn btn-default">Save and go to Assessment</button>
+</div>
