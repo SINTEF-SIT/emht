@@ -62,7 +62,8 @@ function highlightBackListTab (){
    $("#calleeBox").hide();
     $('#notesDiv').hide();
     $('#assesment').hide();
-    
+    $('#extraActionButtonsDiv').hide();
+    $('#patientRegistrationNotesBox').value = '';
     // TODO: perhaps replace the below for just what is really needed 
     setupAssesmentPage();
     setupActionsAndClosingPage();

@@ -12,6 +12,7 @@ function setupAssesmentPage(){
 	// add actions on check buttons
 	$("#nmiTab").find(':checkbox').each(
 		function(i) { 
+			$(this).removeAttr('checked');
 			$(this).change(function(){
 				var selectedLabel = $("#" + $(this).attr('id') + "label");
 			    if(this.checked) {
@@ -37,6 +38,15 @@ function setupAssesmentPage(){
 	
     $("#closeCaseFromAssessButton").click(closeCaseAtAssesment);
     $("#goToClosingButton").click(fromAssementToClosing);
+    
+    //set active tab to NMI
+    $("#nmiTab").addClass("active");
+    $("#infoTab").removeClass("active");
+    $("#sensorTab").removeClass("active");
+    
+    $("#nmiNav").addClass("active");
+    $("#infoNav").removeClass("active");
+    $("#sensorNav").removeClass("active");
 }
 
 

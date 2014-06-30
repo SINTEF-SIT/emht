@@ -33,13 +33,95 @@
     </div>
     
     <div id="extraActionButtonsDiv" class="row">
-	    <div id="dynamicButtonsDiv" class="btn-group-vertical">
-		  <button type="button" class="btn btn-default">Hjemmesykepleien</button>
-		  <button type="button" class="btn btn-default">TP</button>
-		  <button type="button" class="btn btn-default">Legevakt</button>
-		  <button type="button" class="btn btn-default">Ambulerende</button>
-		  <button type="button" class="btn btn-default">Kontaktpersoner</button>
-	    </div>
+    
+        <div class="panel-group" id="dynamicDispatchButtons">
+		  <div class="panel panel-default">
+		    <div class="panel-heading">
+		      <h4 class="panel-title">
+		        <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#hjemmesykepleienPanel">
+		          Hjemmesykepleien
+		        </a>
+		      </h4>
+		    </div>
+		    <div id="hjemmesykepleienPanel" class="panel-collapse collapse">
+		      <div class="panel-body">
+                <table class="table table-bordered" id="hjemmesykepleienTable">
+                <thead><tr><td>Name</td><td>Number</td></tr></thead>
+                <tbody>
+                <tr><td>Ostbyen</td><td>7313 2255</td></tr>
+                <tr><td>Oya</td><td>7313 3155</td></tr>
+                </tbody>
+                </table>
+                <button type="button" class="btn btn-default dispatch-ring-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-send-btn">Send</button>
+		      </div>
+		    </div>
+		  </div>
+		  <div class="panel panel-default">
+		    <div class="panel-heading">
+		      <h4 class="panel-title">
+		        <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#TPpanel">
+		          TP
+		        </a>
+		      </h4>
+		    </div>
+		    <div id="TPpanel" class="panel-collapse collapse">
+		      <div class="panel-body">
+		        TP body
+		      </div>
+		    </div>
+		  </div>
+		  <div class="panel panel-default">
+		    <div class="panel-heading">
+		      <h4 class="panel-title">
+		        <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#legevaktPanel">
+		          Legevakt
+		        </a>
+		      </h4>
+		    </div>
+		    <div id="legevaktPanel" class="panel-collapse collapse">
+		      <div class="panel-body">
+		        Legevakt bopdy
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#ambulerendePanel">
+                  Ambulerende
+                </a>
+              </h4>
+            </div>
+            <div id="ambulerendePanel" class="panel-collapse collapse">
+              <div class="panel-body">
+                Ambulerende panel
+              </div>
+            </div>
+          </div>
+          
+           <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#kontaktpersonerPanel">
+                  Kontaktpersoner
+                </a>
+              </h4>
+            </div>
+            <div id="kontaktpersonerPanel" class="panel-collapse collapse">
+              <div class="panel-body">
+                Kontaktpersoner body
+              </div>
+            </div>
+          </div>
+		  
+		</div>
+    
+    
+    
+    
+
 	   <button id="closeCaseActionsButton" type="button" class="btn btn-default">Close Case</button>
        <button id="saveAndFollowUpButton" type="button" class="btn btn-default">Save and follow up</button>
 	    

@@ -203,6 +203,7 @@ function openAddPatientModal() {
 	            	// TODO: possibly move some of this to a function
 	            	highlightArrowHeader("assesmentArrowHeader");
 	         	   $("#assesment").show();
+	         	  $("#assementNotesDiv").show();
 	        	    $('#notesDiv').hide();
 	        	    // TODO: possibly move and repurpose the div instead of the below
 	        	    $('#assesmentNotesBox').val($('#patientRegistrationNotesBox').val());
