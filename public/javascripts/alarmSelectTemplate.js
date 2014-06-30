@@ -54,4 +54,18 @@ function highlightArrowHeader(headerId){
 	$('#'+ headerId).switchClass("nonselected_arrow_box", "selected_arrow_box" );
 }
 
+function highlightBackListTab (){
+	highlightArrowHeader("receptionArrowHeader");
+	var currentSelected = $('.list-group-item.active.alarmItem');
+	currentSelected.remove();
+   $("#patientBox").hide();
+   $("#calleeBox").hide();
+    $('#notesDiv').hide();
+    $('#assesment').hide();
+    
+    // TODO: perhaps replace the below for just what is really needed 
+    setupAssesmentPage();
+    setupActionsAndClosingPage();
+    
+}
 

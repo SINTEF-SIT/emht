@@ -27,9 +27,14 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	   $("#patientBox").hide();
 	   $("#calleeBox").hide();
 	    $('#notesDiv').hide();
+	    $("#extraActionButtonsDiv").hide();
 
        $("#closeCaseFromPatientRegButton").click(closeCaseAtRegistration);
        $("#goToAssesmentButton").click(fromRegistrationToAssesment);
+
+       setupAssesmentPage();
+       setupActionsAndClosingPage();
+       
 	    
 	 });
 
@@ -126,17 +131,55 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     	    @requestInfoFrame()
     </section>
      <section class="col-md-3 assesmentSection">
-        <div id="assesment" />
+        <div id="assesment">
 			 <ul class="nav nav-tabs">
-			  <li class="active"><a href="#nmiTab" data-toggle="tab">NMI</a></li>
-			  <li><a href="#sensorTab" data-toggle="tab">Sensor</a></li>
-			  <li><a href="#infoTab" data-toggle="tab">OBS!</a></li>
-			</ul>
-               <img src="/assets/images/mockedAssesment.png" class="img-responsive"/>
-               <section id="NMI content" >
-				    <label><input type="checkbox"> Check me out 1</label>
-				    <label><input type="checkbox"> Check me out 2</label>    
-			  </section>
+				  <li class="active"><a href="#nmiTab" data-toggle="tab">NMI</a></li>
+				  <li><a id="sensorTablink" href="#sensorTab" data-toggle="tab">Sensor</a></li>
+				  <li><a id="infoTablink" href="#infoTab" data-toggle="tab">OBS!</a></li>
+			 </ul>
+			 <div class="tab-content">
+	               <div class="tab-pane active" id="nmiTab" >
+					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox1" value="Patient is conscious"> Is the patient conscious?</label></div>
+					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox2" value="Patient breaths normly"> Is the patient breathing normally?</label></div>    
+					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox3" value="Patient can move"> Can the patient move?</label></div>
+					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox4" value="Patient can stand up"> Can the patient stand up?</label></div>
+					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox5" value="Patient can talk"> Can the patient talk?</label></div>
+				  </div>
+				  <div class="tab-pane" id="infoTab" >
+					<div class="panel panel-default">
+					  <div class="panel-body">
+					    The patients is alergic to gluten <p>
+					    The password to the entrance gate is 9456
+					  </div>
+					</div>
+				  </div>
+	              <div class="tab-pane" id="sensorTab" >
+	                     <img src="/assets/images/graph.png" class="img-responsive"/>
+	              </div>
+              </div>
+               <div id="assementLogsDiv">
+                    <u>Log:</u>
+                    <div class="panel panel-default">
+                      <div id="assesmentLogPanel" class="panel-body">
+                        <div class="logLabel" id="NMIassesmentLabel"> NMI assessment</div>
+                        <div class="logLabel" id="NMIcheckBox1label"> Patient is conscious</div>
+                        <div class="logLabel" id="NMIcheckBox2label"> Patient breaths normally</div>    
+                        <div class="logLabel" id="NMIcheckBox3label"> Patient can move</div>
+                        <div class="logLabel" id="NMIcheckBox4label"> Patient can stand up</div>
+                        <div class="logLabel" id="NMIcheckBox5label"> Patient can talk</div>
+                        <div class="logLabel" id="assedmentSensorlabel"> Sensor information checked</div>
+                        <div class="logLabel" id="informationSensorlabel"> Patient information checked</div>
+                      </div>
+                    </div>
+               </div>
+              <div id="assementNotesDiv">
+                   <br>
+                  <u>Notes:</u>
+				    <textarea id="assesmentNotesBox" class="form-control" rows="5"></textarea>
+				    <button id="closeCaseFromAssessButton" type="button" class="btn btn-default">Save and Close Case</button>
+				    <button id="goToClosingButton" type="button" class="btn btn-default">Save and go to Closing</button>
+              </div>
+	   </div>
     </section>  
     
      <section id="dispatchArea" class="col-md-3  dispatchSection">
@@ -163,16 +206,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 					  </div></div>                               
                 </div>
                 
-                             <!-- Test modal
-                      
-                  <div class="modal fade" id="test_modal">
-                  <div class="modal-dialog"><div class="modal-content">
-                      <div class="modal-body" >
-                        test
-                          <p/>
-                      </div>
-                      </div></div>                               
-                </div>    --> 
+ 
 
     
 }

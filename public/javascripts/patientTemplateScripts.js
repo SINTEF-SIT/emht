@@ -186,14 +186,7 @@ function openAddPatientModal() {
 	            data : JSON.stringify(updatedAlarm),
 	            contentType : 'application/json',
 	            success : function (data) {
-	            	// TODO: possibly move some of this to a function
-	            	highlightArrowHeader("receptionArrowHeader");
-	            	var currentSelected = $('.list-group-item.active.alarmItem');
-	            	currentSelected.remove();
-	        	   $("#patientBox").hide();
-	        	   $("#calleeBox").hide();
-	        	    $('#notesDiv').hide();
-	            	
+	            	highlightBackListTab ();
 	            }// end of success
 	    });// end of ajax call
 
@@ -207,10 +200,12 @@ function openAddPatientModal() {
 	            contentType : 'application/json',
 	            success : function (data) {
 	            	// TODO: possibly move some of this to a function
+	            	// TODO: possibly move some of this to a function
 	            	highlightArrowHeader("assesmentArrowHeader");
 	         	   $("#assesment").show();
 	        	    $('#notesDiv').hide();
-	        	    // TODO: possibly move and repurpose the div
+	        	    // TODO: possibly move and repurpose the div instead of the below
+	        	    $('#assesmentNotesBox').val($('#patientRegistrationNotesBox').val());
 	            }// end of success
 	    });// end of ajax call
 	}
