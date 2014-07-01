@@ -3,47 +3,187 @@
 
 @import helper._
 
- <script id="dispatchFrameScripts" language="javascript" type="text/javascript">
-
-/* right now all the buttons just close the alarm and do not register anything else*/
-
-/* on load function */
-$(function(){
 
 
-// the code below would set the buttons to dispatch the action, but it was decided not to do so...
-//	$(".dispatch-btn").click(function(e) {
-//	    $("#dispatchForm").submit();
-//	});
 
-
-}); 
-
-</script>
-
-
-    <div class="row">
+    <div id="staticPhoneNumbers" class="row">
         <h3>Distress Numbers</h3>
         <div class="well well-sm">
                 <div class="dispatcherTags">Police
-                <button type="button" class="btn btn-default dispatch-btn">Ring</button>
-                <button type="button" class="btn btn-default dispatch-btn">Send</button></div>
+                <button type="button" class="btn btn-default dispatch-ring-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-send-btn">Send</button></div>
         </div>
         <div class="well well-sm">
                 <div class="dispatcherTags">AMK
-                <button type="button" class="btn btn-default dispatch-btn">Ring</button>
-                <button type="button" class="btn btn-default dispatch-btn">Send</button></div>
+                <button type="button" class="btn btn-default dispatch-ring-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-send-btn">Send</button></div>
         </div>
         <div class="well well-sm">
                 <div class="dispatcherTags">Fireman
-                <button type="button" class="btn btn-default dispatch-btn">Ring</button>
-                <button type="button" class="btn btn-default dispatch-btn">Send</button></div>
+                <button type="button" class="btn btn-default dispatch-ring-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-send-btn">Send</button></div>
         </div>
-        <div class="well well-sm">
+        <!--  <div class="well well-sm">
                 <div class="dispatcherTags">Alarm Central Ambulance
                 <button type="button" class="btn btn-default dispatch-btn">Ring</button>
                 <button type="button" class="btn btn-default dispatch-btn">Send</button></div>
-        </div>
+        </div>-->
         
         
     </div>
+    
+    <div id="extraActionButtonsDiv" class="row">
+    
+        <div class="panel-group" id="dynamicDispatchButtons">
+		  <div class="panel panel-default">
+		    <div class="panel-heading">
+		      <h4 class="panel-title">
+		        <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#hjemmesykepleienPanel">
+		          Hjemmesykepleien
+		        </a>
+		      </h4>
+		    </div>
+		    <div id="hjemmesykepleienPanel" class="panel-collapse collapse">
+		      <div class="panel-body">
+                <table class="table table-bordered" id="hjemmesykepleienTable">
+                <thead><tr><td>Name</td><td>Number</td></tr></thead>
+                <tbody>
+                <tr><td>Ostbyen</td><td>7313 2255</td></tr>
+                <tr><td>Oya</td><td>7313 3155</td></tr>
+                </tbody>
+                </table>
+                <button type="button" class="btn btn-default dispatch-ring-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-send-btn">Send</button>
+		      </div>
+		    </div>
+		  </div>
+		  <div class="panel panel-default">
+		    <div class="panel-heading">
+		      <h4 class="panel-title">
+		        <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#TPpanel">
+                TP
+		        </a>
+		      </h4>
+		    </div>
+		    <div id="TPpanel" class="panel-collapse collapse">
+		      <div class="panel-body">
+                <table class="table table-bordered" id="hjemmesykepleienTable">
+                <thead><tr><td>Name</td><td>Number</td></tr></thead>
+                <tbody>
+                <tr><td>Rolf</td><td>9332 3773</td></tr>
+                <tr><td>Brit</td><td>9865 6376</td></tr>
+                </tbody>
+                </table>
+                <button type="button" class="btn btn-default dispatch-ring-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-send-btn">Send</button>
+
+		      </div>
+		    </div>
+		  </div>
+		  <div class="panel panel-default">
+		    <div class="panel-heading">
+		      <h4 class="panel-title">
+		        <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#legevaktPanel">
+		          Legevakt
+		        </a>
+		      </h4>
+		    </div>
+		    <div id="legevaktPanel" class="panel-collapse collapse">
+		      <div class="panel-body">
+                <table class="table table-bordered" id="legevaktTable">
+                <thead><tr><td>Name</td><td>Number</td></tr></thead>
+                <tbody>
+                <tr><td>Brynjar</td><td>9654 5342</td></tr>
+                <tr><td>Per</td><td>9234 5456</td></tr>
+                </tbody>
+                </table>
+                <button type="button" class="btn btn-default dispatch-ring-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-send-btn">Send</button>
+
+		      </div>
+		    </div>
+		  </div>
+		  
+		  <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#ambulerendePanel">
+                  Ambulerende
+                </a>
+              </h4>
+            </div>
+            <div id="ambulerendePanel" class="panel-collapse collapse">
+              <div class="panel-body">
+                <table class="table table-bordered" id="ambulerendeTable">
+                <thead><tr><td>Name</td><td>Number</td></tr></thead>
+                <tbody>
+                <tr><td>St Olav</td><td>7213 2555</td></tr>
+                <tr><td>Sykehus</td><td>7452 3315</td></tr>
+                </tbody>
+                </table>
+                <button type="button" class="btn btn-default dispatch-ring-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-send-btn">Send</button>
+
+              </div>
+            </div>
+          </div>
+          
+           <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#kontaktpersonerPanel">
+                  Kontaktpersoner
+                </a>
+              </h4>
+            </div>
+            <div id="kontaktpersonerPanel" class="panel-collapse collapse">
+              <div class="panel-body">
+                <table class="table table-bordered" id="kontaktpersonerTable">
+                <thead><tr><td>Name</td><td>Number</td></tr></thead>
+                <tbody>
+                <tr><td>Ola</td><td>9234 4482</td></tr>
+                <tr><td>Albert</td><td>9321 3155</td></tr>
+                </tbody>
+                </table>
+                <button type="button" class="btn btn-default dispatch-ring-btn">Ring</button>
+                <button type="button" class="btn btn-default dispatch-send-btn">Send</button>
+
+              </div>
+            </div>
+          </div>
+		  
+		</div>
+    
+    
+    
+    
+
+	   <button id="closeCaseActionsButton" type="button" class="btn btn-default">Close Case</button>
+       <button id="saveAndFollowUpButton" type="button" class="btn btn-default">Save and follow up</button>
+	    
+    </div>
+    
+    
+     <!-- Send data modal -->
+                      
+     <div class="modal fade" id="dispatch_data_modal">
+     <div class="modal-dialog"><div class="modal-content">
+         <div class="modal-header">
+	        <h4 class="modal-title">Select data to be sent</h4>
+         </div>
+         <div class="modal-body" >
+            <div class="checkbox"><label><input type="checkbox"> Calee information</label></div>
+            <div class="checkbox"><label><input type="checkbox"> Patient information</label></div>    
+            <div class="checkbox"><label><input type="checkbox"> NMI</label></div>
+            <div class="checkbox"><label><input type="checkbox"> Sensor Data</label></div>
+            <div class="checkbox"><label><input type="checkbox"> OBS!</label></div>
+            <div class="checkbox"><label><input type="checkbox"> Notes</label></div>
+            
+         </div>
+         <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	        <button type="button" class="btn btn-primary" data-dismiss="modal">Send</button>
+         </div>
+         </div></div>                               
+   </div>
+    

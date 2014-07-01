@@ -32,6 +32,9 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
        $("#closeCaseFromPatientRegButton").click(closeCaseAtRegistration);
        $("#goToAssesmentButton").click(fromRegistrationToAssesment);
 
+       // those setup functions should be called just once as they may be binding buttons
+       // and one does not want to rebind
+       setupPatientPage();
        setupAssesmentPage();
        setupActionsAndClosingPage();
        
@@ -67,6 +70,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     };
     
     function selectMyAlarm(alarmIndex) {
+        // TEMPORARY CODE
     	assignAlarm(alarmIndex); // TODO: change this to a simple select of alarm instead of assign
      };
 
@@ -98,7 +102,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			    @if(null != alarm.expired && true == alarm.expired){
 			        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 			    }
-			    <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
+			    <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm") </h4>
 			    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
 			  </a>
 			 }
@@ -114,7 +118,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                                 @if(null != alarm.expired && true == alarm.expired){
                     <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
                 }
-                <h4 class="list-group-item-heading">@{alarm.id} of type @{alarm.`type`} </h4>
+                <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm")</h4>
                 <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
               </a>
              }

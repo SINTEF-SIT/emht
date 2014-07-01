@@ -1,12 +1,26 @@
 
 function openAddPatientModal() {
+	
+	//clear modal
+	$("#add_patient_modal").find(':text').each(
+		function() { 
+			$(this).val('');
+		}
+	);
+	
     $('#add_patient_modal').modal("show");
-    $('#addPatientModalButton').click(function(e) {
+
+            
+ }
+
+ 
+// just to be called on the startup in order not to rebind the button
+function setupPatientPage() {
+    $('#addPatientModalButton').click(function() {
     	addNewPatientFromModal();
      });
-            
- };
 
+}
  
  /* retrieve the callee and populate it */
  function  populateCalleFromAlarm(calleeId){
@@ -104,7 +118,7 @@ function openAddPatientModal() {
 		// empty existing table
 		$("#patientLogTable > tbody").html("");
 		
-		if(null != patientId){
+		if(0 != patientId){
 	       $.getJSON("/pastAlarmsFromPatient/" + patientId,
 	    		   function(data) {
 	    	   		  if(null!= data && null != data.alarmArray){
@@ -167,6 +181,8 @@ function openAddPatientModal() {
 	    var notes = $('#patientRegistrationNotesBox').val();
 	    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
 
+	    //TODO: add the incident address as well
+	    
 	    var updatedAlarm = {
             'alarmId' : alarmId,
             'notes' : notes,
@@ -186,6 +202,7 @@ function openAddPatientModal() {
 	            data : JSON.stringify(updatedAlarm),
 	            contentType : 'application/json',
 	            success : function (data) {
+	            	removeHighlightedAlarmFromList();
 	            	highlightBackListTab ();
 	            }// end of success
 	    });// end of ajax call

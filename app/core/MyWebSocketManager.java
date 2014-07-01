@@ -58,6 +58,7 @@ public class MyWebSocketManager {
     	jsonNotification.put("alarm", alarm);
 		alarm.put("id", al.id);
 		alarm.put("type", al.type);
+		alarm.put("openingDate", al.openingTime.getTime());
 		ObjectNode  callee = Json.newObject();
 		alarm.put("callee", callee);
 		callee.put("id", al.callee.id);

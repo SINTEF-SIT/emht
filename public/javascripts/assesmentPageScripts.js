@@ -2,18 +2,10 @@
 
 function setupAssesmentPage(){
 	
-	// hide all log labels
-	$("#assesmentLogPanel").children().each(
-		function(i) { 
-		    $(this).hide();
-		}
-	);
 	
 	// add actions on check buttons
 	$("#nmiTab").find(':checkbox').each(
 		function(i) { 
-			// clear all checkbockes
-			$(this).removeAttr('checked');
 			// set the action to show the label
 			$(this).change(function(){
 				var selectedLabel = $("#" + $(this).attr('id') + "label");
@@ -40,6 +32,27 @@ function setupAssesmentPage(){
 	
     $("#closeCaseFromAssessButton").click(closeCaseAtAssesment);
     $("#goToClosingButton").click(fromAssementToClosing);
+
+    
+    resetAssesmentPage();
+}
+
+function resetAssesmentPage(){
+	
+
+	$("#nmiTab").find(':checkbox').each(
+		function(i) { 
+			// clear all checkbockes
+			$(this).removeAttr('checked');
+		}
+	);
+	
+	// hide all log labels
+	$("#assesmentLogPanel").children().each(
+		function(i) { 
+		    $(this).hide();
+		}
+	);
     
     //set active tab to NMI
     $("#nmiTab").addClass("active");
@@ -67,6 +80,7 @@ function closeCaseAtAssesment(){
             data : JSON.stringify(updatedAlarm),
             contentType : 'application/json',
             success : function (data) {
+            	removeHighlightedAlarmFromList();
             	highlightBackListTab ();
             }// end of success
     });// end of ajax call

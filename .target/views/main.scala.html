@@ -6,6 +6,7 @@
     <head>
         <title>@title</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        
         <link href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))' rel='stylesheet' >
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.js"))' type='text/javascript' ></script>
@@ -13,9 +14,15 @@
         <script src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.flot.js"))' type='text/javascript' ></script>
         <script src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.flot.time.js"))' type='text/javascript' ></script>
         <script src='@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.js"))' type='text/javascript' ></script>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap-dialog.min.css")">
         <script type="text/javascript" src='@routes.Application.javascriptRoutes()'></script>
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/listViewTabScripts.js")'></script>
         <script type="text/javascript" src='@routes.Assets.at("javascripts/patientTemplateScripts.js")'></script>
         <script type="text/javascript" src='@routes.Assets.at("javascripts/alarmSelectTemplate.js")'></script>
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/assesmentPageScripts.js")'></script>
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/actionsAndClosingScripts.js")'></script>
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/bootstrap-dialog.min.js")'></script>
+        <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery-dateFormat.min.js")'></script>
     </head>
     <body>
         @content

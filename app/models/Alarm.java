@@ -55,11 +55,11 @@ public class Alarm extends Model { // the model extension serves for having acce
 
 	  
 	  public static List<Alarm> all() {
-		  return find.all();
+		  return find.orderBy("openingTime desc").findList();
 		}
 	  
 	  public static List<Alarm> allOpenAlarms() {
-		  return find.where().isNull("closingTime").findList();
+		  return find.where().isNull("closingTime").orderBy("openingTime asc").findList();
 		}
 
 	    // assumes that the calle and patient object from the incoming alarm has already

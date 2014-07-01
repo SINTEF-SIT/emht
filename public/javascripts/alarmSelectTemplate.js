@@ -19,7 +19,8 @@ function assignAlarm(alarmIndex){
 	              $('#Alarm' + alarmIndex).remove();
 	              
 	              // customize and move into assigned list
-	              openAlarmListItem.onclick = "selectMyAlarm(" + alarmIndex + ");return false;";
+	              openAlarmListItem.unbind('click');
+	              openAlarmListItem.attr("onclick","selectMyAlarm(" + alarmIndex + ");return false;");
 	              openAlarmListItem.addClass("active" );
 	              // TODO: check if there is a clock element before removing
 	              var clock = openAlarmListItem.children('.clock-icon');
@@ -54,18 +55,24 @@ function highlightArrowHeader(headerId){
 	$('#'+ headerId).switchClass("nonselected_arrow_box", "selected_arrow_box" );
 }
 
-function highlightBackListTab (){
-	highlightArrowHeader("receptionArrowHeader");
+
+function removeHighlightedAlarmFromList(){
 	var currentSelected = $('.list-group-item.active.alarmItem');
 	currentSelected.remove();
+}
+
+
+function highlightBackListTab (){
+	highlightArrowHeader("receptionArrowHeader");
+
    $("#patientBox").hide();
    $("#calleeBox").hide();
     $('#notesDiv').hide();
     $('#assesment').hide();
     $('#extraActionButtonsDiv').hide();
     $('#patientRegistrationNotesBox').val('');
-    // TODO: perhaps replace the below for just what is really needed (as done for the actions and closing)
-    setupAssesmentPage();
+
+    resetAssesmentPage();
     resetActionsAndClosingPage();
     
 }

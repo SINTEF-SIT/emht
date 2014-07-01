@@ -25,15 +25,15 @@ function setupActionsAndClosingPage(){
     $("#closeCaseActionsButton").click(closeCaseAtClosing);
     $("#saveAndFollowUpButton").click(closeCaseAtClosing);// TODO: updat so it really follows up
 	
+    
+    resetActionsAndClosingPage();
 	// make sure that no phone is expanded
-    $("#dynamicDispatchButtons").find(".in").removeClass("in");
+
 }
 
 function resetActionsAndClosingPage(){
 	
-	// make sure that no phone is expanded
-    var temp = $("#dynamicDispatchButtons").find(".in");
-    temp.removeClass("in");
+    $("#dynamicDispatchButtons").find(".in").removeClass("in");
 }
 
 
@@ -51,6 +51,7 @@ function closeCaseAtClosing(){
             data : JSON.stringify(updatedAlarm),
             contentType : 'application/json',
             success : function (data) {
+            	removeHighlightedAlarmFromList();
             	highlightBackListTab ();
             }// end of success
     });// end of ajax call
