@@ -12,7 +12,9 @@ function setupAssesmentPage(){
 	// add actions on check buttons
 	$("#nmiTab").find(':checkbox').each(
 		function(i) { 
+			// clear all checkbockes
 			$(this).removeAttr('checked');
+			// set the action to show the label
 			$(this).change(function(){
 				var selectedLabel = $("#" + $(this).attr('id') + "label");
 			    if(this.checked) {

@@ -147,7 +147,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    		a.notes = dummy.notes; 
 	    	
 	    	if(null != dummy.closingTime)
-	    		a.notes = dummy.notes; 
+	    		a.closingTime = dummy.closingTime; 
 	    	
 	    	return a;	
 	    }
