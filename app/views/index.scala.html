@@ -32,12 +32,6 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
        $("#closeCaseFromPatientRegButton").click(closeCaseAtRegistration);
        $("#goToAssesmentButton").click(fromRegistrationToAssesment);
 
-       //setting max size of the lists
-       var listSize = ($(window).height())/10;
-       listSize = listSize *3;
-       $("#unassignedAlarmDiv").attr("max-height","30%");
-       $("#assignedAlarmDiv").attr("max-height","30%");
-
        
        // those setup functions should be called just once as they may be binding buttons
        // and one does not want to rebind
@@ -97,9 +91,9 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
      <section class="col-md-3 alarmListSection">
 
 	    <!-- <h2>@alarms.size() alarm(s)</h2>-->
-	    <div id="unassignedAlarmDiv"  overflow-y="scroll">
+	    <div id="unassignedAlarmDiv"  >
 	    <h3>Unassigned Alarms</h3>
-			<div class="list-group" id="unassignedAlarmList" > <!--index would reference to the iteration index, but we are not using it--> 
+			<div class="list-group" id="unassignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
 			@for((alarm,index) <- alarms.zipWithIndex){
 	            @if(null == alarm.attendant){
 				    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
@@ -115,9 +109,9 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			 }  
 			</div>
 	   </div>
-		<div id="assignedAlarmDiv"  overflow-y="scroll">
+		<div id="assignedAlarmDiv">
 			<h3>My Alarms</h3>
-			<div class="list-group" id="assignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
+			<div class="list-group" id="assignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
 	        @for((alarm,index) <- alarms.zipWithIndex){
 	            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin")){
 	                    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
