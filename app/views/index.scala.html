@@ -32,13 +32,20 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
        $("#closeCaseFromPatientRegButton").click(closeCaseAtRegistration);
        $("#goToAssesmentButton").click(fromRegistrationToAssesment);
 
+       //setting max size of the lists
+       var listSize = ($(window).height())/10;
+       listSize = listSize *3;
+       $("#unassignedAlarmDiv").attr("max-height","30%");
+       $("#assignedAlarmDiv").attr("max-height","30%");
+
+       
        // those setup functions should be called just once as they may be binding buttons
        // and one does not want to rebind
        setupPatientPage();
        setupAssesmentPage();
        setupActionsAndClosingPage();
-       
-	    
+
+
 	 });
 
    function selectOpenAlarm(alarmIndex,calleeIndex) {
@@ -77,9 +84,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
     </script>
 
-    <header>
-    	<h1> EMHT </h1>
-    </header>
+
 
  <div class="container-fluid">
     <div class="row" id="arrowHeaders">
@@ -92,38 +97,42 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
      <section class="col-md-3 alarmListSection">
 
 	    <!-- <h2>@alarms.size() alarm(s)</h2>-->
+	    <div id="unassignedAlarmDiv"  overflow-y="scroll">
 	    <h3>Unassigned Alarms</h3>
-		<div class="list-group" id="unassignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
-		@for((alarm,index) <- alarms.zipWithIndex){
-            @if(null == alarm.attendant){
-			    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
-			    <!-- <i class="icon-fire pull-left"></i> -->
-			    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
-			    @if(null != alarm.expired && true == alarm.expired){
-			        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
-			    }
-			    <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm") </h4>
-			    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
-			  </a>
-			 }
-		 }  
-		</div>
-		<h3>My Alarms</h3>
-		<div class="list-group" id="assignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
-        @for((alarm,index) <- alarms.zipWithIndex){
-            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin")){
-                    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
-                <!-- <i class="icon-fire pull-left"></i> -->
-                <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
-                                @if(null != alarm.expired && true == alarm.expired){
-                    <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
-                }
-                <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm")</h4>
-                <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
-              </a>
-             }
-         }  
-        </div>
+			<div class="list-group" id="unassignedAlarmList" > <!--index would reference to the iteration index, but we are not using it--> 
+			@for((alarm,index) <- alarms.zipWithIndex){
+	            @if(null == alarm.attendant){
+				    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
+				    <!-- <i class="icon-fire pull-left"></i> -->
+				    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
+				    @if(null != alarm.expired && true == alarm.expired){
+				        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
+				    }
+				    <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm") </h4>
+				    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
+				  </a>
+				 }
+			 }  
+			</div>
+	   </div>
+		<div id="assignedAlarmDiv"  overflow-y="scroll">
+			<h3>My Alarms</h3>
+			<div class="list-group" id="assignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
+	        @for((alarm,index) <- alarms.zipWithIndex){
+	            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin")){
+	                    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
+	                <!-- <i class="icon-fire pull-left"></i> -->
+	                <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
+	                                @if(null != alarm.expired && true == alarm.expired){
+	                    <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
+	                }
+	                <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm")</h4>
+	                <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
+	              </a>
+	             }
+	         }  
+	        </div>
+	    </div>
 		
 	</section>
     
@@ -143,11 +152,13 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			 </ul>
 			 <div class="tab-content">
 	               <div class="tab-pane active" id="nmiTab" >
-					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox1" value="Patient is conscious"> Is the patient conscious?</label></div>
-					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox2" value="Patient breaths normly"> Is the patient breathing normally?</label></div>    
-					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox3" value="Patient can move"> Can the patient move?</label></div>
-					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox4" value="Patient can stand up"> Can the patient stand up?</label></div>
-					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox5" value="Patient can talk"> Can the patient talk?</label></div>
+	                    <table class="table"><tbody>	               
+						    <tr><td>Is the patient conscious?          </td><td>  <label class="radio-inline">Yes<input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">           </label>  </td><td> <label class="radio-inline"> No <input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious"> </label>       </td></tr>
+						    <tr><td>Is the patient breathing normally? </td><td>  <label class="radio-inline">Yes<input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normly">          </label> </td><td> <label class="radio-inline">  No <input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breath normly"></label> </td></tr>    
+						    <tr><td>Can the patient move?              </td><td> <label class="radio-inline"> Yes<input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">                  </label>  </td><td> <label class="radio-inline">No <input type="radio" id="NMIcheckBox3N" name="NMIcheckBox3radio" value="Patient cant move"> </label>            </td></tr>
+						    <tr><td>Can the patient stand up?          </td><td>  <label class="radio-inline"> Yes<input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">          </label>  </td><td> <label class="radio-inline">   No<input type="radio" id="NMIcheckBox4N" name="NMIcheckBox4radio" value="Patient cant stand up"> </label>         </td></tr>
+						    <tr><td>Can the patient talk?              </td><td>  <label class="radio-inline">Yes<input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">                  </label>  </td><td><label class="radio-inline"> No<input type="radio" id="NMIcheckBox5N" name="NMIcheckBox5radio" value="Patient cant talk"></label>              </td></tr>
+					    </tbody></table>
 				  </div>
 				  <div class="tab-pane" id="infoTab" >
 					<div class="panel panel-default">
@@ -166,11 +177,16 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                     <div class="panel panel-default">
                       <div id="assesmentLogPanel" class="panel-body">
                         <div class="logLabel" id="NMIassesmentLabel"> NMI assessment</div>
-                        <div class="logLabel" id="NMIcheckBox1label"> Patient is conscious</div>
-                        <div class="logLabel" id="NMIcheckBox2label"> Patient breaths normally</div>    
-                        <div class="logLabel" id="NMIcheckBox3label"> Patient can move</div>
-                        <div class="logLabel" id="NMIcheckBox4label"> Patient can stand up</div>
-                        <div class="logLabel" id="NMIcheckBox5label"> Patient can talk</div>
+                        <div class="logLabel" id="NMIcheckBox1Ylabel"> Patient is conscious</div>
+                        <div class="logLabel" id="NMIcheckBox2Ylabel"> Patient breaths normally</div>    
+                        <div class="logLabel" id="NMIcheckBox3Ylabel"> Patient can move</div>
+                        <div class="logLabel" id="NMIcheckBox4Ylabel"> Patient can stand up</div>
+                        <div class="logLabel" id="NMIcheckBox5Ylabel"> Patient can talk</div>
+                        <div class="logLabel" id="NMIcheckBox1Nlabel"> Patient is not conscious</div>
+                        <div class="logLabel" id="NMIcheckBox2Nlabel"> Patient doesnt breath normally</div>    
+                        <div class="logLabel" id="NMIcheckBox3Nlabel"> Patient cant move</div>
+                        <div class="logLabel" id="NMIcheckBox4Nlabel"> Patient cant stand up</div>
+                        <div class="logLabel" id="NMIcheckBox5Nlabel"> Patient cant talk</div>
                         <div class="logLabel" id="assedmentSensorlabel"> Sensor information checked</div>
                         <div class="logLabel" id="informationSensorlabel"> Patient information checked</div>
                       </div>

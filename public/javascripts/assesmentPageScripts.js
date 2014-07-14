@@ -4,15 +4,25 @@ function setupAssesmentPage(){
 	
 	
 	// add actions on check buttons
-	$("#nmiTab").find(':checkbox').each(
+	$("#nmiTab").find(':radio').each(
 		function(i) { 
 			// set the action to show the label
 			$(this).change(function(){
-				var selectedLabel = $("#" + $(this).attr('id') + "label");
+				var radioId = $(this).attr('id');
+				var opositeRadioId = radioId.substring(0, radioId.length -1);
+				if(radioId.charAt(radioId.length -1) == "Y"){
+					opositeRadioId += "N";
+				}else {
+					opositeRadioId += "Y";
+				}
+				var selectedLabel = $("#" + radioId + "label");
+				var unSelectedLabel = $("#" + opositeRadioId + "label");
 			    if(this.checked) {
 			    	selectedLabel.show();
+			    	unSelectedLabel.hide();
 			    }else{
 			    	selectedLabel.hide();
+			    	unSelectedLabel.show();
 			    }
 				
 			});
@@ -40,7 +50,7 @@ function setupAssesmentPage(){
 function resetAssesmentPage(){
 	
 
-	$("#nmiTab").find(':checkbox').each(
+	$("#nmiTab").find(':radio').each(
 		function(i) { 
 			// clear all checkbockes
 			$(this).removeAttr('checked');
