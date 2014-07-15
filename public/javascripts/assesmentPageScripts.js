@@ -79,7 +79,7 @@ function closeCaseAtAssesment(){
 
 	// TODO: retrieve and save logs
     var notes = $('#assesmentNotesBox').val();
-    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
+    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
 
     var updatedAlarm = {
         'alarmId' : alarmId,
@@ -101,7 +101,7 @@ function fromAssementToClosing(){
 
 	// TODO: retrieve and save logs
     var notes = $('#assesmentNotesBox').val();
-    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
+    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
 
     var updatedAlarm = {
         'alarmId' : alarmId,

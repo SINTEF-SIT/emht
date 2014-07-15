@@ -98,7 +98,7 @@ function removeHighlightedAlarmFromList(){
 function moveAlarmToFollowUpList(){
 
 	var currentSelected = $('.list-group-item.active.alarmItem');	
-	var alarmIndex = currentSelected.attr("idNum");
+	var alarmIndex = currentSelected.attr("idnum");
 	currentSelected.toggleClass("active");	
 	
 	if( currentSelected.parent().attr('id') == "assignedAlarmList" ){

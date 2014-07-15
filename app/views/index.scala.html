@@ -82,7 +82,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			<div class="list-group" id="unassignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
 			@for((alarm,index) <- alarms.zipWithIndex){
 	            @if(null == alarm.attendant){
-				    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
+				    <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
 				    <!-- <i class="icon-fire pull-left"></i> -->
 				    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
 				    @if(null != alarm.expired && true == alarm.expired){
@@ -100,7 +100,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			<div class="list-group" id="assignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
 	        @for((alarm,index) <- alarms.zipWithIndex){
 	            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null == alarm.dispatchingTime)){
-	                    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
+	                    <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
 	                <!-- <i class="icon-fire pull-left"></i> -->
 	                <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
 	                                @if(null != alarm.expired && true == alarm.expired){
@@ -118,7 +118,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
             <div class="list-group" id="followupAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;">  
             @for((alarm,index) <- alarms.zipWithIndex){
                 @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null != alarm.dispatchingTime)){
-                        <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectFollowUpAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
+                        <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectFollowUpAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
                     <!-- <i class="icon-fire pull-left"></i> -->
                     <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
                                     @if(null != alarm.expired && true == alarm.expired){

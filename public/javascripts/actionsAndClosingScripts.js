@@ -38,7 +38,7 @@ function closeCaseAtClosing(){
 	
 	// update to get meaningfull data
 
-    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
+    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
 	var notes = $('#closingNotesBox').val();
    
     var updatedAlarm = {
@@ -61,7 +61,7 @@ function saveAndFollowupAtClosing(){
 	
 	// update to get meaningfull data
 
-    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
+    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
 	var notes = $('#closingNotesBox').val();
    
     var updatedAlarm = {

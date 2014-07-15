@@ -185,7 +185,7 @@ function setupPatientPage() {
 	function getUpdatedAlarmFromAssesmentPage(){
 	    var patientId = $('#dynamicPatientInfo').find('#patientId').val();
 	    var notes = $('#patientRegistrationNotesBox').val();
-	    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
+	    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
 
 	    //TODO: add the incident address as well
 	    
