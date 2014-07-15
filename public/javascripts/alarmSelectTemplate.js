@@ -130,6 +130,9 @@ function highlightBackListTab (){
     $('#assesment').hide();
     $('#extraActionButtonsDiv').hide();
     $('#patientRegistrationNotesBox').val('');
+    $('#patientRegistrationNotesBox').val('');
+    $('#assesmentNotesBox').val('');
+    $("#closingNotesAndButtons").hide();
 
     resetAssesmentPage();
     resetActionsAndClosingPage();
@@ -137,6 +140,10 @@ function highlightBackListTab (){
 }
 
 function selectFollowUpAlarm(alarmIndex) {
+	
+	   // start by clearing the view
+	   highlightBackListTab ();
+	
     var currentSelected = $('#Alarm' + alarmIndex);
     currentSelected.toggleClass("active");
 
@@ -146,7 +153,7 @@ function selectFollowUpAlarm(alarmIndex) {
 	   function (data){
 	   createPatientDiv(data);
 		var patientListItem = $("#patientDropDownList li:first a");
-		patientListItem.click();;
+		patientListItem.click();
 	   });
 
 	// populating notebox (TODO: in the future the log an others) from alarm data
@@ -158,12 +165,13 @@ function selectFollowUpAlarm(alarmIndex) {
 
 		       $("#closingNotesBox").text(notes);
 
-
     	   });
 
 
 	   $("#assesment").show();
+	   $("#assesmentNotesDiv").hide();
 	   $("#extraActionButtonsDiv").show();
-
+	   $("#closingNotesAndButtons").show();
+	   highlightArrowHeader("closingArrowHeader");
  };
 

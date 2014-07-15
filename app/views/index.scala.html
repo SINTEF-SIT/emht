@@ -151,11 +151,11 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			 <div class="tab-content">
 	               <div class="tab-pane active" id="nmiTab" >
 	                    <table class="table"><tbody>	               
-						    <tr><td>Is the patient conscious?          </td><td>  <label class="radio-inline">Yes<input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">           </label>  </td><td> <label class="radio-inline"> No <input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious"> </label>       </td></tr>
-						    <tr><td>Is the patient breathing normally? </td><td>  <label class="radio-inline">Yes<input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normly">          </label> </td><td> <label class="radio-inline">  No <input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breath normly"></label> </td></tr>    
-						    <tr><td>Can the patient move?              </td><td> <label class="radio-inline"> Yes<input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">                  </label>  </td><td> <label class="radio-inline">No <input type="radio" id="NMIcheckBox3N" name="NMIcheckBox3radio" value="Patient cant move"> </label>            </td></tr>
-						    <tr><td>Can the patient stand up?          </td><td>  <label class="radio-inline"> Yes<input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">          </label>  </td><td> <label class="radio-inline">   No<input type="radio" id="NMIcheckBox4N" name="NMIcheckBox4radio" value="Patient cant stand up"> </label>         </td></tr>
-						    <tr><td>Can the patient talk?              </td><td>  <label class="radio-inline">Yes<input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">                  </label>  </td><td><label class="radio-inline"> No<input type="radio" id="NMIcheckBox5N" name="NMIcheckBox5radio" value="Patient cant talk"></label>              </td></tr>
+						    <tr><td>Is the patient conscious?          </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">Yes</label>  </td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious">No</label>       </td></tr>
+						    <tr><td>Is the patient breathing normally? </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normly">Yes</label></td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breath normly">No</label> </td></tr>    
+						    <tr><td>Can the patient move?              </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">Yes</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox3N" name="NMIcheckBox3radio" value="Patient cant move">No</label>              </td></tr>
+						    <tr><td>Can the patient stand up?          </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">Yes</label>  </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox4N" name="NMIcheckBox4radio" value="Patient cant stand up">No</label>          </td></tr>
+						    <tr><td>Can the patient talk?              </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">Yes</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox5N" name="NMIcheckBox5radio" value="Patient cant talk">No</label>              </td></tr>
 					    </tbody></table>
 				  </div>
 				  <div class="tab-pane" id="infoTab" >
@@ -195,7 +195,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                   <u>Notes:</u>
 				    <textarea id="assesmentNotesBox" class="form-control" rows="5"></textarea>
 				    <button id="closeCaseFromAssessButton" type="button" class="btn btn-default">Save and Close Case</button>
-				    <button id="goToClosingButton" type="button" class="btn btn-default">Save and go to Closing</button>
+				    <button id="goToClosingButton" type="button" class="btn btn-default">Save and go to Actions</button>
               </div>
 	   </div>
     </section>  
