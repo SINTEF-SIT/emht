@@ -53,7 +53,7 @@ function assignAlarm(alarmIndex){
 	              $('#Alarm' + alarmIndex).remove();
 	              
 	              // customize and move into assigned list
-	              openAlarmListItem.unbind('click');
+	              openAlarmListItem.removeAttr('onclick');
 	              openAlarmListItem.attr("onclick","selectMyAlarm(" + alarmIndex + ");return false;");
 	              openAlarmListItem.addClass("active" );
 	              // TODO: check if there is a clock element before removing
@@ -108,7 +108,7 @@ function moveAlarmToFollowUpList(){
 	    $('#Alarm' + alarmIndex).remove();
 	    
 	    // customize and move into followup list
-	    openFollowUpListItem.unbind('click');
+	    openFollowUpListItem.removeAttr('onclick');
 	    openFollowUpListItem.attr("onclick","selectFollowUpAlarm(" + alarmIndex + ");return false;");
 	
 	    $('#followupAlarmList').prepend(openFollowUpListItem);
