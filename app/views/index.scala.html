@@ -50,7 +50,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	   
 	   //populateAlarmInfo(alarmIndex);
 	   $('#callee_info_modal').modal("show");
-	   $('#confirmCalleeModalButton').click(function(e) {
+	   $('#confirmCalleeModalButton').unbind("click").click(function(e) {
 		   assignAlarm(alarmIndex);
 		});
 			   
