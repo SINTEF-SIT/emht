@@ -22,23 +22,13 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
    }*/
 
    // on start
-   $(document).ready(function(){
-	   $("#assesment").hide();
-	   $("#patientBox").hide();
-	   $("#calleeBox").hide();
-	    $('#notesDiv').hide();
-	    $("#extraActionButtonsDiv").hide();
-
-       $("#closeCaseFromPatientRegButton").click(closeCaseAtRegistration);
-       $("#goToAssesmentButton").click(fromRegistrationToAssesment);
-
-       setupAssesmentPage();
-       setupActionsAndClosingPage();
-       
-	    
-	 });
+   $(document).ready(function () {initApplication()});
 
    function selectOpenAlarm(alarmIndex,calleeIndex) {
+
+       // highlight the alarm
+       var currentSelected = $('#Alarm' + alarmIndex);
+       currentSelected.toggleClass("active");
 
 	   $.getJSON("/pastAlarmsFromCalle/" + calleeIndex,
 		          function(data) {
@@ -60,65 +50,86 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	   
 	   //populateAlarmInfo(alarmIndex);
 	   $('#callee_info_modal').modal("show");
-	   $('#confirmCalleeModalButton').click(function(e) {
+	   $('#confirmCalleeModalButton').unbind("click").click(function(e) {
 		   assignAlarm(alarmIndex);
 		});
 			   
     };
     
     function selectMyAlarm(alarmIndex) {
+        // TEMPORARY CODE
     	assignAlarm(alarmIndex); // TODO: change this to a simple select of alarm instead of assign
      };
 
 
     </script>
 
-    <header>
-    	<h1> EMHT </h1>
-    </header>
+
 
  <div class="container-fluid">
     <div class="row" id="arrowHeaders">
-            <div class="col-md-3"><h2 id="receptionArrowHeader" class="selected_arrow_box">&nbsp Alarm Reception</h2></div>
+            <div class="col-md-3"><h2 id="receptionArrowHeader" class="selected_arrow_box">&nbsp Incident Reception</h2></div>
             <div class="col-md-3"><h2 id="registrationArrowHeader" class="nonselected_arrow_box">&nbsp Registration</h2></div>
             <div class="col-md-3"><h2 id="assesmentArrowHeader" class="nonselected_arrow_box">&nbsp Assessment</h2></div>
             <div class="col-md-3"><h2 id="closingArrowHeader" class="nonselected_arrow_box">&nbsp Actions and Closing</h2></div>
     </div>
     <div class="row">
-     <section class="col-md-3 alarmListSection">
+     <section id="allListsSection" class="col-md-3 alarmListSection">
 
 	    <!-- <h2>@alarms.size() alarm(s)</h2>-->
-	    <h3>Unassigned Alarms</h3>
-		<div class="list-group" id="unassignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
-		@for((alarm,index) <- alarms.zipWithIndex){
-            @if(null == alarm.attendant){
-			    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
-			    <!-- <i class="icon-fire pull-left"></i> -->
-			    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
-			    @if(null != alarm.expired && true == alarm.expired){
-			        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
-			    }
-			    <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm") </h4>
-			    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
-			  </a>
-			 }
-		 }  
-		</div>
-		<h3>My Alarms</h3>
-		<div class="list-group" id="assignedAlarmList"> <!--index would reference to the iteration index, but we are not using it--> 
-        @for((alarm,index) <- alarms.zipWithIndex){
-            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin")){
-                    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
-                <!-- <i class="icon-fire pull-left"></i> -->
-                <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
-                                @if(null != alarm.expired && true == alarm.expired){
-                    <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
-                }
-                <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm")</h4>
-                <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
-              </a>
-             }
-         }  
+	    <div id="unassignedAlarmDiv"  >
+	    <h3>Unassigned Incidents</h3>
+			<div class="list-group" id="unassignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
+			@for((alarm,index) <- alarms.zipWithIndex){
+	            @if(null == alarm.attendant){
+				    <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
+				    <!-- <i class="icon-fire pull-left"></i> -->
+				    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
+				    @if(null != alarm.expired && true == alarm.expired){
+				        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
+				    }
+				    <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm") </h4>
+				    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
+				  </a>
+				 }
+			 }  
+			</div>
+	   </div>
+		<div id="assignedAlarmDiv">
+			<h3>My Incidents</h3>
+			<div class="list-group" id="assignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
+	        @for((alarm,index) <- alarms.zipWithIndex){
+	            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null == alarm.dispatchingTime)){
+	                    <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
+	                <!-- <i class="icon-fire pull-left"></i> -->
+	                <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
+	                                @if(null != alarm.expired && true == alarm.expired){
+	                    <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
+	                }
+	                <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm")</h4>
+	                <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
+	              </a>
+	             }
+	         }  
+	        </div>
+	    </div>
+	     <div id="followupAlarmDiv">
+            <h3>Incidents to Follow-up</h3>
+            <div class="list-group" id="followupAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;">  
+            @for((alarm,index) <- alarms.zipWithIndex){
+                @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null != alarm.dispatchingTime)){
+                        <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectFollowUpAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
+                    <!-- <i class="icon-fire pull-left"></i> -->
+                    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
+                                    @if(null != alarm.expired && true == alarm.expired){
+                        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
+                    }
+                    <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm")</h4>
+                    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
+                  </a>
+                 }
+             }  
+            </div>
         </div>
 		
 	</section>
@@ -139,11 +150,13 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			 </ul>
 			 <div class="tab-content">
 	               <div class="tab-pane active" id="nmiTab" >
-					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox1" value="Patient is conscious"> Is the patient conscious?</label></div>
-					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox2" value="Patient breaths normly"> Is the patient breathing normally?</label></div>    
-					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox3" value="Patient can move"> Can the patient move?</label></div>
-					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox4" value="Patient can stand up"> Can the patient stand up?</label></div>
-					    <div class="checkbox"><label><input type="checkbox" id="NMIcheckBox5" value="Patient can talk"> Can the patient talk?</label></div>
+	                    <table class="table"><tbody>	               
+						    <tr><td>Is the patient conscious?          </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">Yes</label>  </td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious">No</label>       </td></tr>
+						    <tr><td>Is the patient breathing normally? </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normly">Yes</label></td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breath normly">No</label> </td></tr>    
+						    <tr><td>Can the patient move?              </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">Yes</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox3N" name="NMIcheckBox3radio" value="Patient cant move">No</label>              </td></tr>
+						    <tr><td>Can the patient stand up?          </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">Yes</label>  </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox4N" name="NMIcheckBox4radio" value="Patient cant stand up">No</label>          </td></tr>
+						    <tr><td>Can the patient talk?              </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">Yes</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox5N" name="NMIcheckBox5radio" value="Patient cant talk">No</label>              </td></tr>
+					    </tbody></table>
 				  </div>
 				  <div class="tab-pane" id="infoTab" >
 					<div class="panel panel-default">
@@ -162,11 +175,16 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                     <div class="panel panel-default">
                       <div id="assesmentLogPanel" class="panel-body">
                         <div class="logLabel" id="NMIassesmentLabel"> NMI assessment</div>
-                        <div class="logLabel" id="NMIcheckBox1label"> Patient is conscious</div>
-                        <div class="logLabel" id="NMIcheckBox2label"> Patient breaths normally</div>    
-                        <div class="logLabel" id="NMIcheckBox3label"> Patient can move</div>
-                        <div class="logLabel" id="NMIcheckBox4label"> Patient can stand up</div>
-                        <div class="logLabel" id="NMIcheckBox5label"> Patient can talk</div>
+                        <div class="logLabel" id="NMIcheckBox1Ylabel"> Patient is conscious</div>
+                        <div class="logLabel" id="NMIcheckBox2Ylabel"> Patient breaths normally</div>    
+                        <div class="logLabel" id="NMIcheckBox3Ylabel"> Patient can move</div>
+                        <div class="logLabel" id="NMIcheckBox4Ylabel"> Patient can stand up</div>
+                        <div class="logLabel" id="NMIcheckBox5Ylabel"> Patient can talk</div>
+                        <div class="logLabel" id="NMIcheckBox1Nlabel"> Patient is not conscious</div>
+                        <div class="logLabel" id="NMIcheckBox2Nlabel"> Patient doesnt breath normally</div>    
+                        <div class="logLabel" id="NMIcheckBox3Nlabel"> Patient cant move</div>
+                        <div class="logLabel" id="NMIcheckBox4Nlabel"> Patient cant stand up</div>
+                        <div class="logLabel" id="NMIcheckBox5Nlabel"> Patient cant talk</div>
                         <div class="logLabel" id="assedmentSensorlabel"> Sensor information checked</div>
                         <div class="logLabel" id="informationSensorlabel"> Patient information checked</div>
                       </div>
@@ -177,7 +195,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                   <u>Notes:</u>
 				    <textarea id="assesmentNotesBox" class="form-control" rows="5"></textarea>
 				    <button id="closeCaseFromAssessButton" type="button" class="btn btn-default">Save and Close Case</button>
-				    <button id="goToClosingButton" type="button" class="btn btn-default">Save and go to Closing</button>
+				    <button id="goToClosingButton" type="button" class="btn btn-default">Save and go to Actions</button>
               </div>
 	   </div>
     </section>  

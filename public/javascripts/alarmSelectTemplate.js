@@ -143,6 +143,10 @@ function selectFollowUpAlarm(alarmIndex) {
 	
 	   // start by clearing the view
 	   highlightBackListTab ();
+	   
+       // unhighlight any highlighted alarm
+       var currentSelected = $('.list-group-item.active.alarmItem');
+       currentSelected.toggleClass("active");	
 	
     var currentSelected = $('#Alarm' + alarmIndex);
     currentSelected.toggleClass("active");
