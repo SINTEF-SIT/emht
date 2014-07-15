@@ -111,25 +111,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	return a;
 	    }
 	    
-	    /*public static Alarm setPatientAndNote(Long alarmId,Long patientId, String note){
-	    	Alarm a = find.ref(alarmId);
-	    	Patient p = Patient.getFromId(patientId);
-	    	a.notes = note; 
-	    	a.patient = p;
-	    	a.save(); // at the moment we are dispatching and closing all alarms
-	    	return a;
-	    }*/
-	    
-	    /*
-	    public static Alarm setPatientNoteAndClose(Long alarmId,Long patientId, String note){
-	    	Alarm a = find.ref(alarmId);
-	    	Patient p = Patient.getFromId(patientId);
-	    	a.notes = note; 
-	    	a.patient = p;
-	    	Alarm.closeAlarm(a);
-	    	a.save(); // at the moment we are dispatching and closing all alarms
-	    	return a;
-	    }*/
+
 	    
 	    // receives some data in the dummy object a, and updates the data from A
 	    // which is not yet in the database into an mirror from the DB object to
@@ -146,6 +128,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	if(null != dummy.notes) // Im assuming Ill alwasy update the notes
 	    		a.notes = dummy.notes; 
 	    	
+	    	if(null != dummy.dispatchingTime)
+	    		a.dispatchingTime = dummy.dispatchingTime; 
+	    	
 	    	if(null != dummy.closingTime)
 	    		a.closingTime = dummy.closingTime; 
 	    	
@@ -157,6 +142,17 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	a.save();
 	    	return;
 	    }
+	    
+	    public static void saveAndFollowupAlarm(Alarm dummy){
+	    	Date dispatchTime = new Date();
+	    	dummy.dispatchingTime = dispatchTime;
+	    	Alarm a = Alarm.updateFromDummy(dummy);
+	    	a.save();
+	    	Alarm listItem = Global.alarmList.list.get(dummy.id);
+	    	listItem.dispatchingTime = dispatchTime;
+	    	return;
+	    }
+	    
 	    
 	    public static void closeAlarm(Alarm dummy){
 	    	dummy.closingTime = new Date();

@@ -67,17 +67,20 @@ public class Patient extends Model {
 					return p; 
 				}
 				
-				// this function will return: the patient of the Alarm + everybody that lives in the
+				// this function will return: the patient of the Alarm or everybody that lives in the
 				// same address of the callee
 				public static List<Patient> prospectPatientsFromAlarm(Long id){
 					Alarm a = Alarm.get(id);
 					List<Patient> list = new ArrayList<Patient>();
 					String calleeAdr = a.callee.address;
 
-					if (null != calleeAdr && (calleeAdr.isEmpty() == false)) // if we have the callee address
-						list.addAll(find.where().ieq("address", calleeAdr).findList());// add all patients in that address
-					if(null != a.patient && (a.patient.address.equalsIgnoreCase(calleeAdr) == false)) // if the alarm has an assigned patinet which has not been already added to the list
+					if(null != a.patient){ // if the alarm has an assigned patient 
 						list.add(a.patient);
+					}else{ // otherwise I get the list of residents
+						if (null != calleeAdr && (calleeAdr.isEmpty() == false)){ // if we have the callee address
+							list.addAll(find.where().ieq("address", calleeAdr).findList());// add all people in that address
+						}
+					}
 					
 						return list;
 					

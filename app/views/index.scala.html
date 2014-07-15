@@ -22,27 +22,13 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
    }*/
 
    // on start
-   $(document).ready(function(){
-	   $("#assesment").hide();
-	   $("#patientBox").hide();
-	   $("#calleeBox").hide();
-	    $('#notesDiv').hide();
-	    $("#extraActionButtonsDiv").hide();
-
-       $("#closeCaseFromPatientRegButton").click(closeCaseAtRegistration);
-       $("#goToAssesmentButton").click(fromRegistrationToAssesment);
-
-       
-       // those setup functions should be called just once as they may be binding buttons
-       // and one does not want to rebind
-       setupPatientPage();
-       setupAssesmentPage();
-       setupActionsAndClosingPage();
-
-
-	 });
+   $(document).ready(function () {initApplication()});
 
    function selectOpenAlarm(alarmIndex,calleeIndex) {
+
+       // highlight the alarm
+       var currentSelected = $('#Alarm' + alarmIndex);
+       currentSelected.toggleClass("active");
 
 	   $.getJSON("/pastAlarmsFromCalle/" + calleeIndex,
 		          function(data) {
@@ -82,7 +68,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
  <div class="container-fluid">
     <div class="row" id="arrowHeaders">
-            <div class="col-md-3"><h2 id="receptionArrowHeader" class="selected_arrow_box">&nbsp Alarm Reception</h2></div>
+            <div class="col-md-3"><h2 id="receptionArrowHeader" class="selected_arrow_box">&nbsp Incident Reception</h2></div>
             <div class="col-md-3"><h2 id="registrationArrowHeader" class="nonselected_arrow_box">&nbsp Registration</h2></div>
             <div class="col-md-3"><h2 id="assesmentArrowHeader" class="nonselected_arrow_box">&nbsp Assessment</h2></div>
             <div class="col-md-3"><h2 id="closingArrowHeader" class="nonselected_arrow_box">&nbsp Actions and Closing</h2></div>
@@ -92,7 +78,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
 	    <!-- <h2>@alarms.size() alarm(s)</h2>-->
 	    <div id="unassignedAlarmDiv"  >
-	    <h3>Unassigned Alarms</h3>
+	    <h3>Unassigned Incidents</h3>
 			<div class="list-group" id="unassignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
 			@for((alarm,index) <- alarms.zipWithIndex){
 	            @if(null == alarm.attendant){
@@ -110,10 +96,10 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			</div>
 	   </div>
 		<div id="assignedAlarmDiv">
-			<h3>My Alarms</h3>
+			<h3>My Incidents</h3>
 			<div class="list-group" id="assignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
 	        @for((alarm,index) <- alarms.zipWithIndex){
-	            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin")){
+	            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null == alarm.dispatchingTime)){
 	                    <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
 	                <!-- <i class="icon-fire pull-left"></i> -->
 	                <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
@@ -127,6 +113,24 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	         }  
 	        </div>
 	    </div>
+	     <div id="followupAlarmDiv">
+            <h3>Incidents to Follow-up</h3>
+            <div class="list-group" id="followupAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;">  
+            @for((alarm,index) <- alarms.zipWithIndex){
+                @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null != alarm.dispatchingTime)){
+                        <a href="#" idNum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectFollowUpAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
+                    <!-- <i class="icon-fire pull-left"></i> -->
+                    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left" width="48" height="48"/>
+                                    @if(null != alarm.expired && true == alarm.expired){
+                        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
+                    }
+                    <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm")</h4>
+                    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
+                  </a>
+                 }
+             }  
+            </div>
+        </div>
 		
 	</section>
     

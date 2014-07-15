@@ -2,10 +2,7 @@ function setupActionsAndClosingPage(){
 	
 
 	$(".dispatch-ring-btn").click(function() {
-		  BootstrapDialog.show({
-	            title: '',
-	            message: 'calling'
-	        });
+		$('#calling_modal').modal("show");
 	});
 	$(".dispatch-send-btn").click(function() {
 		
@@ -23,7 +20,7 @@ function setupActionsAndClosingPage(){
 	
 	
     $("#closeCaseActionsButton").click(closeCaseAtClosing);
-    $("#saveAndFollowUpButton").click(closeCaseAtClosing);// TODO: updat so it really follows up
+    $("#saveAndFollowUpButton").click(saveAndFollowupAtClosing);
 	
     
     resetActionsAndClosingPage();
@@ -42,9 +39,11 @@ function closeCaseAtClosing(){
 	// update to get meaningfull data
 
     var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
+	var notes = $('#closingNotesBox').val();
    
     var updatedAlarm = {
             'alarmId' : alarmId,
+            'notes' : notes
 	    };
 
 	myJsRoutes.controllers.Application.closeCase().ajax({
@@ -58,3 +57,25 @@ function closeCaseAtClosing(){
 
 }
 
+function saveAndFollowupAtClosing(){
+	
+	// update to get meaningfull data
+
+    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idNum");
+	var notes = $('#closingNotesBox').val();
+   
+    var updatedAlarm = {
+            'alarmId' : alarmId,
+            'notes' : notes
+	    };
+
+	myJsRoutes.controllers.Application.saveAndFollowupCase().ajax({
+            data : JSON.stringify(updatedAlarm),
+            contentType : 'application/json',
+            success : function (data) {
+            	moveAlarmToFollowUpList();
+            	highlightBackListTab ();
+            }// end of success
+    });// end of ajax call
+
+}

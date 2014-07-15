@@ -155,18 +155,21 @@
 		</div>
     
     
+    </div>
     
-    
-
+    <div id="closingNotesAndButtons" class="row">
+       <br>
+       <u>Notes:</u>
+       <textarea id="closingNotesBox" class="form-control" rows="5"></textarea>
 	   <button id="closeCaseActionsButton" type="button" class="btn btn-default">Close Case</button>
        <button id="saveAndFollowUpButton" type="button" class="btn btn-default">Save and follow up</button>
-	    
-    </div>
+	</div>   
+    
     
     
      <!-- Send data modal -->
                       
-     <div class="modal fade" id="dispatch_data_modal">
+     <div class="modal fade" id="dispatch_data_modal" style="top : 50%; right : 0%; outline: none;">
      <div class="modal-dialog"><div class="modal-content">
          <div class="modal-header">
 	        <h4 class="modal-title">Select data to be sent</h4>
@@ -183,6 +186,19 @@
          <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 	        <button type="button" class="btn btn-primary" data-dismiss="modal">Send</button>
+         </div>
+         </div></div>                               
+   </div>
+   
+     <!-- calling modal -->
+                      
+     <div class="modal fade" id="calling_modal" style="top : 50%; right : 0%; outline: none;">
+     <div class="modal-dialog"><div class="modal-content">
+         <div class="modal-header">
+            <h4 class="modal-title">Calling...</h4>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-default" data-dismiss="modal">Done</button>
          </div>
          </div></div>                               
    </div>

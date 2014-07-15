@@ -23,8 +23,8 @@ function setupPatientPage() {
 }
  
  /* retrieve the callee and populate it */
- function  populateCalleFromAlarm(calleeId){
-     $.getJSON("/callee/" + calleeId,
+ function  populateCalleFromAlarm(alarmId){
+     $.getJSON("/callee/" + alarmId,
              function(data) {
                  // TODO: check if the json is full before creating the table		    	 
 		         var calleeId = data.id;
@@ -50,63 +50,69 @@ function setupPatientPage() {
 	 if( $('#dynamicPatientInfo').length == 1){ //check if we have the dynamic data
 		  
 			       $.getJSON("/prospectPatient/" + alarmIndex,
-			                  function(data) {
-			                      // TODO: check if the json is full before creating the table
-			                      $("#dynamicPatientInfo").empty();
-			                      var dynamicPatientBlock = '<u>Name:</u> ';
-
-			                      // building Patient Drop Down Block
-			                      var patientDropDownBox = '<span class="btn-group"  id="patientDropDown" ><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">' +
-			                      '<span class="selection">Patient</span><span class="caret"></span></button><ul id="patientDropDownList" class="dropdown-menu">';
-			                      var array = data.patientArray;
-                                  for(var i in array){
-                                    var patientId = array[i].id;
-                                    var patientName = array[i].name;
-                                    var patientPersoNum = array[i].persoNumber;
-                                    var patientAddress = array[i].address;
-                                    var patientAge = array[i].age;
-                                    patientDropDownBox += '<li><a onclick="populatePatient(\'' + patientId + '\',\'' + patientName + '\',\'' + patientPersoNum + '\',\'' + patientAddress +
-                                    '\',\'' + patientAge + '\');" href="#">' + patientName +'</a></li>'; 
-                                  }
-                                  if( $.isArray(array) && array.length != 0){
-                                	  patientDropDownBox += '<li class="divider"></li>';
-                                  }
-                                  patientDropDownBox += '<li><a onclick="openAddPatientModal();" href="#">Other Patient...</a></li>'
-                                  patientDropDownBox += '<li><a onclick="fillUnknownPatient();" href="#">Unknown Patient</a></li>'
-                                  patientDropDownBox += '</ul></span>';
-
-                                  // building Patient Details
-                                  var patientDetails = '<u>Adress:</u>  <span id="patientAddress"/><br><u>Personal Number:</u>  <span id="patientPersoNum"/><br>' +
-                                  '<u>Age:</u>  <span id="patientAge"/><br><input id="patientId" type="hidden"><p><p><u>Patient Location:</u>';
-                                  patientDetails+= '<span class="checkbox inline"><label><input id="sameAddressCheckbox" type="checkbox"> Same address as residence</label>' +
-                                  '</span>'; // adds checkbox
-                                  patientDetails+= '<input type="text" class="form-control" id="incidentAddress" placeholder="Other Address">';
-
-                                  patientDetails+= '<h5>Patient Logs</h5><table class="table table-bordered" id="patientLogTable"><thead><tr><td>date</td><td>hour</td><td>type</td></tr></thead><tbody></tbody></table>';
-                                  
-                                  var identity = '<div class="checkbox"><label><input id="unknownIdentityCheckbox" type="checkbox"> Unknown Identity</label></div><br>';
-                                  
-                                  dynamicPatientBlock += patientDropDownBox + '<br>' + patientDetails + '<br>';// + identity;
-                                  
-
-			                      $("#dynamicPatientInfo").html(dynamicPatientBlock);
-			                      
-			                      $("#sameAddressCheckbox").click(function() {
-			                    	    var addr = $("#patientAddress").text();
-			                    	    if(this.checked){
-			                    	    	$("#incidentAddress").val(addr);
-			                    	    }else{
-			                    	    	$("#incidentAddress").val("Other Address");
-			                    	    }
-			                    	});
-			                      
-			                      $("#patientBox").show();
-
-			               });
+			    		   function (data){createPatientDiv(data)});
 
 			    }
 	 	return;
 	 }
+ 
+ 
+ 	// function to be called by the json function retrieving the prospect patients
+ 	function createPatientDiv(data){
+        // TODO: check if the json is full before creating the table
+        $("#dynamicPatientInfo").empty();
+        var dynamicPatientBlock = '<u>Name:</u> ';
+
+        // building Patient Drop Down Block
+        var patientDropDownBox = '<span class="btn-group"  id="patientDropDown" ><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">' +
+        '<span class="selection">Patient</span><span class="caret"></span></button><ul id="patientDropDownList" class="dropdown-menu">';
+        var array = data.patientArray;
+        for(var i in array){
+          var patientId = array[i].id;
+          var patientName = array[i].name;
+          var patientPersoNum = array[i].persoNumber;
+          var patientAddress = array[i].address;
+          var patientAge = array[i].age;
+          patientDropDownBox += '<li><a onclick="populatePatient(\'' + patientId + '\',\'' + patientName + '\',\'' + patientPersoNum + '\',\'' + patientAddress +
+          '\',\'' + patientAge + '\');" href="#">' + patientName +'</a></li>'; 
+        }
+        if( $.isArray(array) && array.length != 0){
+      	  patientDropDownBox += '<li class="divider"></li>';
+        }
+        patientDropDownBox += '<li><a onclick="openAddPatientModal();" href="#">Other Patient...</a></li>'
+        patientDropDownBox += '<li><a onclick="fillUnknownPatient();" href="#">Unknown Patient</a></li>'
+        patientDropDownBox += '</ul></span>';
+
+        // building Patient Details
+        var patientDetails = '<u>Adress:</u>  <span id="patientAddress"/><br><u>Personal Number:</u>  <span id="patientPersoNum"/><br>' +
+        '<u>Age:</u>  <span id="patientAge"/><br><input id="patientId" type="hidden"><p><p><u>Patient Location:</u>';
+        patientDetails+= '<span class="checkbox inline"><label><input id="sameAddressCheckbox" type="checkbox"> Same address as residence</label>' +
+        '</span>'; // adds checkbox
+        patientDetails+= '<input type="text" class="form-control" id="incidentAddress" placeholder="Other Address">';
+
+        patientDetails+= '<h5>Patient Logs</h5><table class="table table-bordered" id="patientLogTable"><thead><tr><td>date</td><td>hour</td><td>type</td></tr></thead><tbody></tbody></table>';
+        
+        var identity = '<div class="checkbox"><label><input id="unknownIdentityCheckbox" type="checkbox"> Unknown Identity</label></div><br>';
+        
+        dynamicPatientBlock += patientDropDownBox + '<br>' + patientDetails + '<br>';// + identity;
+        
+
+        $("#dynamicPatientInfo").html(dynamicPatientBlock);
+        
+        $("#sameAddressCheckbox").click(function() {
+      	    var addr = $("#patientAddress").text();
+      	    if(this.checked){
+      	    	$("#incidentAddress").val(addr);
+      	    }else{
+      	    	$("#incidentAddress").val("Other Address");
+      	    }
+      	});
+        
+        $("#patientBox").show();
+
+
+ 		
+ 	}
  
 	function populatePatient(patientId,patientName,personNumber,address,age){
 		$('#patientAddress').text(address);
@@ -217,12 +223,10 @@ function setupPatientPage() {
 	            contentType : 'application/json',
 	            success : function (data) {
 	            	// TODO: possibly move some of this to a function
-	            	// TODO: possibly move some of this to a function
 	            	highlightArrowHeader("assesmentArrowHeader");
 	         	   $("#assesment").show();
 	         	  $("#assementNotesDiv").show();
 	        	    $('#notesDiv').hide();
-	        	    // TODO: possibly move and repurpose the div instead of the below
 	        	    $('#assesmentNotesBox').val($('#patientRegistrationNotesBox').val());
 	            }// end of success
 	    });// end of ajax call

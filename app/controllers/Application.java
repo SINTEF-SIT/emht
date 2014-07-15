@@ -28,18 +28,10 @@ public class Application extends Controller {
 	
     public static Result index() {
     	return redirect(routes.Application.openAlarms());
-        //return ok(index.render("Your new application is ready."));
     }
 
     public static Result  openAlarms(){
     	List<Alarm> object = Global.alarmList.getAlarmList();
-    	/*System.out.println("test "); 
-    	// debugging loop
-    	Iterator<Alarm> iterator = object.iterator();
-    	while (iterator.hasNext()) {
-    		Alarm a  = iterator.next();
-    		System.out.println("Adding alarm " + a.id + "with expiry flag as " + a.expired); 
-    	}*/
     	
     	Content html = views.html.index.render(object, alarmForm);
     	 return ok(
@@ -77,6 +69,43 @@ public class Application extends Controller {
 			    views.html.requestInfoFrame.render(Global.alarmList.list.get(id))
 			  );
     }*/
+    
+
+    // returns a json alarm such as
+    // { "type": string, "notes": string, "alarmId": long, 
+    //  "callee" : { "phoneNumber": string, "name": string, "address": string, "id": long },
+    //  "patient" : { "persoNumber": string, "name": string, "address": string,  "age": int, "id": long }}
+    public static Result  getAlarm(Long id){
+    	
+    	Alarm a = Alarm.get(id);
+
+    	ObjectNode jsonAlarm = Json.newObject();
+    	jsonAlarm.put("type", a.type);
+    	jsonAlarm.put("notes", a.notes);
+    	jsonAlarm.put("alarmId", a.id);
+    	
+    	if(null != a.callee){
+			ObjectNode calle = Json.newObject();
+			calle.put("id", a.callee.id);
+			calle.put("name", a.callee.name);
+			calle.put("phoneNumber", a.callee.phoneNumber);
+			calle.put("address", a.callee.address);
+			jsonAlarm.put("calle", calle);
+    	}
+
+    	if(null != a.patient){
+	  		ObjectNode  patient = Json.newObject();
+			patient.put("id", a.patient.id);
+			patient.put("name", a.patient.name);
+			patient.put("persoNumber", a.patient.personalNumber);
+			patient.put("address", a.patient.address);
+			patient.put("age", a.patient.age);
+			jsonAlarm.put("patient", patient);
+    	}
+        
+    	return ok(jsonAlarm);
+
+    }
     
     
     // Return the type and date of each one of the past alarms of the callee
@@ -233,6 +262,25 @@ public class Application extends Controller {
     }
     
  
+    @BodyParser.Of(BodyParser.Json.class)
+    public static Result saveAndFollowupCase() {
+  	  	JsonNode json = request().body().asJson();
+        long patientId = json.findPath("patientId").asLong();
+        String notes = json.findPath("notes").asText();
+        long alarmId = json.findPath("alarmId").asLong();
+        
+        Alarm a = new Alarm();
+        a.id = alarmId;
+        a.notes = notes;
+        if(0 != patientId){
+        	a.patient = new Patient();
+        	a.patient.id = patientId;
+        }
+        Alarm.saveAndFollowupAlarm(a);
+
+    	return ok();
+    }
+    
     
     
     @BodyParser.Of(BodyParser.Json.class)
@@ -247,31 +295,7 @@ public class Application extends Controller {
     }
     
     
-    // TODO: discontinue this function once the above is running and tested
-/*    public static Result  assignAlarm(){
-    	DynamicForm dynamicForm = Form.form().bindFromRequest();
-    	String attendantUserName = dynamicForm.get("attendantUserName");
-    	Long alarmId =  Long.parseLong(dynamicForm.get("alarmId"));
-       	AlarmAttendant a = AlarmAttendant.getAttendantFromUsername(attendantUserName);
-    	Alarm alarm = Alarm.assignAttendantToAlarm(alarmId, a);    	
-    	List<Alarm> l = Global.alarmList.getAlarmList();
-   	 	return ok(
-			    views.html.index.render(l, alarmForm, alarm)
-			  );
 
-    }*/
-    /* 
-    public static Result  dispatchAlarm(){
-    	DynamicForm dynamicForm = Form.form().bindFromRequest();
-    	Long alarmId =  Long.parseLong(dynamicForm.get("alarmId"));
-    	Alarm alarm = Alarm.dispatchAlarm(alarmId);    	
-    	List<Alarm> l = Global.alarmList.getAlarmList();
-   	 	return ok(
-			    views.html.index.render(l, alarmForm, alarm)
-			  );
-
-    }*/
-    
 
     
     
@@ -282,13 +306,14 @@ public class Application extends Controller {
                 //controllers.routes.javascript.Application.deleteAlarm(),
                 controllers.routes.javascript.Application.getPastAlarmsFromCallee(),
                 //controllers.routes.javascript.Application.assignAlarm(),
+                controllers.routes.javascript.Application.saveAndFollowupCase(),
                 controllers.routes.javascript.Application.closeCase(),
                 controllers.routes.javascript.Application.saveCase(),
             	controllers.routes.javascript.Application.insertPatientFromJson(),
             	controllers.routes.javascript.Application.assignAlarmFromJson(),
                 controllers.routes.javascript.Application.getCalleeFromAlarm(),
-                controllers.routes.javascript.Application.getProspectPatients()
-                //controllers.routes.javascript.Application.getOpenAlarm()
+                controllers.routes.javascript.Application.getProspectPatients(),
+                controllers.routes.javascript.Application.getAlarm()
             )
         );
     }

@@ -117,7 +117,8 @@ function fromAssementToClosing(){
          	   $("#assesment").show();
         	    $('#assementNotesDiv').hide();
         	    $("#extraActionButtonsDiv").show();
-        	    // TODO: implement notes part
+        	    $("#closingNotesAndButtons").show();
+        	    $('#closingNotesBox').val($('#assesmentNotesBox').val());
             }// end of success
     });// end of ajax call
 }
