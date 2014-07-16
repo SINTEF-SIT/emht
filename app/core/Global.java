@@ -10,6 +10,7 @@ import models.AlarmAttendant;
 import play.Application;
 import play.GlobalSettings;
 import play.libs.Yaml;
+import play.test.FakeApplication;
 
 
 public class Global extends GlobalSettings {
@@ -23,7 +24,6 @@ public class Global extends GlobalSettings {
         localMonitor = new LocalMonitor();
         alarmList = new OpenAlarmList();
 
-    	
     	// Check if the AlarmAttendant db is empty
         if (AlarmAttendant.find.findRowCount() == 0) {
             Ebean.save((List) Yaml.load("initial-data.yml"));
@@ -31,7 +31,8 @@ public class Global extends GlobalSettings {
             
         }
         populateMemoryAlarmList();
-        
+
+    
     }
     
     //populates the list of open alarms which is cached in the memory

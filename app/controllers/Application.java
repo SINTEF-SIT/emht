@@ -208,18 +208,16 @@ public class Application extends Controller {
     	  p.personalNumber = json.findPath("persoNumber").textValue();
 		  p.address = json.findPath("address").textValue();
 		  p.age = json.findPath("age").asInt();
-    	  if(p.personalNumber == null) {
-    	    return badRequest("Missing parameter [personal Number]"); // TODO: render this
-    	  } else {
-    		  Patient retObj = Patient.getOrCreate(p); // inserts on the db and return the db instance (which will include the id of the patient)
-	    		ObjectNode  patient = Json.newObject();
-				patient.put("id", retObj.id);
-				patient.put("name", retObj.name);
-				patient.put("persoNumber", retObj.personalNumber);
-				patient.put("address", retObj.address);
-				patient.put("age", retObj.age);
-    		  return ok(patient);
-    	  }
+
+		// inserts on the db and return the db instance (which will include the id of the patient)
+		  Patient retObj = Patient.getOrCreate(p); 
+		ObjectNode  patient = Json.newObject();
+		patient.put("id", retObj.id);
+		patient.put("name", retObj.name);
+		patient.put("persoNumber", retObj.personalNumber);
+		patient.put("address", retObj.address);
+		patient.put("age", retObj.age);
+		  return ok(patient);
 
     }
     

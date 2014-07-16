@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.PersistenceException;
 
 import core.Global;
 
@@ -22,8 +23,8 @@ public class Patient extends Model {
 	public String address;
 	public Integer age;
 	
-	@Column(unique=true)
-	public String personalNumber; // TODO: add validation format to the personal Number
+
+	public String personalNumber; 
 	
 	  public static Finder<Long,Patient> find = new Finder(
 			    Long.class, Patient.class
@@ -42,10 +43,13 @@ public class Patient extends Model {
 				}
 				
 				public static Patient getOrCreate(Patient pat) {
-					if (null == pat || pat.personalNumber.isEmpty())
+					if (null == pat)
 						return null;
 					//else
-					Patient p = find.where().ieq("personalNumber", pat.personalNumber).findUnique(); 
+					Patient p = null;
+					if(null != pat.personalNumber && false == pat.personalNumber.isEmpty())
+						p = find.where().ieq("personalNumber", pat.personalNumber).findUnique();
+
 					if(null != p)
 						return p; // patient is already on db, no need to save it
 					//else
