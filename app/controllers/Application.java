@@ -1,10 +1,20 @@
 package controllers;
 
 import java.text.SimpleDateFormat;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import models.Alarm;
+import models.AlarmAttendant;
+import models.Callee;
+import models.Patient;
+import play.Routes;
+import play.data.Form;
+import play.libs.Json;
+import play.mvc.BodyParser;
+import play.mvc.Content;
+import play.mvc.Controller;
+import play.mvc.Result;
+import play.mvc.WebSocket;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -13,14 +23,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import core.Global;
 import core.MyWebSocketManager;
-
-import models.*;
-import play.*;
-import play.data.*;
-import play.libs.Json;
-import play.mvc.*;
-
-import views.html.*;
 
 public class Application extends Controller {
 

@@ -2,15 +2,13 @@ package core;
 import java.util.Iterator;
 import java.util.List;
 
-
-import com.avaje.ebean.Ebean;
-
 import models.Alarm;
 import models.AlarmAttendant;
 import play.Application;
 import play.GlobalSettings;
 import play.libs.Yaml;
-import play.test.FakeApplication;
+
+import com.avaje.ebean.Ebean;
 
 
 public class Global extends GlobalSettings {

@@ -1,5 +1,4 @@
 import static org.fest.assertions.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
