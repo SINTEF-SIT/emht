@@ -17,6 +17,26 @@ function setupActionsAndClosingPage(){
 		// show modal
 		$('#dispatch_data_modal').modal("show");
 	});
+
+	// setting up schedule time modal
+	
+	$(".schedule-btn").click(function() {
+		
+		//clear modal
+		$("#schedule_time_modal").find(':checkbox').each(
+			function() { 
+				$(this).removeAttr('checked');
+			}
+		);
+		
+		
+		// show modal
+		$('#schedule_time_modal').modal("show");
+	});
+	
+	$("#schedule-time-picker").datetimepicker();
+	$("#schedule_time_modal_btn").click(closeCaseAtClosing);
+	// end of setting up schedule time modal
 	
 	
     $("#closeCaseActionsButton").click(closeCaseAtClosing);
