@@ -158,6 +158,7 @@ function selectFollowUpAlarm(alarmIndex) {
 	   createPatientDiv(data);
 		var patientListItem = $("#patientDropDownList li:first a");
 		patientListItem.click();
+		loadPatientSensor();
 	   });
 
 	// populating notebox (TODO: in the future the log an others) from alarm data

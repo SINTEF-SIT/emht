@@ -224,6 +224,7 @@ function setupPatientPage() {
 	            success : function (data) {
 	            	// TODO: possibly move some of this to a function
 	            	highlightArrowHeader("assesmentArrowHeader");
+	            	loadPatientSensor();
 	         	   $("#assesment").show();
 	         	  $("#assementNotesDiv").show();
 	        	    $('#notesDiv').hide();

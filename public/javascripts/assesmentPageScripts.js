@@ -47,6 +47,29 @@ function setupAssesmentPage(){
     resetAssesmentPage();
 }
 
+function loadPatientSensor(){
+	
+	// TODO retrieve NMI (but in another funtion)
+	removeImageFromSensorTab()
+	var patId = $('#patientId').val();
+	if(0 != patId){
+		var image = new Image(); 
+		image.src = "/assets/images/patient/" + patId + ".png" ;
+		image.className = "img-responsive assesment-graph";
+		image.onerror = removeImageFromSensorTab;
+		//if (image.width != 0) {
+			$("#sensorTab").append(image);
+		//}
+	}
+	
+	// TODO: remove picture when IM resetting the page
+}
+
+function removeImageFromSensorTab(){
+	$(".assesment-graph").remove();
+}
+
+
 function resetAssesmentPage(){
 	
 
