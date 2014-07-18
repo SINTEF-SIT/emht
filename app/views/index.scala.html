@@ -62,6 +62,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
      };
 
 
+     
     </script>
 
 
@@ -78,7 +79,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
 	    <!-- <h2>@alarms.size() alarm(s)</h2>-->
 	    <div id="unassignedAlarmDiv"  >
-	    <h3>Unassigned Incidents</h3>
+	    <h3><span id="nbOfUnassignedAlarm"></span> Unassigned Incidents</h3>
 			<div class="list-group" id="unassignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
 			@for((alarm,index) <- alarms.zipWithIndex){
 	            @if(null == alarm.attendant){
@@ -96,7 +97,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			</div>
 	   </div>
 		<div id="assignedAlarmDiv">
-			<h3>My Incidents</h3>
+			<h3><span id="nbOfAssignedAlarm"></span> Incidents assigned to me</h3>
 			<div class="list-group" id="assignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
 	        @for((alarm,index) <- alarms.zipWithIndex){
 	            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null == alarm.dispatchingTime)){
@@ -114,7 +115,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	        </div>
 	    </div>
 	     <div id="followupAlarmDiv">
-            <h3>Incidents to Follow-up</h3>
+            <h3><span id="nbOfFollowUpAlarm"></span> Incidents to Follow-up</h3>
             <div class="list-group" id="followupAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;">  
             @for((alarm,index) <- alarms.zipWithIndex){
                 @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null != alarm.dispatchingTime)){

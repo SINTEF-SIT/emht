@@ -22,6 +22,7 @@ $(function(){
                       '<h4 class="list-group-item-heading">' + alarm.id + ', arrived at '+ formatedTime  +' </h4>' + 
                       '<p class="list-group-item-text">Callee '+ alarm.callee.phoneNumber + '</p>';
                   $("#unassignedAlarmList").append(listItem);
+                resetAlarmCount();
                 break;
             case "addTimeNotification":
                 

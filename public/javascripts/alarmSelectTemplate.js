@@ -22,10 +22,19 @@ function initApplication(){
            currentSelected.toggleClass("active");	
     	});
 
+       resetAlarmCount();
 
 	 }
 
-
+function resetAlarmCount(){
+    var unassignedAlarmCount = $("#unassignedAlarmList .list-group-item").length;
+    var assignedAlarmCount = $("#assignedAlarmList .list-group-item").length;
+    var followUpAlarmCount = $("#followupAlarmList .list-group-item").length;
+    $("#nbOfUnassignedAlarm").text(unassignedAlarmCount);
+    $("#nbOfAssignedAlarm").text(assignedAlarmCount);
+    $("#nbOfFollowUpAlarm").text(followUpAlarmCount);
+	
+}
 
 function assignAlarm(alarmIndex){
 	   
@@ -61,6 +70,7 @@ function assignAlarm(alarmIndex){
 	              if(clock != null)
 	            	  clock.remove();
 	              $('#assignedAlarmList').prepend(openAlarmListItem);
+	              resetAlarmCount();
 	            }// end of success
 	    });// end of ajax call
 		
@@ -91,6 +101,7 @@ function highlightArrowHeader(headerId){
 function removeHighlightedAlarmFromList(){
 	var currentSelected = $('.list-group-item.active.alarmItem');
 	currentSelected.remove();
+	resetAlarmCount();
 }
 
 //this function will move back the incident from the My Incidents list to the follow-up lists
@@ -112,6 +123,7 @@ function moveAlarmToFollowUpList(){
 	    openFollowUpListItem.attr("onclick","selectFollowUpAlarm(" + alarmIndex + ");return false;");
 	
 	    $('#followupAlarmList').prepend(openFollowUpListItem);
+	    resetAlarmCount();
 	}
 	// else means it is on the followup list. In that case I do nothing, because I have already removed the focus of
 	// the element and the function calling this one is already showing back the incident list
