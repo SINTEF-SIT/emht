@@ -24,42 +24,6 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
    // on start
    $(document).ready(function () {initApplication()});
 
-   function selectOpenAlarm(alarmIndex,calleeIndex) {
-
-       // highlight the alarm
-       var currentSelected = $('#Alarm' + alarmIndex);
-       currentSelected.toggleClass("active");
-
-	   $.getJSON("/pastAlarmsFromCalle/" + calleeIndex,
-		          function(data) {
-		              // TODO: check if the json is full before creating the table
-		              $("#calleeLogTableDiv").empty();
-		              var htmlTable = '<table class="table"><thead><tr><td>date</td><td>hour</td><td>type</td></tr></thead><tbody>';
-		              // TODO: validate the json
-		              // data is a JSON list, so we can iterate over it
-		              var array = data.alarmArray;
-		              for(var i in array){
-						var day = array[i].day;
-						var hour = array[i].hour;
-						var type = array[i].type;
-						htmlTable+= '<tr><td> ' + day + ' </td><td> ' + hour + ' </td><td> ' + type + ' </td></tr>'; 
-					  }
-		              htmlTable+= "</tbody></table>";
-		              $("#calleeLogTableDiv").html(htmlTable);
-		       });
-	   
-	   //populateAlarmInfo(alarmIndex);
-	   $('#callee_info_modal').modal("show");
-	   $('#confirmCalleeModalButton').unbind("click").click(function(e) {
-		   assignAlarm(alarmIndex);
-		});
-			   
-    };
-    
-    function selectMyAlarm(alarmIndex) {
-        // TEMPORARY CODE
-    	assignAlarm(alarmIndex); // TODO: change this to a simple select of alarm instead of assign
-     };
 
 
      

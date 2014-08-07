@@ -126,7 +126,7 @@ public class Application extends Controller {
     private static Result alarmListToJsonAlarmLog(List<Alarm> alarmList){
     
 	SimpleDateFormat ddMMyy = new SimpleDateFormat ("dd/MM yyyy");
-	SimpleDateFormat hhMin = new SimpleDateFormat ("hh:mm");
+	SimpleDateFormat hhMin = new SimpleDateFormat ("HH:mm");
 	
 
 	ObjectNode result = Json.newObject();

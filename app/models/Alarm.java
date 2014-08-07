@@ -121,10 +121,10 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    		a.notes = dummy.notes; 
 	    	
 	    	// for the time fields, Ill not update them if they have already been set
-	    	if(null != dummy.dispatchingTime && null != a.dispatchingTime)
+	    	if(null != dummy.dispatchingTime && null == a.dispatchingTime)
 	    		a.dispatchingTime = dummy.dispatchingTime; 
 	    	
-	    	if(null != dummy.closingTime && null != a.closingTime)
+	    	if(null != dummy.closingTime && null == a.closingTime)
 	    		a.closingTime = dummy.closingTime; 
 	    	
 	    	return a;	

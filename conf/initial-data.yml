@@ -1,5 +1,11 @@
 # Callees
    
+ - &callee1 !!models.Callee
+   name:             Anna By
+   address:          Strindveien 14
+   phoneNumber:      41233133
+   
+   
 # AlarmAttendants
 
  - &karin !!models.AlarmAttendant
@@ -28,11 +34,100 @@
     personalNumber:  89248032
     age:             75    
 
+ - &patient4 !!models.Patient
+    name:            Anna By
+    address:         Strindveien 14
+    personalNumber:  119458764
+    age:             76    
+
 
 # Alarms
 
     
 # closed alarms
+
+# closed alarms
+
+ - &alarm101 !!models.Alarm
+    type:            phone
+    callee:          *callee1
+    patient:         *patient4
+    openingTime:     2012-03-31 11:02:57
+    dispatchingTime: 2012-03-31 11:06:57
+    closingTime:     2012-03-31 11:06:57
+
+ - &alarm102 !!models.Alarm
+    type:            phone
+    callee:          *callee1
+    patient:         *patient4
+    openingTime:     2012-04-31 12:12:07
+    dispatchingTime: 2012-04-31 14:06:57
+    closingTime:     2012-04-31 14:06:57
+
+ - &alarm103 !!models.Alarm
+    type:            phone
+    callee:          *callee1
+    patient:         *patient4
+    openingTime:     2014-02-12 11:02:57
+    dispatchingTime: 2014-03-31 11:06:57
+    closingTime:     2014-03-31 11:06:57
+
+ - &alarm104 !!models.Alarm
+    type:            phone
+    callee:          *callee1
+    patient:         *patient4
+    openingTime:     2014-02-12 21:02:57
+    dispatchingTime: 2014-03-31 21:06:57
+    closingTime:     2014-03-31 21:06:57
+
+ - &alarm105 !!models.Alarm
+    type:            phone
+    callee:          *callee1
+    patient:         *patient4
+    openingTime:     2014-02-12 20:02:57
+    dispatchingTime: 2014-03-31 20:06:57
+    closingTime:     2014-03-31 20:06:57
+
+ - &alarm106 !!models.Alarm
+    type:            phone
+    callee:          *callee1
+    patient:         *patient4
+    openingTime:     2012-08-12 11:52:15
+    dispatchingTime: 2012-08-12 11:06:57
+    closingTime:     2012-08-12 11:56:15
+
+ - &alarm107 !!models.Alarm
+    type:            phone
+    callee:          *callee1
+    patient:         *patient4
+    openingTime:     2013-08-12 07:52:15
+    dispatchingTime: 2013-08-12 07:06:57
+    closingTime:     2013-08-12 07:56:15
+    
+ - &alarm108 !!models.Alarm
+    type:            phone
+    callee:          *callee1
+    patient:         *patient4
+    openingTime:     2014-08-04 07:52:15
+    dispatchingTime: 2014-08-04 07:06:57
+    closingTime:     2014-08-04 07:56:15
+    
+ - &alarm109 !!models.Alarm
+    type:            phone
+    callee:          *callee1
+    patient:         *patient4
+    openingTime:     2014-08-04 08:52:15
+    dispatchingTime: 2014-08-04 08:06:57
+    closingTime:     2014-08-04 08:56:15
+    
+ - &alarm110 !!models.Alarm
+    type:            phone
+    callee:          *callee1
+    patient:         *patient4
+    openingTime:     2014-08-04 09:52:15
+    dispatchingTime: 2014-08-04 09:06:57
+    closingTime:     2014-08-04 09:56:15
+
 
 # Sensors
 
