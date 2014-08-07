@@ -165,6 +165,8 @@ function selectFollowUpAlarm(alarmIndex) {
 
 	
 	populateCalleFromAlarm(alarmIndex);
+	// TODO: there is currently a bug in the sense that in case an alarm was set to followup with an
+	// unknown patient, it will be loaded here with a person as a patient
    $.getJSON("/prospectPatient/" + alarmIndex,
 	   function (data){
 	   createPatientDiv(data);

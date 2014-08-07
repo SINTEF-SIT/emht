@@ -98,19 +98,11 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	// clean expired flag
 	    	Global.localMonitor.registerAssignment(alarmId);
 	    	// TODO: possibly add checks
-	    	// TODO: add websocket call
+	    	// TODO: add websocket call in the case of a real multi-user
 	    	return a;
 	    }
 	  
-	    public static Alarm dispatchAlarm(Long alarmId){
-	    	Alarm a = find.ref(alarmId);
-	    	a.dispatchingTime = new Date();
-	    	a.closingTime = new Date();
-	    	a.save(); // at the moment we are dispatching and closing all alarms
 
-	    	return a;
-	    }
-	    
 
 	    
 	    // receives some data in the dummy object a, and updates the data from A
@@ -147,10 +139,15 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    public static void saveAndFollowupAlarm(Alarm dummy){
 	    	Date dispatchTime = new Date();
 	    	dummy.dispatchingTime = dispatchTime;
+	    	// TODO: we should not update the dispatching time, if an incident is being save for followup
+	    	// more than once. Conceptually this would be wrong. However, since such behavior will not affect
+	    	// the demo, it has not been implemented
 	    	Alarm a = Alarm.updateFromDummy(dummy);
 	    	a.save();
 	    	Alarm listItem = Global.alarmList.list.get(dummy.id);
 	    	listItem.dispatchingTime = dispatchTime;
+	    	Global.localMonitor.registerFollowUp(listItem.id);
+	    	// TODO: add websocket call in the case of a real multi-user
 	    	return;
 	    }
 	    
@@ -160,11 +157,12 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	
 	    	// since we are already closing the alarm, we will automatically remove it from the list
 	    	// in the future TODO: we should rather repalce the hash item and delete when the item is closed
+	    	Global.localMonitor.registerClosing(dummy.id);
 	    	Global.alarmList.list.remove(dummy.id);
 	    	
 	    	Alarm a = Alarm.updateFromDummy(dummy);
-	    	// TODO: possibly add checks
-	    	// TODO: add websocket call
+
+	    	// TODO: add websocket call in the case of a real multi-user
 	    	a.save();
 	    }
 }

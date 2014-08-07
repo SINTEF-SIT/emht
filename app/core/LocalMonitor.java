@@ -12,8 +12,8 @@ public class LocalMonitor {
 	
 	HashMap<Long,TimerTask> timerTasks;
 
-	public static long assignmentTimeTreshold = 10 * 1000; // 10 seconds
-	public static long resolutionTimeTreshold = 60 * 60 * 1000; // 60 minutes
+	public static long assignmentTimeTreshold = 20 * 1000; // 20 seconds
+	public static long resolutionTimeTreshold = 3 * 60 * 1000; // 3 minutes
 	
 	public LocalMonitor() {
 		super();
@@ -29,6 +29,26 @@ public class LocalMonitor {
 	
 	
 	public void registerAssignment(long alertId){
+		AssignmentReminderTask t = (AssignmentReminderTask) timerTasks.get(alertId);
+		if(null != t){
+			t.cancel();
+			timerTasks.remove(alertId);
+		}
+		
+	}
+	
+	public void registerFollowUp(long alertId){
+		// since one can save a case to followup multiple times, we have to ensure that we just create the
+		// monitoring task in the first time it is set to followup
+		if( timerTasks.get(alertId) == null){
+			AssignmentReminderTask t = new AssignmentReminderTask(alertId);
+			timerTasks.put(alertId, t);
+			timer.schedule(t, resolutionTimeTreshold);
+		}
+	}
+	
+	
+	public void registerClosing(long alertId){
 		AssignmentReminderTask t = (AssignmentReminderTask) timerTasks.get(alertId);
 		if(null != t){
 			t.cancel();

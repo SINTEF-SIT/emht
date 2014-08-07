@@ -84,7 +84,7 @@ function setupPatientPage() {
         patientDropDownBox += '</ul></span>';
 
         // building Patient Details
-        var patientDetails = '<u>Adress:</u>  <span id="patientAddress"/><br><u>Personal Number:</u>  <span id="patientPersoNum"/><br>' +
+        var patientDetails = '<u>Home Address:</u>  <span id="patientAddress"/><br><u>Personal Number:</u>  <span id="patientPersoNum"/><br>' +
         '<u>Age:</u>  <span id="patientAge"/><br><input id="patientId" type="hidden"><p><p><u>Patient Location:</u>';
         patientDetails+= '<span class="checkbox inline"><label><input id="sameAddressCheckbox" type="checkbox"> Same address as residence</label>' +
         '</span>'; // adds checkbox
