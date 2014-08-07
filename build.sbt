@@ -11,7 +11,8 @@ libraryDependencies ++= Seq(
   "org.webjars" % "jqgrid" % "4.4.5",
   "org.webjars" % "jquery-ui" % "1.10.4-1",
   "org.webjars" % "jQuery-Timepicker-Addon" % "1.4.5",
-  "org.webjars" % "bootstrap" % "3.2.0"
+  "org.webjars" % "bootstrap" % "3.2.0",
+  "org.webjars" % "jQuery-Timepicker-Addon" % "1.4.5"
 )     
 
 play.Project.playJavaSettings

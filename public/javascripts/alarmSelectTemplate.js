@@ -204,7 +204,7 @@ function selectFollowUpAlarm(alarmIndex) {
 		          function(data) {
 		              // TODO: check if the json is full before creating the table
 		              $("#calleeLogTableDiv").empty();
-		              var htmlTable = '<table class="table"><thead><tr><td>date</td><td>hour</td><td>type</td></tr></thead><tbody>';
+		              var htmlTable = '<table class="table" id="pastCalleeAlarmsTable"><thead><tr><td>date</td><td>hour</td><td>type</td></tr></thead><tbody>';
 		              // TODO: validate the json
 		              // data is a JSON list, so we can iterate over it
 		              var array = data.alarmArray;
@@ -216,6 +216,15 @@ function selectFollowUpAlarm(alarmIndex) {
 					  }
 		              htmlTable+= "</tbody></table>";
 		              $("#calleeLogTableDiv").html(htmlTable);
+		              // make it a datatable with pagination
+		              /*$('#pastCalleeAlarmsTable').DataTable( {
+		            	    "paging": true,
+		            	    "searching": false,
+		            	    "ordering":  false,
+		            	    "pageLength": 5,
+		            	    "destroy": true,
+		            	    "lengthChange": false
+		            	} );*/
 		       });
 	   
 	   //populateAlarmInfo(alarmIndex);

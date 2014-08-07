@@ -123,6 +123,9 @@ function setupPatientPage() {
 
 		// empty existing table
 		$("#patientLogTable > tbody").html("");
+		// destroying the datatable
+		//var table = $('#patientLogTable').DataTable();
+		//table.destroy();
 		
 		if(0 != patientId){
 	       $.getJSON("/pastAlarmsFromPatient/" + patientId,
@@ -138,8 +141,21 @@ function setupPatientPage() {
 							$("#patientLogTable > tbody").prepend(htmlRow);
 						  }
 	       			}
+	    	   		  
+	    	  		// make it a datatable with pagination, TODO: investigate further if we want to commit the
+	    	   		  // datatable code
+	    	          /*$('#patientLogTable').DataTable( {
+	    	          	    "paging": true,
+	    	          	    "searching": false,
+	    	          	    "ordering":  false,
+	    	          	    "pageLength": 5,
+	    	          	    "destroy": true,
+	    	          	    "lengthChange": false
+	    	      	} );*/
+	    	   		  
 	       });
 		}
+
 		
 
 	    $('#patientDropDown').find('.selection').text(patientName);
