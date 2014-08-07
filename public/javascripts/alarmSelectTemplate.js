@@ -122,7 +122,7 @@ function moveAlarmToFollowUpList(){
 	    openFollowUpListItem.removeAttr('onclick');
 	    openFollowUpListItem.attr("onclick","selectFollowUpAlarm(" + alarmIndex + ");return false;");
 	
-	    $('#followupAlarmList').prepend(openFollowUpListItem);
+	    $('#followupAlarmList').append(openFollowUpListItem);
 	    resetAlarmCount();
 	}
 	// else means it is on the followup list. In that case I do nothing, because I have already removed the focus of
