@@ -12,8 +12,8 @@ public class LocalMonitor {
 	
 	HashMap<Long,TimerTask> timerTasks;
 
-	public static long assignmentTimeTreshold = 20 * 1000; // 20 seconds
-	public static long resolutionTimeTreshold = 3 * 60 * 1000; // 3 minutes
+	public static long assignmentTimeTreshold = 30 * 1000; // 30 seconds
+	public static long resolutionTimeTreshold = 120 * 60 * 1000; // 120 minutes
 	
 	public LocalMonitor() {
 		super();
