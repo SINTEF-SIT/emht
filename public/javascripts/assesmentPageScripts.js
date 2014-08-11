@@ -43,9 +43,13 @@ function setupAssesmentPage(){
     $("#closeCaseFromAssessButton").click(closeCaseAtAssesment);
     $("#goToClosingButton").click(fromAssementToClosing);
 
+
+    
     
     resetAssesmentPage();
 }
+
+
 
 function loadPatientSensor(){
 	

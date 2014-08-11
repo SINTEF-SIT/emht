@@ -1,3 +1,9 @@
+function organizationTableClick(){
+	$(this).closest('table').find('tr.active').removeClass('active');
+	$(this).addClass('active');
+}
+
+
 function setupActionsAndClosingPage(){
 	
 
@@ -9,7 +15,7 @@ function setupActionsAndClosingPage(){
 		//clear modal
 		$("#dispatch_data_modal").find(':checkbox').each(
 			function() { 
-				$(this).removeAttr('checked');
+				$(this).prop("checked", "checked");
 			}
 		);
 		
@@ -25,7 +31,7 @@ function setupActionsAndClosingPage(){
 		//clear modal
 		$("#schedule_time_modal").find(':checkbox').each(
 			function() { 
-				$(this).removeAttr('checked');
+				$(this).prop("checked", "checked");
 			}
 		);
 		
@@ -42,11 +48,24 @@ function setupActionsAndClosingPage(){
     $("#closeCaseActionsButton").click(closeCaseAtClosing);
     $("#saveAndFollowUpButton").click(saveAndFollowupAtClosing);
 	
+    // setting up organization tables so that the rows can be selected
+    
+    $("#kontaktpersonerTable").on("click","tr",organizationTableClick);
+    $("#ambulerendeTable").on("click","tr",organizationTableClick);
+    $("#legevaktTable").on("click","tr",organizationTableClick);
+    $("#tpTable").on("click","tr",organizationTableClick);
+    $("#hjemmesykepleienTable").on("click","tr",organizationTableClick);
+    
+    
+    
+    
+    
     
     resetActionsAndClosingPage();
 	// make sure that no phone is expanded
 
 }
+
 
 function resetActionsAndClosingPage(){
 	
