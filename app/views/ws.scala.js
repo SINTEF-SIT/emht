@@ -1,3 +1,5 @@
+@import play.i18n._
+
 $(function(){
 
     // get websocket class, firefox has a different way to get it
@@ -19,8 +21,8 @@ $(function(){
                 var formatedTime = $.format.date(time, "dd/MM HH:mm")
                 var listItem = '<a href="#" idnum="'+ alarm.id +'" id="Alarm' + alarm.id  + '"  onclick="selectOpenAlarm(' + alarm.id + ',' + alarm.callee.id + ');return false;" class="list-group-item alarmItem">' +
                       '<img src="/assets/images/' + alarm.type + '.png" class="img-thumbnail pull-left" width="48" height="48"/>' +
-                      '<h4 class="list-group-item-heading">' + alarm.id + ', arrived at '+ formatedTime  +' </h4>' + 
-                      '<p class="list-group-item-text">Callee '+ alarm.callee.phoneNumber + '</p>';
+                      '<h4 class="list-group-item-heading">' + alarm.id + ', @Messages.get("listitem.arrived") '+ formatedTime  +' </h4>' + 
+                      '<p class="list-group-item-text">@Messages.get("listitem.callee") '+ alarm.callee.phoneNumber + '</p>';
                   $("#unassignedAlarmList").append(listItem);
                 resetAlarmCount();
                 break;

@@ -17,9 +17,10 @@ listitem.callee=Innringer
 listitem.arrived=ankom
 
 #handling pop-up
+handling.popup.title=Do you want to handle this request?
 handling.popup.date=dato
-handling.popup.date=time
-handling.popup.date=typen
+handling.popup.hour=time
+handling.popup.type=typen
 
 #callee pane
 callee.callee=Innringer
@@ -46,5 +47,35 @@ patientpane.log.type=typen
 patientmodal.title=Legge Pasient
 patientmodal.savebutton=Lagre Pasientinformasjon
 
+#actions pane
+actions.list.title=Distress Number
+actions.list.police=Police
+actions.list.amk=AMK
+actions.list.fireman=Fireman
+actions.list.doctor=Hjemmesykepleien
+actions.list.tp=TP
+actions.list.alarmcentral=Legevakt
+actions.list.ambu=Ambulerende
+actions.list.contact=Kontaktpersoner
+
+actions.button.appointment.leg=Schedule appointment with legvakta
+actions.button.appointment.doctor=Schedule appointment with personal doctor
+
+actions.popup.call.title=Calling
+actions.popup.send.title=Select data to be sent
+actions.popup.send.callee=Callee information
+actions.popup.send.patient=Patient information
+actions.popup.send.nmi=NMI
+actions.popup.send.sensor=Sensor data
+actions.popup.send.obs=OBS!
+actions.popup.send.notes=Notes
+actions.popup.appointment.title=Select appointment time and data to be sent
+actions.popup.appointment.date=Date
+
 #common
 button.cancel=Avbryte
+button.yes=Ja
+button.no=Nei
+button.ring=Ring
+button.send=Send
+button.done=Done

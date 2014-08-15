@@ -1,3 +1,5 @@
+@import play.i18n._
+
 function initApplication(){
 	   $("#assesment").hide();
 	   $("#patientBox").hide();
@@ -204,7 +206,7 @@ function selectFollowUpAlarm(alarmIndex) {
 		          function(data) {
 		              // TODO: check if the json is full before creating the table
 		              $("#calleeLogTableDiv").empty();
-		              var htmlTable = '<table class="table" id="pastCalleeAlarmsTable"><thead><tr><td>date</td><td>hour</td><td>type</td></tr></thead><tbody>';
+		              var htmlTable = '<table class="table" id="pastCalleeAlarmsTable"><thead><tr><td>@Messages.get("handling.popup.date")</td><td>@Messages.get("handling.popup.hour")</td><td>@Messages.get("handling.popup.type")</td></tr></thead><tbody>';
 		              // TODO: validate the json
 		              // data is a JSON list, so we can iterate over it
 		              var array = data.alarmArray;

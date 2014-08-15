@@ -54,8 +54,8 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 				    @if(null != alarm.expired && true == alarm.expired){
 				        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 				    }
-				    <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm") </h4>
-				    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
+				    <h4 class="list-group-item-heading">@{alarm.id}, @Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
+				    <p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.phoneNumber} ;</p>
 				  </a>
 				 }
 			 }  
@@ -72,8 +72,8 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	                                @if(null != alarm.expired && true == alarm.expired){
 	                    <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 	                }
-	                <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm")</h4>
-	                <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
+                    <h4 class="list-group-item-heading">@{alarm.id}, @Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
+                    <p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.phoneNumber} ;</p>
 	              </a>
 	             }
 	         }  
@@ -90,8 +90,8 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                                     @if(null != alarm.expired && true == alarm.expired){
                         <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
                     }
-                    <h4 class="list-group-item-heading">@{alarm.id}, arrived at @alarm.openingTime.format("dd/MM HH:mm")</h4>
-                    <p class="list-group-item-text">Callee @{alarm.callee.phoneNumber} ;</p>
+                    <h4 class="list-group-item-heading">@{alarm.id}, @Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
+                    <p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.phoneNumber} ;</p>
                   </a>
                  }
              }  
@@ -181,9 +181,9 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                   <div class="modal fade" id="callee_info_modal">
                   <div class="modal-dialog"><div class="modal-content">
 					  <div class="modal-body" >
-					    Do you want to handle this request?&nbsp;&nbsp;
-					    <a href="#" class="btn" data-dismiss="modal">No</a>
-					    <a href="#" id="confirmCalleeModalButton" class="btn btn-primary" data-dismiss="modal">Yes</a>
+					    @Messages.get("handling.popup.title")&nbsp;&nbsp;
+					    <a href="#" class="btn" data-dismiss="modal">@Messages.get("button.no")</a>
+					    <a href="#" id="confirmCalleeModalButton" class="btn btn-primary" data-dismiss="modal">@Messages.get("button.yes")</a>
 					      <p/>
 					      <div id="calleeLogTableDiv"/>
 					  </div>

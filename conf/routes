@@ -47,6 +47,8 @@ GET     /wsInterface                    controllers.Application.wsInterface()
 GET     /assets.javascript.ws.js        controllers.Application.wsJs()
 GET     /assets.javascript.alarmSelectTemplate.js        controllers.Application.getalarmSelectTemplateJs()
 GET     /assets.javascript.patientTemplateScripts.js      controllers.Application.getpatientTemplateScriptsJs()
+GET     /assets.javascript.actionsAndClosingScripts.js      controllers.Application.getactionsAndClosingScriptsJs()
+GET     /assets.javascript.assesmentPageScripts.js      controllers.Application.getassesmentPageScriptsJs()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

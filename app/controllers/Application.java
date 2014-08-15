@@ -314,6 +314,12 @@ public class Application extends Controller {
     public static Result getpatientTemplateScriptsJs(){
         return ok(views.js.patientTemplateScripts.render());
     }
+    public static Result getactionsAndClosingScriptsJs(){
+        return ok(views.js.actionsAndClosingScripts.render());
+    }
+    public static Result getassesmentPageScriptsJs(){
+        return ok(views.js.assesmentPageScripts.render());
+    }
     
     // Websocket interface
     public static WebSocket<JsonNode> wsInterface(){
