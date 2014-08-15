@@ -40,9 +40,13 @@ POST    /attendants/:id/delete       controllers.AttendantControler.deleteAttend
 GET     /component/:readingType/                  controllers.ComponentReadingController.getReadingsPerType(readingType: String)
 
 # Websockets
-GET     /assets.javascript.ws.js        controllers.Application.wsJs()
 GET     /wsInterface                    controllers.Application.wsInterface()
 
+#Building scala javascript files into javascript files
+#To be effectively called on the main html
+GET     /assets.javascript.ws.js        controllers.Application.wsJs()
+GET     /assets.javascript.alarmSelectTemplate.js        controllers.Application.getalarmSelectTemplateJs()
+GET     /assets.javascript.patientTemplateScripts.js      controllers.Application.getpatientTemplateScriptsJs()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

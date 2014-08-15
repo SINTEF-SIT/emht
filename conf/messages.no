@@ -1,0 +1,50 @@
+# Norwegian language file
+#
+
+#arrow
+arrow.reception=Hendelser
+arrow.registration=Registrering
+arrow.assessment=Vurdering
+arrow.actions=Handlinger og Lukking
+
+#list
+unassignedlist.title=Ufordelte Hendelser
+assignedlist.title=Hendelser tildelt meg
+followuplist.title=Hendelser til Oppfølging
+
+#list items
+listitem.callee=Innringer
+listitem.arrived=ankom
+
+#handling pop-up
+handling.popup.date=dato
+handling.popup.date=time
+handling.popup.date=typen
+
+#callee pane
+callee.callee=Innringer
+
+#patient pane
+patientpane.title=Pasientinformasjon
+patientpane.name=Navn
+patientpane.address=Hjemmeadresse 
+patientpane.personumber=Fødselsnummer 
+patientpane.phonenumber=Telefonnummer 
+patientpane.age=Alder
+patientpane.incident.location=Hendelse plassering
+patientpane.incident.same=Samme adresse som hjemmeadresse
+patientpane.incident.other=Andre addresse
+patientpane.pill.patient=Pasient
+patientpane.pill.other.patient=Andre Pasient...
+patientpane.pill.unknown=Ukjent Pasient
+patientpane.log.title=Pasient Logs
+patientpane.log.date=dato
+patientpane.log.hour=time
+patientpane.log.type=typen
+
+#add patient modal
+patientmodal.title=Legge Pasient
+patientmodal.savebutton=Lagre Pasientinformasjon
+
+#common
+button.cancel=Avbryte

@@ -20,24 +20,28 @@
     name:            Clara Olsen
     address:         Munkegata 20
     personalNumber: 123456789
+    phoneNumber:    75678678
     age:            67    
 
  - &patient2 !!models.Patient
     name:            Tor Olsen
     address:         Furuveien 22 Klaebu
     personalNumber:  45687832
+    phoneNumber:     78325678
     age:             67    
 
  - &patient3 !!models.Patient
     name:            Gudrun Olsen
     address:         Furuveien 22 Klaebu
     personalNumber:  89248032
+    phoneNumber:     12345678
     age:             75    
 
  - &patient4 !!models.Patient
     name:            Anna By
     address:         Strindveien 14
     personalNumber:  119458764
+    phoneNumber:      41233133
     age:             76    
 
 

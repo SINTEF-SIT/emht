@@ -1,0 +1,52 @@
+# English language file
+#
+
+#arrow
+arrow.reception=Incident Reception
+arrow.registration=Registration
+arrow.assessment=Assessment
+arrow.actions=Actions and Closing
+
+#list
+unassignedlist.title=Unassigned Incidents
+assignedlist.title=Incidents assigned to me
+followuplist.title=Incidents to Follow-up
+
+#list items
+listitem.callee=Callee
+listitem.arrived=arrived at
+
+#handling pop-up
+handling.popup.date=date
+handling.popup.date=hour
+handling.popup.date=type
+
+#callee pane
+callee.callee=Callee
+
+#patient pane
+patientpane.title=Patient Information
+patientpane.name=Name
+patientpane.address=Home Address
+patientpane.personumber=Personal Number
+patientpane.phonenumber=Phone Number
+patientpane.age=Age
+patientpane.incident.location=Incident location
+patientpane.incident.same=Same address as residence
+patientpane.incident.other=Other Address
+patientpane.pill.patient=Patient
+patientpane.pill.other.patient=Other Patient...
+patientpane.pill.unknown=Unknown Patient
+patientpane.log.title=Patient Logs
+patientpane.log.date=date
+patientpane.log.hour=hour
+patientpane.log.type=type
+
+#add patient modal
+patientmodal.title=Add Patient
+patientmodal.savebutton=Save Patient Data
+
+#common
+button.cancel=cancel
+
+#assessment pane

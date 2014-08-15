@@ -17,7 +17,7 @@ public class Patient extends Model {
 	public String name;
 	public String address;
 	public Integer age;
-	
+	public String phoneNumber; 
 
 	public String personalNumber; 
 	

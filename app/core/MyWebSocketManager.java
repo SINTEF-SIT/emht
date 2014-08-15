@@ -63,9 +63,7 @@ public class MyWebSocketManager {
 		alarm.put("callee", callee);
 		callee.put("id", al.callee.id);
 		callee.put("phoneNumber", al.callee.phoneNumber);
-		//ObjectNode  patient = Json.newObject();   -> Commented as the patient info is not being retrieved on the input yet
-		//alarm.put("patient", patient);
-		//patient.put("personalNumber", al.patient.personalNumber);
+
 		
 		MyWebSocketManager.notifyAll(jsonNotification);
     	

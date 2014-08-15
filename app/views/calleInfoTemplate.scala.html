@@ -1,9 +1,10 @@
 @* calleInfoTemplate Template File *@
+@import play.i18n._
 
     <div id="calleeBox" class="row">
             <div class="well well-sm">
                 <h4 >
-                    Callee</h4>
+                    @Messages.get("listitem.callee")</h4>
                 <p>
                     <i class="glyphicon glyphicon-user"></i>  <span id="calleeName"> </span>
                     <br />

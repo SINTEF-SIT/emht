@@ -6,6 +6,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
 @import helper._
 @import play.api.libs.json._ 
+@import play.i18n._
 
 @main("Alarm list") {
 
@@ -33,17 +34,17 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
  <div class="container-fluid">
     <div class="row" id="arrowHeaders">
-            <div class="col-md-3"><h2 id="receptionArrowHeader" class="selected_arrow_box">&nbsp Incident Reception</h2></div>
-            <div class="col-md-3"><h2 id="registrationArrowHeader" class="nonselected_arrow_box">&nbsp Registration</h2></div>
-            <div class="col-md-3"><h2 id="assesmentArrowHeader" class="nonselected_arrow_box">&nbsp Assessment</h2></div>
-            <div class="col-md-3"><h2 id="closingArrowHeader" class="nonselected_arrow_box">&nbsp Actions and Closing</h2></div>
+            <div class="col-md-3"><h2 id="receptionArrowHeader" class="selected_arrow_box">&nbsp @Messages.get("arrow.reception")</h2></div>
+            <div class="col-md-3"><h2 id="registrationArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.registration")</h2></div>
+            <div class="col-md-3"><h2 id="assesmentArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.assessment")</h2></div>
+            <div class="col-md-3"><h2 id="closingArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.actions")</h2></div>
     </div>
     <div class="row">
      <section id="allListsSection" class="col-md-3 alarmListSection">
 
 	    <!-- <h2>@alarms.size() alarm(s)</h2>-->
 	    <div id="unassignedAlarmDiv"  >
-	    <h3><span id="nbOfUnassignedAlarm"></span> Unassigned Incidents</h3>
+	    <h3><span id="nbOfUnassignedAlarm"></span> @Messages.get("unassignedlist.title")</h3>
 			<div class="list-group" id="unassignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
 			@for((alarm,index) <- alarms.zipWithIndex){
 	            @if(null == alarm.attendant){
@@ -61,7 +62,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			</div>
 	   </div>
 		<div id="assignedAlarmDiv">
-			<h3><span id="nbOfAssignedAlarm"></span> Incidents assigned to me</h3>
+			<h3><span id="nbOfAssignedAlarm"></span> @Messages.get("assignedlist.title")</h3>
 			<div class="list-group" id="assignedAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;"> <!--index would reference to the iteration index, but we are not using it--> 
 	        @for((alarm,index) <- alarms.zipWithIndex){
 	            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null == alarm.dispatchingTime)){
@@ -79,7 +80,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	        </div>
 	    </div>
 	     <div id="followupAlarmDiv">
-            <h3><span id="nbOfFollowUpAlarm"></span> Incidents to Follow-up</h3>
+            <h3><span id="nbOfFollowUpAlarm"></span> @Messages.get("followuplist.title")</h3>
             <div class="list-group" id="followupAlarmList" style="overflow-y: scroll; height: auto; max-height: 300px;">  
             @for((alarm,index) <- alarms.zipWithIndex){
                 @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null != alarm.dispatchingTime)){

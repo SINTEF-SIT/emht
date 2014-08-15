@@ -100,6 +100,7 @@ public class Application extends Controller {
 			patient.put("id", a.patient.id);
 			patient.put("name", a.patient.name);
 			patient.put("persoNumber", a.patient.personalNumber);
+			patient.put("phoneNumber", a.patient.phoneNumber);
 			patient.put("address", a.patient.address);
 			patient.put("age", a.patient.age);
 			jsonAlarm.put("patient", patient);
@@ -144,28 +145,7 @@ public class Application extends Controller {
     
     }
     
-    // TO be discontinued once funtion below is working
-/*    public static Result  getPatientsByAddress(String address){
-    	List<Patient> patientList = Patient.patientFromAddress(address);
-    	
-		ObjectNode result = Json.newObject();
 
-		ArrayNode patientArray = new ArrayNode(JsonNodeFactory.instance);
-		if(null != patientList){
-	    	for (Patient temp : patientList) {
-	    		ObjectNode  patient = Json.newObject();
-				patient.put("id", temp.id);
-				patient.put("name", temp.name);
-				patient.put("persoNumber", temp.personalNumber);
-				patient.put("address", temp.address);
-				patient.put("age", temp.age);
-				patientArray.add(patient);
-	    	}
-		}
-    	result.put("patientArray",patientArray);
-    	return ok(result);
-
-    }*/
     
     public static Result  getProspectPatients(Long id){
     	List<Patient> patientList = Patient.prospectPatientsFromAlarm(id);
@@ -179,6 +159,7 @@ public class Application extends Controller {
 				patient.put("id", temp.id);
 				patient.put("name", temp.name);
 				patient.put("persoNumber", temp.personalNumber);
+				patient.put("phoneNumber", temp.phoneNumber);
 				patient.put("address", temp.address);
 				patient.put("age", temp.age);
 				patientArray.add(patient);
@@ -208,6 +189,7 @@ public class Application extends Controller {
   	      Patient p = new Patient();
     	  p.name = json.findPath("name").textValue();
     	  p.personalNumber = json.findPath("persoNumber").textValue();
+    	  p.phoneNumber = json.findPath("phoneNumber").textValue();
 		  p.address = json.findPath("address").textValue();
 		  p.age = json.findPath("age").asInt();
 
@@ -216,6 +198,7 @@ public class Application extends Controller {
 		ObjectNode  patient = Json.newObject();
 		patient.put("id", retObj.id);
 		patient.put("name", retObj.name);
+		patient.put("phoneNumber", retObj.phoneNumber);
 		patient.put("persoNumber", retObj.personalNumber);
 		patient.put("address", retObj.address);
 		patient.put("age", retObj.age);
@@ -321,6 +304,15 @@ public class Application extends Controller {
     // get the ws.js script
     public static Result wsJs() {
         return ok(views.js.ws.render());
+    }
+    
+    // get the other scripts
+    public static Result getalarmSelectTemplateJs() {
+        return ok(views.js.alarmSelectTemplate.render());
+    }
+    
+    public static Result getpatientTemplateScriptsJs(){
+        return ok(views.js.patientTemplateScripts.render());
     }
     
     // Websocket interface

@@ -56,6 +56,7 @@ create table patient (
   name                      varchar(255),
   address                   varchar(255),
   age                       integer,
+  phone_number              varchar(255),
   personal_number           varchar(255),
   constraint pk_patient primary key (id))
 ;
