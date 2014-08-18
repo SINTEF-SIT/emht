@@ -67,7 +67,7 @@ function assignAlarm(alarmIndex){
 	              openAlarmListItem.removeAttr('onclick');
 	              openAlarmListItem.attr("onclick","selectMyAlarm(" + alarmIndex + ");return false;");
 	              openAlarmListItem.addClass("active" );
-	              // TODO: check if there is a clock element before removing
+	              // remove clock icon
 	              var clock = openAlarmListItem.children('.clock-icon');
 	              if(clock != null)
 	            	  clock.remove();
@@ -165,10 +165,16 @@ function selectFollowUpAlarm(alarmIndex) {
     var currentSelected = $('#Alarm' + alarmIndex);
     currentSelected.toggleClass("active");
 
-	
+    //remove recurring icon
+    var recurring = currentSelected.children('.recurring-icon');
+    if(recurring != null)
+    	recurring.remove();
+    
+    
 	populateCalleFromAlarm(alarmIndex);
 	// TODO: there is currently a bug in the sense that in case an alarm was set to followup with an
 	// unknown patient, it will be loaded here with a person as a patient
+	// TODO: and in case there was no patient assigned, it will select the "Add patient" option that will ask for adding a patient
    $.getJSON("/prospectPatient/" + alarmIndex,
 	   function (data){
 	   createPatientDiv(data);

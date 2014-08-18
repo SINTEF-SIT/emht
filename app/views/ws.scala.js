@@ -32,6 +32,16 @@ $(function(){
                 $(elementId).remove();
                 resetAlarmCount();
                 break;
+            case "notifyFollowup":
+                var id = data.alarmId;
+                var elementId ="#Alarm" + id;
+            	// check if alarm does not have a recurring icon
+            	if($(elementId).find('.recurring-icon').length == 0){
+	                var recurringImage = '<img src="/assets/images/recurring.png" class="img-thumbnail pull-left recurring-icon" width="48" height="48"/>';
+	                var alarm = $(elementId).children(":first").after(recurringImage); // find list item and add the recurringImage after its first symbol
+	                $(elementId).parent().prepend($(elementId));// move it to top of the list
+            	}
+                break;
             case "addTimeNotification":
                 
             	var clockImage = '<img src="/assets/images/clock.png" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>';

@@ -293,7 +293,23 @@ public class Application extends Controller {
     
     
 
+    // to be called when a followup alarm is triggered back again
+    // in other words, when the callee responsible for it call it back
+    public static Result  notifyFollowup(Long id){
+    	
+      	Alarm a = Alarm.get(id);
+      	// test if alarm exists and is on following up list
+      	if(null == a || a.dispatchingTime == null || a.closingTime != null){
+      		return badRequest();
+      	}
+      	else{
+      		MyWebSocketManager.notifyFollowUpAlarm(id);
+      		return ok();
+      	}
+    	
+    	
 
+    }
     
     
     public static Result javascriptRoutes() {
@@ -310,6 +326,7 @@ public class Application extends Controller {
             	controllers.routes.javascript.Application.assignAlarmFromJson(),
                 controllers.routes.javascript.Application.getCalleeFromAlarm(),
                 controllers.routes.javascript.Application.getProspectPatients(),
+                controllers.routes.javascript.Application.notifyFollowup(),
                 controllers.routes.javascript.Application.getAlarm()
             )
         );

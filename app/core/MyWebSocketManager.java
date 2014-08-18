@@ -88,4 +88,15 @@ public class MyWebSocketManager {
     	
     	MyWebSocketManager.notifyAll(jsonNotification);
     }
+    
+    public static void notifyFollowUpAlarm(long alarmId){
+    	ObjectNode jsonNotification = Json.newObject();
+    	ObjectNode  action = Json.newObject();
+    	jsonNotification.put("action", action);
+    	action.put("action", "notifyFollowup");
+    	jsonNotification.put("alarmId", alarmId);
+    	
+    	MyWebSocketManager.notifyAll(jsonNotification);
+    }
+    
 }
