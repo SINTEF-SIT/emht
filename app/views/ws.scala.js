@@ -26,6 +26,12 @@ $(function(){
                   $("#unassignedAlarmList").append(listItem);
                 resetAlarmCount();
                 break;
+            case "removeAlarm":
+                var id = data.alarmId;
+                var elementId ="#Alarm" + id;
+                $(elementId).remove();
+                resetAlarmCount();
+                break;
             case "addTimeNotification":
                 
             	var clockImage = '<img src="/assets/images/clock.png" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>';

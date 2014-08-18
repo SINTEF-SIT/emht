@@ -64,12 +64,13 @@ public class Alarm extends Model { // the model extension serves for having acce
 
 	    // assumes that the calle and patient object from the incoming alarm has already
 	    // been saved on the db
-		public static void create(Alarm alarm) {
+		public static Alarm create(Alarm alarm) {
 			alarm.openingTime = new Date();
 			alarm.save();
 			Global.alarmList.list.put(alarm.id, alarm);
 			Global.localMonitor.registerNewAlert(alarm.id);
 			MyWebSocketManager.notifyNewAlarm(alarm);
+			return alarm;
 		}
 
 		public static void delete(Long id) {
@@ -162,7 +163,10 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	
 	    	Alarm a = Alarm.updateFromDummy(dummy);
 
-	    	// TODO: add websocket call in the case of a real multi-user
+	    	// ill just call the websocket if the attendant id is null,
+	    	//though in a real multi user environment Id need to do it for everyone
+	    	// and handle the GUI just based on the websocket
+	    	MyWebSocketManager.notifyCloseAlarm(dummy);
 	    	a.save();
 	    }
 }

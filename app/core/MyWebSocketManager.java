@@ -79,4 +79,13 @@ public class MyWebSocketManager {
     	MyWebSocketManager.notifyAll(jsonNotification);
     }
     
+    public static void notifyCloseAlarm(Alarm al){
+    	ObjectNode jsonNotification = Json.newObject();
+    	ObjectNode  action = Json.newObject();
+    	jsonNotification.put("action", action);
+    	action.put("action", "removeAlarm");
+    	jsonNotification.put("alarmId", al.id);
+    	
+    	MyWebSocketManager.notifyAll(jsonNotification);
+    }
 }

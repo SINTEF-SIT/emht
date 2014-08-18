@@ -16,6 +16,12 @@ followuplist.title=Hendelser til Oppfølging
 listitem.callee=Innringer
 listitem.arrived=ankom
 
+#statistics
+statistics.avgresp=Average Response Time
+statistics.maxresptime=Max Response Time
+statistics.numberRespAbov30sec=Nb. of incidents > 30 sek 
+statistics.numberResponseToday=Nb. of incidents
+
 #handling pop-up
 handling.popup.title=Do you want to handle this request?
 handling.popup.date=dato

@@ -44,20 +44,34 @@ public class Application extends Controller {
     public static Result  newAlarm(){
     	  Form<Alarm> filledForm = alarmForm.bindFromRequest(); // create a new form with the request data
     	  if(filledForm.hasErrors()) {
-    	    return redirect(routes.Application.openAlarms());
+    		  return badRequest();
     	  } else {
     		  Alarm formAlarm = filledForm.get();
+    		  
+	    	ObjectNode jsonAlarm = Json.newObject();
+    		  
     		if(null != formAlarm.callee){
     			formAlarm.callee = Callee.getOrCreate(formAlarm.callee);
     			//formAlarm.patient = Patient.getOrCreate(formAlarm.patient);
-    			Alarm.create(formAlarm);//
+    			Alarm a = Alarm.create(formAlarm);//
+    	    	jsonAlarm.put("type", a.type);
+    	    	jsonAlarm.put("alarmId", a.id);    	    	
+    	    	if(null != a.callee){
+    				ObjectNode calle = Json.newObject();
+    				calle.put("id", a.callee.id);
+    				calle.put("name", a.callee.name);
+    				calle.put("phoneNumber", a.callee.phoneNumber);
+    				calle.put("address", a.callee.address);
+    				jsonAlarm.put("calle", calle);
+    	    	}
+
+    	    	return ok(jsonAlarm);	
     		}	
     		else{
     			System.out.println("calle was not found in the form");
-    			// TODO: show error because callee was not set
+    			return badRequest();
     		}
-    	    
-    	    return redirect(routes.Application.openAlarms());  
+
     	  }
     }
     
