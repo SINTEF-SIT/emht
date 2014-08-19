@@ -97,12 +97,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
              }  
             </div>
         </div>
-        <div id="statisticsDiv">
-        <h4>@Messages.get("statistics.avgresp"): 20,1 sec</h4>
-        <h4>@Messages.get("statistics.maxresptime"): 59 sec</h4>
-        <h4>@Messages.get("statistics.numberRespAbov30sec"): 15</h4>
-        <h4>@Messages.get("statistics.numberResponseToday"): 250 </h4>
-        </div>
+
 		
 	</section>
     
@@ -179,6 +174,19 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
     
   </div>
+   <div class="row" id="notesRow">
+           <div class="col-md-3" id="statisticsDiv">
+		        <h4>@Messages.get("statistics.avgresp"): 20,1 sec</h4>
+		        <h4>@Messages.get("statistics.maxresptime"): 59 sec</h4>
+		        <h4>@Messages.get("statistics.numberRespAbov30sec"): 15</h4>
+		        <h4>@Messages.get("statistics.numberResponseToday"): 250 </h4>
+            </div>
+           <div class="col-md-9" id="globalNotesDiv">
+                  <u>Notes:</u>
+                    <textarea id="globalNotesBox" class="form-control" rows="5"></textarea>
+              </div>
+           </div>
+   </div>
 
 
                <!-- This is Bootstrap's modal popup plugin. Used to populate the response

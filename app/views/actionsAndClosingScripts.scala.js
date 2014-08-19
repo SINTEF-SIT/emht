@@ -98,6 +98,12 @@ function closeCaseAtClosing(){
 
 }
 
+// called when one of the SEND buttons of the modals
+// is called
+function actionsDataSent(){
+    $('#send_confirmation_modal').modal();
+}
+
 function saveAndFollowupAtClosing(){
 	
 	// update to get meaningfull data

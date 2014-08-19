@@ -76,6 +76,7 @@ actions.popup.send.nmi=NMI
 actions.popup.send.sensor=Sensor data
 actions.popup.send.obs=OBS!
 actions.popup.send.notes=Notes
+actions.popup.send.confirmation=Data sent
 actions.popup.appointment.title=Select appointment time and data to be sent
 actions.popup.appointment.date=Date
 

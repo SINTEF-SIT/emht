@@ -117,7 +117,16 @@ function setupPatientPage() {
  
 	function populatePatient(patientId,patientName,personNumber,address,phoneNumber,age){
 		$('#patientAddress').text(address);
-		$('#patientPersoNum').text(personNumber);
+		
+		// for the perso Number, if it is more than 6 digits, we add a space after the first 6 digits
+		var formattedPersoNumber;
+		if(personNumber.length > 6){
+			formattedPersoNumber = personNumber.substring(0, 6) + " " + personNumber.substring(6);
+		}else{
+			formattedPersoNumber = personNumber;
+		}
+		
+		$('#patientPersoNum').text(formattedPersoNumber);
 		$('#patientPhoneNum').text(phoneNumber);
 		$('#patientAddress').text(address);
 		$('#patientAge').text(age);
