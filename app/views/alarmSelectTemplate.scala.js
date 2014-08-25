@@ -1,14 +1,14 @@
 @import play.i18n._
 
 function initApplication(){
-	   $("#assesment").hide();
-	   $("#patientBox").hide();
-	   $("#calleeBox").hide();
-	    $("#extraActionButtonsDiv").hide();
-	    $("#closingNotesAndButtons").hide();
+	   $("#assesment").show();
+	   $("#patientBox").show();
+	   $("#calleeBox").show();
+	    $("#extraActionButtonsDiv").show();
+	    $("#closingNotesAndButtons").show();
 
-       $("#closeCaseFromPatientRegButton").click(closeCaseAtRegistration);
-       $("#goToAssesmentButton").click(fromRegistrationToAssesment);
+//       $("#closeCaseFromPatientRegButton").click(closeCaseAtRegistration);
+//       $("#goToAssesmentButton").click(fromRegistrationToAssesment);
 
        
        // those setup functions should be called just once as they may be binding buttons
@@ -41,7 +41,8 @@ function resetAlarmCount(){
 function assignAlarm(alarmIndex){
 	   
 	   // start by clearing the view
-	   highlightBackListTab ();
+	   //highlightBackListTab ();
+		clearUpData();
        
 	   var attendant = "Karin";
 	   var assignAlarmReq = {
@@ -77,7 +78,7 @@ function assignAlarm(alarmIndex){
 	    });// end of ajax call
 		
 
-		highlightArrowHeader("registrationArrowHeader");
+		//highlightArrowHeader("registrationArrowHeader");
 		populateAlarmDetails(alarmIndex);
     return;
 }
@@ -86,18 +87,18 @@ function populateAlarmDetails(alarmIndex){
     
 	populateCalleFromAlarm(alarmIndex);
 	retrivePatientsByAddress(alarmIndex);
-	$('#notesDiv').show();
+	//$('#notesDiv').show();
 	
  return;
 }
 
 // takes as input the id of the header to be highlighted and both highlight it and un-highlight the others
-function highlightArrowHeader(headerId){
+/*function highlightArrowHeader(headerId){
 	var currentSelected = $('.selected_arrow_box');
 
 	currentSelected.switchClass("selected_arrow_box", "nonselected_arrow_box" );
 	$('#'+ headerId).switchClass("nonselected_arrow_box", "selected_arrow_box" );
-}
+}*/
 
 
 function removeHighlightedAlarmFromList(){
@@ -135,28 +136,25 @@ function moveAlarmToFollowUpList(){
 }
 
 
-function highlightBackListTab (){
-	highlightArrowHeader("receptionArrowHeader");
+/* function highlightBackListTab (){
+	//highlightArrowHeader("receptionArrowHeader");
 
-   $("#patientBox").hide();
+  $("#patientBox").hide();
    $("#calleeBox").hide();
     $('#notesDiv').hide();
     $('#assesment').hide();
-    $('#extraActionButtonsDiv').hide();
-    $('#patientRegistrationNotesBox').val('');
-    $('#patientRegistrationNotesBox').val('');
-    $('#assesmentNotesBox').val('');
-    $("#closingNotesAndButtons").hide();
+    $('#extraActionButtonsDiv').hide(); 
+   $("#closingNotesAndButtons").hide();
 
     resetAssesmentPage();
     resetActionsAndClosingPage();
     
-}
+}*/
 
 function selectFollowUpAlarm(alarmIndex) {
 	
 	   // start by clearing the view
-	   highlightBackListTab ();
+	   //highlightBackListTab ();
 	   
        // unhighlight any highlighted alarm
        var currentSelected = $('.list-group-item.active.alarmItem');
@@ -181,25 +179,29 @@ function selectFollowUpAlarm(alarmIndex) {
 		var patientListItem = $("#patientDropDownList li:first a");
 		patientListItem.click();
 		loadPatientSensor();
+		
+		// populate notebox
+	   $.getJSON("/alarm/" + alarmIndex,
+	    	   function (data){
+			       // TODO: check if the json is full before populating the DOM		    	 
+			       var notes = data.notes;
+			       var occuranceAddress = data.occuranceAddress;
+			       $("#globalNotesBox").val(notes);
+			       $("#incidentAddress").val(occuranceAddress);
+			       
+
+	    	   });
+	   // end of populate notebox
 	   });
 
-	// populating notebox (TODO: in the future the log an others) from alarm data
-				       
-   $.getJSON("/alarm/" + alarmIndex,
-    	   function (data){
-		       // TODO: check if the json is full before populating the DOM		    	 
-		       var notes = data.notes;
-
-		       $("#closingNotesBox").text(notes);
-
-    	   });
 
 
-	   $("#assesment").show();
-	   $("#assesmentNotesDiv").hide();
-	   $("#extraActionButtonsDiv").show();
-	   $("#closingNotesAndButtons").show();
-	   highlightArrowHeader("closingArrowHeader");
+
+	   //$("#assesment").show();
+	   //$("#assesmentNotesDiv").hide();
+	   //$("#extraActionButtonsDiv").show();
+	   //$("#closingNotesAndButtons").show();
+	   //highlightArrowHeader("closingArrowHeader");
  };
  
  function selectOpenAlarm(alarmIndex,calleeIndex) {
@@ -248,4 +250,14 @@ function selectFollowUpAlarm(alarmIndex) {
   	assignAlarm(alarmIndex); // TODO: change this to a simple select of alarm instead of assign
    };
 
-
+   
+   /* clear patient, calle and notes data */
+   function  clearUpData(){
+	   clearUpCaleeData();
+       clearUpPatientData();
+       resetAssesmentPage();
+       resetActionsAndClosingPage();
+       $("#globalNotesBox").val("");
+       return;
+   }
+   

@@ -36,14 +36,14 @@ function setupPatientPage() {
                  $("#calleeName").text(calleeName);
                  $("#calleeAddress").text(calleeAddress);
                  $("#calleePhone").text(calleePhone);
-                 $("#calleeBox").show();
+                 //$("#calleeBox").show();
                  
 
           });
 
      return;
  }
- 
+
 
   /* retrieve possible patients based on the address */
  function retrivePatientsByAddress(alarmIndex) {
@@ -109,7 +109,7 @@ function setupPatientPage() {
       	    }
       	});
         
-        $("#patientBox").show();
+        //$("#patientBox").show();
 
 
  		
@@ -209,27 +209,10 @@ function setupPatientPage() {
 	}
 	
 	
-	// simple function that just gets the data from the assessment page and package it
-	// into a json object
-	function getUpdatedAlarmFromAssesmentPage(){
-	    var patientId = $('#dynamicPatientInfo').find('#patientId').val();
-	    var notes = $('#patientRegistrationNotesBox').val();
-	    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
 
-	    //TODO: add the incident address as well
-	    
-	    var updatedAlarm = {
-            'alarmId' : alarmId,
-            'notes' : notes,
-             'patient' : {
-            	 'patientId' : patientId
-             }
-	    };
-		return updatedAlarm;
-	}
 	
 	
-	function closeCaseAtRegistration(){
+/*	function closeCaseAtRegistration(){
 
 		var updatedAlarm = getUpdatedAlarmFromAssesmentPage();
 
@@ -261,7 +244,15 @@ function setupPatientPage() {
 	            }// end of success
 	    });// end of ajax call
 	}
+*/
 
-
+	function   clearUpCaleeData(){
+        $("#calleeName").text("");
+        $("#calleeAddress").text("");
+        $("#calleePhone").text("");
+	}
+	function   clearUpPatientData(){
+		$("#dynamicPatientInfo").empty();
+	}
 	
 

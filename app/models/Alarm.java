@@ -121,6 +121,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 	    	if(null != dummy.notes) // Im assuming Ill alwasy update the notes
 	    		a.notes = dummy.notes; 
 	    	
+	    	if(null != dummy.occuranceAddress) // Im assuming Ill alwasy update the address
+	    		a.occuranceAddress = dummy.occuranceAddress; 
+	    	
 	    	// for the time fields, Ill not update them if they have already been set
 	    	if(null != dummy.dispatchingTime && null == a.dispatchingTime)
 	    		a.dispatchingTime = dummy.dispatchingTime; 

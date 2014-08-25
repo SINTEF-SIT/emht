@@ -34,7 +34,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
  <div class="container-fluid">
     <div class="row" id="arrowHeaders">
-            <div class="col-md-3"><h2 id="receptionArrowHeader" class="selected_arrow_box">&nbsp @Messages.get("arrow.reception")</h2></div>
+            <div class="col-md-3"><h2 id="receptionArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.reception")</h2></div>
             <div class="col-md-3"><h2 id="registrationArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.registration")</h2></div>
             <div class="col-md-3"><h2 id="assesmentArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.assessment")</h2></div>
             <div class="col-md-3"><h2 id="closingArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.actions")</h2></div>
@@ -157,13 +157,6 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                       </div>
                     </div>
                </div>
-              <div id="assementNotesDiv">
-                   <br>
-                  <u>Notes:</u>
-				    <textarea id="assesmentNotesBox" class="form-control" rows="5"></textarea>
-				    <button id="closeCaseFromAssessButton" type="button" class="btn btn-default">Save and Close Case</button>
-				    <button id="goToClosingButton" type="button" class="btn btn-default">Save and go to Actions</button>
-              </div>
 	   </div>
     </section>  
     

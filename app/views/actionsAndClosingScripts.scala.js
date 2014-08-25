@@ -75,24 +75,37 @@ function resetActionsAndClosingPage(){
 }
 
 
+//simple function that just gets the data from the  page and package it
+//into a json object
+function getUpdatedAlarmFromPage(){
+ var patientId = $('#dynamicPatientInfo').find('#patientId').val();
+ var alarmId = $('#allListsSection').find('.list-group-item.active').attr("idnum");
+	var notes = $('#globalNotesBox').val();
+
+ var occuranceAddress = $('#incidentAddress').val();
+ 
+ var updatedAlarm = {
+     'alarmId' : alarmId,
+     'notes' : notes,
+     'occuranceAddress' : occuranceAddress,
+      'patient' : {
+     	 'patientId' : patientId
+      }
+ };
+	return updatedAlarm;
+}
+
 function closeCaseAtClosing(){
 	
-	// update to get meaningfull data
-
-    var alarmId = $('#allListsSection').find('.list-group-item.active').attr("idnum");
-	var notes = $('#closingNotesBox').val();
-   
-    var updatedAlarm = {
-            'alarmId' : alarmId,
-            'notes' : notes
-	    };
+    var updatedAlarm = getUpdatedAlarmFromPage();
 
 	myJsRoutes.controllers.Application.closeCase().ajax({
             data : JSON.stringify(updatedAlarm),
             contentType : 'application/json',
             success : function (data) {
             	removeHighlightedAlarmFromList();
-            	highlightBackListTab ();
+            	clearUpData();
+            	//highlightBackListTab ();
             }// end of success
     });// end of ajax call
 
@@ -104,25 +117,22 @@ function actionsDataSent(){
     $('#send_confirmation_modal').modal();
 }
 
+
+
+
 function saveAndFollowupAtClosing(){
 	
-	// update to get meaningfull data
-
-    var alarmId = $('#allListsSection').find('.list-group-item.active').attr("idnum");
-	var notes = $('#closingNotesBox').val();
-   
-    var updatedAlarm = {
-            'alarmId' : alarmId,
-            'notes' : notes
-	    };
+    var updatedAlarm = getUpdatedAlarmFromPage();
 
 	myJsRoutes.controllers.Application.saveAndFollowupCase().ajax({
             data : JSON.stringify(updatedAlarm),
             contentType : 'application/json',
             success : function (data) {
             	moveAlarmToFollowUpList();
-            	highlightBackListTab ();
+            	clearUpData();
+            	//highlightBackListTab ();
             }// end of success
     });// end of ajax call
 
 }
+

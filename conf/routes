@@ -20,7 +20,7 @@ POST    /alarm                  controllers.Application.newAlarm()
 #POST    /dispatchAlarm/         controllers.Application.dispatchAlarm()
 POST    /alarm/assign           controllers.Application.assignAlarmFromJson()
 POST    /alarm/close           controllers.Application.closeCase()
-POST    /alarm/save           controllers.Application.saveCase()
+#POST    /alarm/save           controllers.Application.saveCase()
 POST    /alarm/saveAndFollowup           controllers.Application.saveAndFollowupCase()
 POST    /alarm/notifyFollowup/:id           controllers.Application.notifyFollowup(id: Long)
 

@@ -40,8 +40,8 @@ function setupAssesmentPage(){
 	});
 	
 	
-    $("#closeCaseFromAssessButton").click(closeCaseAtAssesment);
-    $("#goToClosingButton").click(fromAssementToClosing);
+//    $("#closeCaseFromAssessButton").click(closeCaseAtAssesment);
+//    $("#goToClosingButton").click(fromAssementToClosing);
 
 
     
@@ -101,7 +101,7 @@ function resetAssesmentPage(){
     $("#sensorNav").removeClass("active");
 }
 
-
+/*
 function closeCaseAtAssesment(){
 
 	// TODO: retrieve and save logs
@@ -149,3 +149,4 @@ function fromAssementToClosing(){
             }// end of success
     });// end of ajax call
 }
+*/

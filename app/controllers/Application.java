@@ -99,6 +99,7 @@ public class Application extends Controller {
     	jsonAlarm.put("type", a.type);
     	jsonAlarm.put("notes", a.notes);
     	jsonAlarm.put("alarmId", a.id);
+    	jsonAlarm.put("occuranceAddress", a.occuranceAddress);
     	
     	if(null != a.callee){
 			ObjectNode calle = Json.newObject();
@@ -220,7 +221,7 @@ public class Application extends Controller {
 
     }
     
-    @BodyParser.Of(BodyParser.Json.class)
+/*    @BodyParser.Of(BodyParser.Json.class)
     public static Result saveCase(){
   	  	JsonNode json = request().body().asJson();
         long patientId = json.findPath("patientId").asLong();
@@ -237,16 +238,18 @@ public class Application extends Controller {
         Alarm.saveAlarm(a);
 
     	return ok();
-    }
+    }*/
     
     @BodyParser.Of(BodyParser.Json.class)
     public static Result closeCase() {
   	  	JsonNode json = request().body().asJson();
         long patientId = json.findPath("patientId").asLong();
         String notes = json.findPath("notes").asText();
+        String alarmOccurance = json.findPath("occuranceAddress").asText();
         long alarmId = json.findPath("alarmId").asLong();
         
         Alarm a = new Alarm();
+        a.occuranceAddress = alarmOccurance;
         a.id = alarmId;
         a.notes = notes;
         if(0 != patientId){
@@ -264,9 +267,11 @@ public class Application extends Controller {
   	  	JsonNode json = request().body().asJson();
         long patientId = json.findPath("patientId").asLong();
         String notes = json.findPath("notes").asText();
+        String alarmOccurance = json.findPath("occuranceAddress").asText();
         long alarmId = json.findPath("alarmId").asLong();
         
         Alarm a = new Alarm();
+        a.occuranceAddress = alarmOccurance;
         a.id = alarmId;
         a.notes = notes;
         if(0 != patientId){
@@ -321,7 +326,7 @@ public class Application extends Controller {
                 //controllers.routes.javascript.Application.assignAlarm(),
                 controllers.routes.javascript.Application.saveAndFollowupCase(),
                 controllers.routes.javascript.Application.closeCase(),
-                controllers.routes.javascript.Application.saveCase(),
+                //controllers.routes.javascript.Application.saveCase(),
             	controllers.routes.javascript.Application.insertPatientFromJson(),
             	controllers.routes.javascript.Application.assignAlarmFromJson(),
                 controllers.routes.javascript.Application.getCalleeFromAlarm(),
