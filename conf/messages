@@ -65,6 +65,11 @@ actions.list.alarmcentral=Alarm Central
 actions.list.ambu=Ambulatory
 actions.list.contact=Contact Person
 
+# legevakta pill
+legvaktapill.car=Car
+legvaktapill.driver=Driver
+legvaktapill.phisician=Physician
+
 actions.button.appointment.leg=Schedule appointment with legvakta
 actions.button.appointment.doctor=Schedule appointment with personal doctor
 

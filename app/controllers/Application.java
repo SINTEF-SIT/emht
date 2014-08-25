@@ -153,6 +153,7 @@ public class Application extends Controller {
 		alarm.put("day", ddMMyy.format(temp.closingTime));
 		alarm.put("hour", hhMin.format(temp.closingTime));
 		alarm.put("type", temp.type);
+		alarm.put("notes", temp.notes);
 		alarmArray.add(alarm);
 	}
 	result.put("alarmArray",alarmArray);

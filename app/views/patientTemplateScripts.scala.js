@@ -148,9 +148,11 @@ function setupPatientPage() {
 							var day = array[i].day;
 							var hour = array[i].hour;
 							var type = array[i].type;
-							htmlRow= '<tr><td> ' + day + ' </td><td> ' + hour + ' </td><td> ' + type + ' </td></tr>';
+							var notes = array[i].notes;
+							htmlRow= '<tr data-toggle="tooltip" data-placement="right" title="@Messages.get("actions.popup.send.notes"): ' +notes+'"><td> ' + day + ' </td><td> ' + hour + ' </td><td> ' + type + ' </td></tr>';
 							$("#patientLogTable > tbody").prepend(htmlRow);
 						  }
+			              $('[data-toggle="tooltip"]').tooltip({'placement': 'right'});
 	       			}
 	    	   		  
 	    	  		// make it a datatable with pagination, TODO: investigate further if we want to commit the

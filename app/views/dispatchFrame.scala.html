@@ -85,10 +85,12 @@
 		    <div id="legevaktPanel" class="panel-collapse collapse">
 		      <div class="panel-body">
                 <table class="table table-bordered" id="legevaktTable">
-                <thead><tr><td>@Messages.get("patientpane.name")</td><td>@Messages.get("patientpane.phonenumber")</td></tr></thead>
+                <thead><tr>
+                <td>@Messages.get("legvaktapill.car")</td><td>@Messages.get("legvaktapill.driver")</td><td>@Messages.get("legvaktapill.phisician")</td><td>@Messages.get("patientpane.phonenumber")</td>
+                </tr></thead>
                 <tbody>
-                <tr><td>Brynjar</td><td>9654 5342</td></tr>
-                <tr><td>Per</td><td>9234 5456</td></tr>
+                <tr><td>@Messages.get("legvaktapill.car") 1</td><td>Brynjar</td><td>Åge</td><td>9654 5342</td></tr>
+                <tr><td>@Messages.get("legvaktapill.car") 2</td><td>Per</td><td>Ralf</td><td>9234 5456</td></tr>
                 </tbody>
                 </table>
                 <button type="button" class="btn btn-default dispatch-ring-btn">@Messages.get("button.ring")</button>

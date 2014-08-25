@@ -52,11 +52,11 @@ function setupActionsAndClosingPage(){
 	
     // setting up organization tables so that the rows can be selected
     
-    $("#kontaktpersonerTable").on("click","tr",organizationTableClick);
-    $("#ambulerendeTable").on("click","tr",organizationTableClick);
-    $("#legevaktTable").on("click","tr",organizationTableClick);
-    $("#tpTable").on("click","tr",organizationTableClick);
-    $("#hjemmesykepleienTable").on("click","tr",organizationTableClick);
+    $("#kontaktpersonerTable > tbody").on("click","tr",organizationTableClick);
+    $("#ambulerendeTable > tbody").on("click","tr",organizationTableClick);
+    $("#legevaktTable > tbody").on("click","tr",organizationTableClick);
+    $("#tpTable > tbody").on("click","tr",organizationTableClick);
+    $("#hjemmesykepleienTable > tbody").on("click","tr",organizationTableClick);
     
     
     
