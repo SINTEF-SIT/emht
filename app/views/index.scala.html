@@ -111,18 +111,18 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
      <section class="col-md-3 assesmentSection">
         <div id="assesment">
 			 <ul class="nav nav-tabs">
-				  <li id="nmiNav" class="active"><a href="#nmiTab" data-toggle="tab">NMI</a></li>
-				  <li id="sensorNav" ><a id="sensorTablink" href="#sensorTab" data-toggle="tab">Sensor</a></li>
-				  <li id="infoNav"><a id="infoTablink" href="#infoTab" data-toggle="tab">OBS!</a></li>
+				  <li id="nmiNav" class="active"><a href="#nmiTab" data-toggle="tab">@Messages.get("assessment.tab.nmi")</a></li>
+				  <li id="sensorNav" ><a id="sensorTablink" href="#sensorTab" data-toggle="tab">@Messages.get("assessment.tab.sensor")</a></li>
+				  <li id="infoNav"><a id="infoTablink" href="#infoTab" data-toggle="tab">@Messages.get("assessment.tab.obs")</a></li>
 			 </ul>
 			 <div class="tab-content">
 	               <div class="tab-pane active" id="nmiTab" >
 	                    <table class="table"><tbody>	               
-						    <tr><td>Is the patient conscious?          </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">Yes</label>  </td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious">No</label>       </td></tr>
-						    <tr><td>Is the patient breathing normally? </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normly">Yes</label></td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breath normly">No</label> </td></tr>    
-						    <tr><td>Can the patient move?              </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">Yes</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox3N" name="NMIcheckBox3radio" value="Patient cant move">No</label>              </td></tr>
-						    <tr><td>Can the patient stand up?          </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">Yes</label>  </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox4N" name="NMIcheckBox4radio" value="Patient cant stand up">No</label>          </td></tr>
-						    <tr><td>Can the patient talk?              </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">Yes</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox5N" name="NMIcheckBox5radio" value="Patient cant talk">No</label>              </td></tr>
+						    <tr><td>@Messages.get("assessment.tab.question.conscious") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious">@Messages.get("button.no")</label>       </td></tr>
+						    <tr><td>@Messages.get("assessment.tab.question.breathing") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normly">@Messages.get("button.yes")</label></td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breath normly">@Messages.get("button.no")</label> </td></tr>    
+						    <tr><td>@Messages.get("assessment.tab.question.move")      </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">@Messages.get("button.yes")</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox3N" name="NMIcheckBox3radio" value="Patient cant move">@Messages.get("button.no")</label>              </td></tr>
+						    <tr><td>@Messages.get("assessment.tab.question.standup")   </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox4N" name="NMIcheckBox4radio" value="Patient cant stand up">@Messages.get("button.no")</label>          </td></tr>
+						    <tr><td>@Messages.get("assessment.tab.question.talk")       </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">@Messages.get("button.yes")</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox5N" name="NMIcheckBox5radio" value="Patient cant talk">@Messages.get("button.no")</label>              </td></tr>
 					    </tbody></table>
 				  </div>
 				  <div class="tab-pane" id="infoTab" >
@@ -136,22 +136,22 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 	              </div>
               </div>
                <div id="assementLogsDiv">
-                    <u>Log:</u>
+                    <u>@Messages.get("assessment.log") :</u>
                     <div class="panel panel-default">
                       <div id="assesmentLogPanel" class="panel-body">
                         <div class="logLabel" id="NMIassesmentLabel"> NMI assessment</div>
-                        <div class="logLabel" id="NMIcheckBox1Ylabel"> Patient is conscious</div>
-                        <div class="logLabel" id="NMIcheckBox2Ylabel"> Patient breaths normally</div>    
-                        <div class="logLabel" id="NMIcheckBox3Ylabel"> Patient can move</div>
-                        <div class="logLabel" id="NMIcheckBox4Ylabel"> Patient can stand up</div>
-                        <div class="logLabel" id="NMIcheckBox5Ylabel"> Patient can talk</div>
-                        <div class="logLabel" id="NMIcheckBox1Nlabel"> Patient is not conscious</div>
-                        <div class="logLabel" id="NMIcheckBox2Nlabel"> Patient doesnt breath normally</div>    
-                        <div class="logLabel" id="NMIcheckBox3Nlabel"> Patient cant move</div>
-                        <div class="logLabel" id="NMIcheckBox4Nlabel"> Patient cant stand up</div>
-                        <div class="logLabel" id="NMIcheckBox5Nlabel"> Patient cant talk</div>
-                        <div class="logLabel" id="assedmentSensorlabel"> Sensor information checked</div>
-                        <div class="logLabel" id="informationSensorlabel"> Patient information checked</div>
+                        <div class="logLabel" id="NMIcheckBox1Ylabel"> @Messages.get("assessment.log.affirmation.conscious")</div>
+                        <div class="logLabel" id="NMIcheckBox2Ylabel"> @Messages.get("assessment.log.affirmation.breathing")</div>    
+                        <div class="logLabel" id="NMIcheckBox3Ylabel"> @Messages.get("assessment.log.affirmation.move")</div>
+                        <div class="logLabel" id="NMIcheckBox4Ylabel"> @Messages.get("assessment.log.affirmation.standup")</div>
+                        <div class="logLabel" id="NMIcheckBox5Ylabel"> @Messages.get("assessment.log.affirmation.talk")</div>
+                        <div class="logLabel" id="NMIcheckBox1Nlabel"> @Messages.get("assessment.log.negation.conscious")</div>
+                        <div class="logLabel" id="NMIcheckBox2Nlabel"> @Messages.get("assessment.log.negation.breathing")</div>    
+                        <div class="logLabel" id="NMIcheckBox3Nlabel"> @Messages.get("assessment.log.negation.move")</div>
+                        <div class="logLabel" id="NMIcheckBox4Nlabel"> @Messages.get("assessment.log.negation.standup")</div>
+                        <div class="logLabel" id="NMIcheckBox5Nlabel"> @Messages.get("assessment.log.negation.talk")</div>
+                        <div class="logLabel" id="assedmentSensorlabel"> @Messages.get("assessment.log.sensor")</div>
+                        <div class="logLabel" id="informationSensorlabel"> @Messages.get("assessment.log.obs")</div>
                       </div>
                     </div>
                </div>
@@ -167,8 +167,8 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
   </div>
    <div class="row" id="notesRow">
            <div class="col-md-3" id="statisticsDiv">
-		        <h4>@Messages.get("statistics.avgresp"): 20,1 sec</h4>
-		        <h4>@Messages.get("statistics.maxresptime"): 59 sec</h4>
+		        <h4>@Messages.get("statistics.avgresp"): 20,1 @Messages.get("statistics.timeunit")</h4>
+		        <h4>@Messages.get("statistics.maxresptime"): 59 @Messages.get("statistics.timeunit")</h4>
 		        <h4>@Messages.get("statistics.numberRespAbov30sec"): 15</h4>
 		        <h4>@Messages.get("statistics.numberResponseToday"): 250 </h4>
             </div>

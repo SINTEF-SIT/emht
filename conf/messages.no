@@ -19,6 +19,7 @@ listitem.arrived=ankom
 #statistics
 statistics.avgresp=Average Response Time
 statistics.maxresptime=Max Response Time
+statistics.timeunit=sec
 statistics.numberRespAbov30sec=Nb. of incidents > 30 sek 
 statistics.numberResponseToday=Nb. of incidents
 
@@ -52,6 +53,29 @@ patientpane.log.type=typen
 #add patient modal
 patientmodal.title=Legge Pasient
 patientmodal.savebutton=Lagre Pasientinformasjon
+
+#assessment pane
+assessment.tab.nmi=NMI
+assessment.tab.question.conscious=Is the patient conscious?
+assessment.tab.question.breathing=Is the patient breathing normally?
+assessment.tab.question.move=Can the patient move?
+assessment.tab.question.standup=Can the patient stand up?
+assessment.tab.question.talk=Can the patient talk?
+assessment.tab.sensor=Sensors
+assessment.tab.obs=OBS!
+assessment.log=Log
+assessment.log.affirmation.conscious=The patient is conscious
+assessment.log.affirmation.breathing=The patient breaths normally
+assessment.log.affirmation.move=The patient can move
+assessment.log.affirmation.standup=The patient can stand up
+assessment.log.affirmation.talk=The patient can talk
+assessment.log.negation.conscious=The patient is not conscious
+assessment.log.negation.breathing=The patient doesnt breath normally
+assessment.log.negation.move=The patient cant move
+assessment.log.negation.standup=The patient cant stand up
+assessment.log.negation.talk=The patient cant talk
+assessment.log.sensor=Sensor information checked
+assessment.log.obs=Patient information checked
 
 #actions pane
 actions.list.title=Distress Number
