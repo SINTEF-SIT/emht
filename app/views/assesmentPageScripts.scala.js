@@ -51,11 +51,10 @@ function setupAssesmentPage(){
 
 
 
-function loadPatientSensor(){
+function loadPatientSensor(patId){
 	
 	// TODO retrieve NMI (but in another funtion)
 	removeImageFromSensorTab()
-	var patId = $('#patientId').val();
 	if(0 != patId){
 		var image = new Image(); 
 		image.src = "/assets/images/patient/" + patId + ".png" ;
@@ -66,7 +65,6 @@ function loadPatientSensor(){
 		//}
 	}
 	
-	// TODO: remove picture when IM resetting the page
 }
 
 function removeImageFromSensorTab(){

@@ -58,6 +58,7 @@ create table patient (
   age                       integer,
   phone_number              varchar(255),
   personal_number           varchar(255),
+  obs                       varchar(255),
   constraint pk_patient primary key (id))
 ;
 

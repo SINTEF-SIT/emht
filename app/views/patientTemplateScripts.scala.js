@@ -75,8 +75,9 @@ function setupPatientPage() {
           var patientAddress = array[i].address;
           var patientAge = array[i].age;
           var patientPhoneNum = array[i].phoneNumber;
+          var patientObs = array[i].obs;
           patientDropDownBox += '<li><a onclick="populatePatient(\'' + patientId + '\',\'' + patientName + '\',\'' + patientPersoNum + '\',\'' + patientAddress +
-          '\',\'' + patientPhoneNum + '\',\'' + patientAge + '\');" href="#">' + patientName +'</a></li>'; 
+          '\',\'' + patientPhoneNum + '\',\'' + patientAge + '\',\'' + patientObs + '\');" href="#">' + patientName +'</a></li>'; 
         }
         if( $.isArray(array) && array.length != 0){
       	  patientDropDownBox += '<li class="divider"></li>';
@@ -115,7 +116,7 @@ function setupPatientPage() {
  		
  	}
  
-	function populatePatient(patientId,patientName,personNumber,address,phoneNumber,age){
+	function populatePatient(patientId,patientName,personNumber,address,phoneNumber,age,obs){
 		$('#patientAddress').text(address);
 		
 		// for the perso Number, if it is more than 6 digits, we add a space after the first 6 digits
@@ -131,7 +132,13 @@ function setupPatientPage() {
 		$('#patientAddress').text(address);
 		$('#patientAge').text(age);
 		$('#patientId').val(patientId);
+			loadPatientSensor(patientId);
 
+
+		// set the obs field in the assesment page
+		if(null != obs)
+			$('#obsBody').text(obs);
+		
 		// empty existing table
 		$("#patientLogTable > tbody").html("");
 		// destroying the datatable
@@ -196,9 +203,9 @@ function setupPatientPage() {
 	            success : function (outpuPatient) {
 	              // add it to list
 	              var patientListItem =  '<li><a onclick="populatePatient(\'' + outpuPatient.id + '\',\'' + outpuPatient.name + '\',\'' + outpuPatient.persoNumber + '\',\'' + outpuPatient.address +
-	              '\',\'' + outpuPatient.phoneNumber +'\',\'' + outpuPatient.age + '\');" href="#">' + outpuPatient.name +'</a></li>'
+	              '\',\'' + outpuPatient.phoneNumber +'\',\'' + outpuPatient.age + '\'\,\'\');" href="#">' + outpuPatient.name +'</a></li>'
 	              $('#patientDropDownList').prepend(patientListItem);
-	              populatePatient(outpuPatient.id,outpuPatient.name,outpuPatient.persoNumber,outpuPatient.address,outpuPatient.phoneNumber,outpuPatient.age);
+	              populatePatient(outpuPatient.id,outpuPatient.name,outpuPatient.persoNumber,outpuPatient.address,outpuPatient.phoneNumber,outpuPatient.age,'');
 	              
 	            }// end of success
 	    });// end of ajax call
@@ -207,7 +214,7 @@ function setupPatientPage() {
 	}
 	
 	function fillUnknownPatient(){
-		populatePatient('','@Messages.get("patientpane.pill.unknown")','','','','');
+		populatePatient('','@Messages.get("patientpane.pill.unknown")','','','','','');
 	}
 	
 	

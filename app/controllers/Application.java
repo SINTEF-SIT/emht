@@ -178,6 +178,10 @@ public class Application extends Controller {
 				patient.put("phoneNumber", temp.phoneNumber);
 				patient.put("address", temp.address);
 				patient.put("age", temp.age);
+				if(null != temp.obs)
+					patient.put("obs", temp.obs);
+				else
+					patient.put("obs", "");
 				patientArray.add(patient);
 	    	}
 		}

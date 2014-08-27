@@ -19,7 +19,8 @@ public class Patient extends Model {
 	public Integer age;
 	public String phoneNumber; 
 
-	public String personalNumber; 
+	public String personalNumber;
+	public String obs; 
 	
 	  public static Finder<Long,Patient> find = new Finder(
 			    Long.class, Patient.class
