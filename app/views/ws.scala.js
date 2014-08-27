@@ -20,7 +20,7 @@ $(function(){
                 var time = new Date(alarm.openingDate);
                 var formatedTime = $.format.date(time, "dd/MM HH:mm")
                 var listItem = '<a href="#" idnum="'+ alarm.id +'" id="Alarm' + alarm.id  + '"  onclick="selectOpenAlarm(' + alarm.id + ',' + alarm.callee.id + ');return false;" class="list-group-item alarmItem">' +
-                      '<img src="/assets/images/' + alarm.type + '.png" class="img-thumbnail pull-left" width="48" height="48"/>' +
+                      '<img src="/assets/images/' + alarm.type + '.png" class="img-thumbnail pull-left type-icon" data-type="'+ alarm.type + '" width="48" height="48"/>' +
                       '<h4 class="list-group-item-heading">' + alarm.id + ', @Messages.get("listitem.arrived") '+ formatedTime  +' </h4>' + 
                       '<p class="list-group-item-text">@Messages.get("listitem.callee") '+ alarm.callee.phoneNumber + '</p>';
                   $("#unassignedAlarmList").append(listItem);

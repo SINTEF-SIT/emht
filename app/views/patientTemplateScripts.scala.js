@@ -112,7 +112,28 @@ function setupPatientPage() {
         
         //$("#patientBox").show();
 
+        //if it is an alarm of type: fire, safety_alarm or fall, I've set the patient as the callee
+        var currentSelected = $('.list-group-item.active.alarmItem');
+        var typeImage = currentSelected.find('.type-icon');
+        var currentAlarm_type = typeImage.attr('data-type');
+        if (currentAlarm_type == "fall" || currentAlarm_type == "fire" || currentAlarm_type == "safety_alarm"){
+        	
+            for(var i in array){
+                var patName = array[i].name;
+                var patAddress = array[i].address;
+            	if(patName == $("#calleeName").text() && patAddress == $("#calleeAddress").text()){
+                    var patPersoNum = array[i].persoNumber;
+                    var patId = array[i].id;
+                    var patAge = array[i].age;
+                    var patPhoneNum = array[i].phoneNumber;
+                    var patObs = array[i].obs;
+                    populatePatient(patId,patName,patPersoNum,patAddress,patPhoneNum,patAge,patObs);
+                    break;
+            	}
+              }
+        	
 
+        }
  		
  	}
  
