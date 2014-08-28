@@ -97,6 +97,8 @@ legvaktapill.phisician=Physician
 
 actions.button.appointment.leg=Schedule appointment with legvakta
 actions.button.appointment.doctor=Schedule appointment with personal doctor
+actions.button.close=Close Case
+actions.button.followup=Save and follow up
 
 actions.popup.call.title=Calling
 actions.popup.send.title=Select data to be sent

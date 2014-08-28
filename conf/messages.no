@@ -2,86 +2,86 @@
 #
 
 #arrow
-arrow.reception=Hendelser
+arrow.reception=Mottak
 arrow.registration=Registrering
-arrow.assessment=Vurdering
-arrow.actions=Handlinger og Lukking
+arrow.assessment=Vurdering og beslutning
+arrow.actions=Aksjon og avslutting
 
 #list
-unassignedlist.title=Ufordelte Hendelser
-assignedlist.title=Hendelser tildelt meg
-followuplist.title=Hendelser til Oppfølging
+unassignedlist.title=Nye henvendelser
+assignedlist.title=Under behandling
+followuplist.title=Til oppfølging
 
 #list items
 listitem.callee=Innringer
 listitem.arrived=ankom
 
 #statistics
-statistics.avgresp=Average Response Time
-statistics.maxresptime=Max Response Time
+statistics.avgresp=Gjennomsnittlig svartid
+statistics.maxresptime=Maksimum svartid
 statistics.timeunit=sec
-statistics.numberRespAbov30sec=Nb. of incidents > 30 sek 
-statistics.numberResponseToday=Nb. of incidents
+statistics.numberRespAbov30sec=Antall henvendelser > 30 sec 
+statistics.numberResponseToday=Antall henvendelser
 
 #handling pop-up
-handling.popup.title=Do you want to handle this request?
+handling.popup.title=Vil du svare på denne henvendelsen?
 handling.popup.date=dato
-handling.popup.hour=time
-handling.popup.type=typen
+handling.popup.hour=tid
+handling.popup.type=type
 
 #callee pane
 callee.callee=Innringer
 
 #patient pane
-patientpane.title=Pasientinformasjon
+patientpane.title=Pasient
 patientpane.name=Navn
 patientpane.address=Hjemmeadresse 
-patientpane.personumber=Fødselsnummer 
+patientpane.personumber=Personnummer 
 patientpane.phonenumber=Telefonnummer 
 patientpane.age=Alder
-patientpane.incident.location=Hendelse plassering
-patientpane.incident.same=Samme adresse som hjemmeadresse
-patientpane.incident.other=Andre addresse
+patientpane.incident.location=Hvor befinner pasient seg
+patientpane.incident.same=Samme adresse som registrert adresse
+patientpane.incident.other=Annen addresse
 patientpane.pill.patient=Pasient
-patientpane.pill.other.patient=Andre Pasient...
-patientpane.pill.unknown=Ukjent Pasient
-patientpane.log.title=Pasient Logs
+patientpane.pill.other.patient=Annen pasient...
+patientpane.pill.unknown=Ukjent identitet
+patientpane.log.title=Hendelselog
 patientpane.log.date=dato
-patientpane.log.hour=time
-patientpane.log.type=typen
+patientpane.log.hour=tid
+patientpane.log.type=type
 
 #add patient modal
-patientmodal.title=Legge Pasient
-patientmodal.savebutton=Lagre Pasientinformasjon
+patientmodal.title=Legge til pasient
+patientmodal.savebutton=Lagre pasientinformasjon
 
 #assessment pane
 assessment.tab.nmi=NMI
-assessment.tab.question.conscious=Is the patient conscious?
-assessment.tab.question.breathing=Is the patient breathing normally?
-assessment.tab.question.move=Can the patient move?
-assessment.tab.question.standup=Can the patient stand up?
-assessment.tab.question.talk=Can the patient talk?
-assessment.tab.sensor=Sensors
+assessment.tab.question.conscious=Er pasienten ved bevisthet?
+assessment.tab.question.breathing=Puster pasienten normalt?
+assessment.tab.question.move=Kan pasienten bevege seg?
+assessment.tab.question.standup=Kan pasienten stå oppreist?
+assessment.tab.question.talk=Kan pasienten snakke?
+assessment.tab.sensor=Sensorer
 assessment.tab.obs=OBS!
 assessment.log=Log
-assessment.log.affirmation.conscious=The patient is conscious
-assessment.log.affirmation.breathing=The patient breaths normally
-assessment.log.affirmation.move=The patient can move
-assessment.log.affirmation.standup=The patient can stand up
-assessment.log.affirmation.talk=The patient can talk
-assessment.log.negation.conscious=The patient is not conscious
-assessment.log.negation.breathing=The patient doesnt breath normally
-assessment.log.negation.move=The patient cant move
-assessment.log.negation.standup=The patient cant stand up
-assessment.log.negation.talk=The patient cant talk
-assessment.log.sensor=Sensor information checked
-assessment.log.obs=Patient information checked
+assessment.log.affirmation.conscious=Pasienten er ved bevisthet
+assessment.log.affirmation.breathing=Pasienten puster normalt
+assessment.log.affirmation.move=Pasienten kan bevege seg
+assessment.log.affirmation.standup=Pasienten kan stå oppreist
+assessment.log.affirmation.talk=Pasienten kan snakke
+assessment.log.negation.conscious=Patienten er bevistløs
+assessment.log.negation.breathing=Pasienten puster ikke normalt
+assessment.log.negation.move=Pasienten kan ikke bevege seg
+assessment.log.negation.standup=Pasienten kan ikke stå oppreist
+assessment.log.negation.talk=Pasienten kan ikke snakke
+assessment.log.sensor=Sensorinformasjon sjekket
+assessment.log.obs=OBS! meldinger sjekket
 
 #actions pane
-actions.list.title=Distress Number
-actions.list.police=Police
+actions.list.title=Nødtelefoner
+actions.list.police=Politi
 actions.list.amk=AMK
-actions.list.fireman=Fireman
+actions.list.fireman=Brann
 actions.list.doctor=Hjemmesykepleien
 actions.list.tp=TP
 actions.list.alarmcentral=Legevakt
@@ -89,30 +89,33 @@ actions.list.ambu=Ambulerende
 actions.list.contact=Kontaktpersoner
 
 # legevakta pill
-legvaktapill.car=Car
-legvaktapill.driver=Driver
-legvaktapill.phisician=Physician
+legvaktapill.car=Bil
+legvaktapill.driver=Sjåfør
+legvaktapill.phisician=Lege
 
 
-actions.button.appointment.leg=Schedule appointment with legvakta
-actions.button.appointment.doctor=Schedule appointment with personal doctor
+actions.button.appointment.leg=Bestill time på legevakta
+actions.button.appointment.doctor=Bestill time hos fastlege
 
-actions.popup.call.title=Calling
-actions.popup.send.title=Select data to be sent
-actions.popup.send.callee=Callee information
-actions.popup.send.patient=Patient information
+actions.button.close=Lagre og avslutt
+actions.button.followup=Lagre og følg opp
+
+actions.popup.call.title=Ringer
+actions.popup.send.title=Velg informasjon som skal sendes
+actions.popup.send.callee=Informasjon om innringer
+actions.popup.send.patient=Patientinformation
 actions.popup.send.nmi=NMI
-actions.popup.send.sensor=Sensor data
+actions.popup.send.sensor=Sensorinformasjon
 actions.popup.send.obs=OBS!
-actions.popup.send.notes=Notes
-actions.popup.send.confirmation=Data sent
-actions.popup.appointment.title=Select appointment time and data to be sent
-actions.popup.appointment.date=Date
+actions.popup.send.notes=Notat
+actions.popup.send.confirmation=Informasjonen er oversendt
+actions.popup.appointment.title=Velg tidspunkt og informasjon som skal sendes
+actions.popup.appointment.date=Dato
 
 #common
-button.cancel=Avbryte
+button.cancel=Avbryt
 button.yes=Ja
 button.no=Nei
 button.ring=Ring
 button.send=Send
-button.done=Done
+button.done=OK

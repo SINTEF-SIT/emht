@@ -128,6 +128,7 @@ function setupPatientPage() {
                     var patPhoneNum = array[i].phoneNumber;
                     var patObs = array[i].obs;
                     populatePatient(patId,patName,patPersoNum,patAddress,patPhoneNum,patAge,patObs);
+
                     break;
             	}
               }
@@ -159,6 +160,15 @@ function setupPatientPage() {
 		// set the obs field in the assesment page
 		if(null != obs)
 			$('#obsBody').text(obs);
+
+			
+	     //if it is an alarm of type: fire, safety_alarm or fall, I've set obs to the front
+	     var currentAlarm_type = $('.list-group-item.active.alarmItem').find('.type-icon').attr('data-type');
+	     if (currentAlarm_type == "fall" || currentAlarm_type == "fire" || currentAlarm_type == "safety_alarm"){
+	    	 $('#assesmentTabHeader a[href="#infoTab"]').tab('show');
+	    	 $("#informationSensorlabel").show();
+         }
+        	
 		
 		// empty existing table
 		$("#patientLogTable > tbody").html("");

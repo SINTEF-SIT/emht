@@ -4,7 +4,11 @@
    name:             Anna By
    address:          Strindveien 14
    phoneNumber:      41233133
-   
+  
+ - &callee2 !!models.Callee
+   name:             Maria
+   address:          quitanduba
+   phoneNumber:      98765432 
    
 # AlarmAttendants
 
@@ -47,6 +51,14 @@
     phoneNumber:      41233133
     age:             76
     obs:                 
+
+ - &patient5 !!models.Patient
+    name:            Julio
+    address:         quitanduba
+    personalNumber:  123456789
+    phoneNumber:     98765432
+    age:             14
+    obs:             has diabetes    
 
 
 # Alarms

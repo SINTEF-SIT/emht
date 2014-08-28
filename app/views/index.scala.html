@@ -110,12 +110,12 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
     </section>
      <section class="col-md-3 assesmentSection">
         <div id="assesment">
-			 <ul class="nav nav-tabs">
+			 <ul class="nav nav-tabs" id="assesmentTabHeader" role="tablist">
 				  <li id="nmiNav" class="active"><a href="#nmiTab" data-toggle="tab">@Messages.get("assessment.tab.nmi")</a></li>
 				  <li id="sensorNav" ><a id="sensorTablink" href="#sensorTab" data-toggle="tab">@Messages.get("assessment.tab.sensor")</a></li>
 				  <li id="infoNav"><a id="infoTablink" href="#infoTab" data-toggle="tab">@Messages.get("assessment.tab.obs")</a></li>
 			 </ul>
-			 <div class="tab-content">
+			 <div class="tab-content" id="assessmentTabs">
 	               <div class="tab-pane active" id="nmiTab" >
 	                    <table class="table"><tbody>	               
 						    <tr><td>@Messages.get("assessment.tab.question.conscious") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious">@Messages.get("button.no")</label>       </td></tr>
