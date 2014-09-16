@@ -84,8 +84,8 @@ actions.list.amk=AMK
 actions.list.fireman=Brann
 actions.list.doctor=Hjemmesykepleien
 actions.list.tp=TP
-actions.list.alarmcentral=Legevakt
-actions.list.ambu=Ambulerende
+actions.list.alarmcentral=Ambulerende
+actions.list.ambu=Lege hos legevakten
 actions.list.contact=Kontaktpersoner
 
 # legevakta pill

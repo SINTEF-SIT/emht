@@ -1,14 +1,15 @@
 # Callees
    
  - &callee1 !!models.Callee
-   name:             Anna By
-   address:          Strindveien 14
-   phoneNumber:      41233133
-  
+   name:             Berit Nilsen
+   address:          Nedre Møllenberg gt. 44
+   phoneNumber:      91105432 
+ 
  - &callee2 !!models.Callee
-   name:             Maria
-   address:          quitanduba
-   phoneNumber:      98765432 
+   name:             Peter Dale
+   address:          Søndre gate 19
+   phoneNumber:      45091234 
+ 
    
 # AlarmAttendants
 
@@ -21,45 +22,76 @@
 # Patients
 
  - &patient1 !!models.Patient
-    name:            Clara Olsen
+    name:            Jessica Berg
     address:         Munkegata 20
-    personalNumber: 123456789
+    personalNumber: 12033942405
     phoneNumber:    75678678
-    age:            67
+    age:            75
     obs:                
 
  - &patient2 !!models.Patient
     name:            Tor Olsen
     address:         Furuveien 22 Klaebu
-    personalNumber:  45687832
+    personalNumber:  03123013332
     phoneNumber:     78325678
-    age:             67
+    age:             83
     obs:                 
 
  - &patient3 !!models.Patient
     name:            Gudrun Olsen
     address:         Furuveien 22 Klaebu
-    personalNumber:  89248032
+    personalNumber:  29023124803
     phoneNumber:     12345678
-    age:             75
+    age:             83
     obs:                 
 
  - &patient4 !!models.Patient
-    name:            Anna By
+    name:            Jacob Larsen
     address:         Strindveien 14
-    personalNumber:  119458764
-    phoneNumber:      41233133
-    age:             76
+    personalNumber:  11078618764
+    phoneNumber:     41233133
+    age:             28
     obs:                 
 
  - &patient5 !!models.Patient
-    name:            Julio
-    address:         quitanduba
-    personalNumber:  123456789
+    name:            Marius Bakken
+    address:         Nedre Møllenberg gt. 123
+    personalNumber:  05018726778
     phoneNumber:     98765432
-    age:             14
-    obs:             has diabetes    
+    age:             27
+    obs:                 
 
+ - &patient6 !!models.Patient
+    name:            Berit Nilsen
+    address:         Nedre Møllenberg gt. 44
+    personalNumber:  05033326826
+    phoneNumber:     91105432
+    age:             81
+    obs:             Nøkler tilgjengelig hos vaktmester    
+
+ - &patient7 !!models.Patient
+    name:            Carl Olsen
+    address:         Fossegrenda 22
+    personalNumber:  27034213152
+    phoneNumber:     73765432
+    age:             72
+    obs:             Tung å løfte - det trengs 2 i bilen    
+
+ - &patient8 !!models.Patient
+    name:            Peter Dale
+    address:         Søndre gate 19
+    personalNumber:  04064549789
+    phoneNumber:     45091234
+    age:             69
+    obs:                 
+
+ - &patient9 !!models.Patient
+    name:            Olav Strand
+    address:         Skjermveien 119 B
+    personalNumber:  12093519117
+    phoneNumber:     49987654
+    age:             79
+    obs:                 
 
 # Alarms
 
@@ -71,66 +103,66 @@
  - &alarm103 !!models.Alarm
     type:            safety_alarm
     callee:          *callee1
-    patient:         *patient4
-    openingTime:     2014-02-12 11:02:57
-    dispatchingTime: 2014-03-31 11:06:57
-    closingTime:     2014-03-31 11:06:57
+    patient:         *patient6
+    openingTime:     2014-09-15 11:02:57
+    dispatchingTime: 2014-09-15 11:06:57
+    closingTime:     2014-09-15 11:06:57
 
  - &alarm104 !!models.Alarm
     type:            safety_alarm
     callee:          *callee1
-    patient:         *patient4
-    openingTime:     2014-02-12 21:02:57
-    dispatchingTime: 2014-03-31 21:06:57
-    closingTime:     2014-03-31 21:06:57
+    patient:         *patient6
+    openingTime:     2014-09-15 21:02:57
+    dispatchingTime: 2014-09-15 21:06:57
+    closingTime:     2014-09-15 21:06:57
 
  - &alarm105 !!models.Alarm
     type:            safety_alarm
-    callee:          *callee1
-    patient:         *patient4
-    openingTime:     2014-02-12 20:02:57
-    dispatchingTime: 2014-03-31 20:06:57
-    closingTime:     2014-03-31 20:06:57
+    callee:          *callee2
+    patient:         *patient7
+    openingTime:     2014-09-15 20:02:57
+    dispatchingTime: 2014-09-15 20:06:57
+    closingTime:     2014-09-15 20:06:57
 
  - &alarm106 !!models.Alarm
     type:            safety_alarm
     callee:          *callee1
-    patient:         *patient4
-    openingTime:     2012-08-12 11:52:15
-    dispatchingTime: 2012-08-12 11:06:57
-    closingTime:     2012-08-12 11:56:15
+    patient:         *patient6
+    openingTime:     2014-09-16 11:52:15
+    dispatchingTime: 2014-09-16 11:06:57
+    closingTime:     2014-09-16 11:56:15
 
  - &alarm107 !!models.Alarm
     type:            safety_alarm
     callee:          *callee1
-    patient:         *patient4
-    openingTime:     2013-08-12 07:52:15
-    dispatchingTime: 2013-08-12 07:06:57
-    closingTime:     2013-08-12 07:56:15
+    patient:         *patient6
+    openingTime:     2014-09-16 07:52:15
+    dispatchingTime: 2014-09-16 07:06:57
+    closingTime:     2014-09-16 07:56:15
     
  - &alarm108 !!models.Alarm
     type:            safety_alarm
     callee:          *callee1
-    patient:         *patient4
-    openingTime:     2014-08-04 07:52:15
-    dispatchingTime: 2014-08-04 07:06:57
-    closingTime:     2014-08-04 07:56:15
+    patient:         *patient6
+    openingTime:     2014-09-17 07:52:15
+    dispatchingTime: 2014-09-17 07:06:57
+    closingTime:     2014-09-17 07:56:15
     
  - &alarm109 !!models.Alarm
     type:            safety_alarm
     callee:          *callee1
-    patient:         *patient4
-    openingTime:     2014-08-04 08:52:15
-    dispatchingTime: 2014-08-04 08:06:57
-    closingTime:     2014-08-04 08:56:15
+    patient:         *patient6
+    openingTime:     2014-09-17 08:52:15
+    dispatchingTime: 2014-09-17 08:06:57
+    closingTime:     2014-09-17 08:56:15
     
  - &alarm110 !!models.Alarm
     type:            safety_alarm
     callee:          *callee1
-    patient:         *patient4
-    openingTime:     2014-08-04 09:52:15
-    dispatchingTime: 2014-08-04 09:06:57
-    closingTime:     2014-08-04 09:56:15
+    patient:         *patient6
+    openingTime:     2014-09-17 09:52:15
+    dispatchingTime: 2014-09-17 09:06:57
+    closingTime:     2014-09-17 09:56:15
 
 
 # Sensors

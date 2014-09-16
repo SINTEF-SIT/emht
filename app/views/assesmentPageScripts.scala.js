@@ -60,15 +60,24 @@ function loadPatientSensor(patId){
 		image.src = "/assets/images/patient/" + patId + ".png" ;
 		image.className = "img-responsive assesment-graph";
 		image.onerror = removeImageFromSensorTab;
+		image.onclick = showGraphModal;
 		//if (image.width != 0) {
 			$("#sensorTab").append(image);
+			$("#ampliphied-graph").attr("src", image.src);
 		//}
 	}
 	
 }
 
+
+
 function removeImageFromSensorTab(){
 	$(".assesment-graph").remove();
+	$("#ampliphied-graph").attr("src", "");
+}
+
+function showGraphModal(){
+	$('#graph_modal').modal("show");
 }
 
 
