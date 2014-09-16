@@ -63,6 +63,7 @@ public class MyWebSocketManager {
 		alarm.put("callee", callee);
 		callee.put("id", al.callee.id);
 		callee.put("phoneNumber", al.callee.phoneNumber);
+		callee.put("name", al.callee.name);
 
 		
 		MyWebSocketManager.notifyAll(jsonNotification);
