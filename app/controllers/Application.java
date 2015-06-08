@@ -8,13 +8,9 @@ import models.AlarmAttendant;
 import models.Callee;
 import models.Patient;
 import play.Routes;
-import play.data.Form;
+import play.data.*;
 import play.libs.Json;
-import play.mvc.BodyParser;
-import play.mvc.Content;
-import play.mvc.Controller;
-import play.mvc.Result;
-import play.mvc.WebSocket;
+import play.mvc.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -23,6 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import core.Global;
 import core.MyWebSocketManager;
+import core.auth.Authentication;
 
 public class Application extends Controller {
 
@@ -32,13 +29,36 @@ public class Application extends Controller {
     	return redirect(routes.Application.openAlarms());
     }
 
+	/**
+	 * Default login view controller
+	 * @return A Result object containing the response body
+	 */
+	public static Result login() {
+		return ok(views.html.login.render(Authentication.loginForm));
+	}
+
+	/**
+	 * Default authentication controller. This controller passes the provided credentials
+	 * from the login form onto the Authentication class for validation.
+	 * @return A Result object containing the response body
+	 */
+	public static Result authenticate() {
+		Form<Authentication.Login> filledForm = Authentication.loginForm.bindFromRequest();
+
+		// Return a bad request if validation failed
+		if (filledForm.hasErrors()) return badRequest(views.html.login.render(filledForm));
+		else {
+			session().clear();
+			session("username", filledForm.get().username);
+			return redirect(routes.Application.openAlarms());
+		}
+	}
+
     public static Result  openAlarms(){
     	List<Alarm> object = Global.alarmList.getAlarmList();
     	
     	Content html = views.html.index.render(object, alarmForm);
-    	 return ok(
-    			    html
-    			  );
+    	return ok(html);
     }
     
     public static Result  newAlarm(){

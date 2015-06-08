@@ -8,6 +8,10 @@ GET     /assets/javascripts/routes          controllers.Application.javascriptRo
 # Home page
 GET     /                           controllers.Application.index()
 
+# Authentication
+GET     /login                  controllers.Application.login()
+POST    /login                  controllers.Application.authenticate()
+
 # Alarms
 GET     /openAlarms             controllers.Application.openAlarms()          
 #GET     /alarms                controllers.Application.alarms()
