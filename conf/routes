@@ -3,59 +3,61 @@
 # ~~~~
 
 # Javascript Routes
-GET     /assets/javascripts/routes          controllers.Application.javascriptRoutes()
+GET         /assets/javascripts/routes                            controllers.Application.javascriptRoutes()
 
 # Home page
-GET     /                           controllers.Application.index()
+GET         /                                                     controllers.Application.index()
 
 # Authentication
-GET     /login                  controllers.Application.login()
-POST    /login                  controllers.Application.authenticate()
+GET         /login                                                controllers.Application.login()
+POST        /login                                                controllers.Application.authenticate()
+# TODO: Change below HTTP method to POST when logout form/button is implemented in dashboard
+GET         /logout                                               controllers.Application.logout()
 
 # Alarms
-GET     /openAlarms             controllers.Application.openAlarms()          
+GET         /openAlarms                                           controllers.Application.openAlarms()
 #GET     /alarms                controllers.Application.alarms()
-GET     /pastAlarmsFromCalle/:calleeId   controllers.Application.getPastAlarmsFromCallee(calleeId: Long)
-GET     /pastAlarmsFromPatient/:patientId   controllers.Application.getPastAlarmsFromPatient(patientId: Long)
-GET     /alarm/:id              controllers.Application.getAlarm(id: Long)
-POST    /alarm                  controllers.Application.newAlarm()
+GET         /pastAlarmsFromCalle/:calleeId                        controllers.Application.getPastAlarmsFromCallee(calleeId: Long)
+GET         /pastAlarmsFromPatient/:patientId                     controllers.Application.getPastAlarmsFromPatient(patientId: Long)
+GET         /alarm/:id                                            controllers.Application.getAlarm(id: Long)
+POST        /alarm                                                controllers.Application.newAlarm()
 #POST    /alarm/:id/delete       controllers.Application.deleteAlarm(id: Long)
 #POST    /assignAlarm/           controllers.Application.assignAlarm()
 #POST    /dispatchAlarm/         controllers.Application.dispatchAlarm()
-POST    /alarm/assign           controllers.Application.assignAlarmFromJson()
-POST    /alarm/close           controllers.Application.closeCase()
+POST        /alarm/assign                                         controllers.Application.assignAlarmFromJson()
+POST        /alarm/close                                          controllers.Application.closeCase()
 #POST    /alarm/save           controllers.Application.saveCase()
-POST    /alarm/saveAndFollowup           controllers.Application.saveAndFollowupCase()
-POST    /alarm/notifyFollowup/:id           controllers.Application.notifyFollowup(id: Long)
+POST        /alarm/saveAndFollowup                                controllers.Application.saveAndFollowupCase()
+POST        /alarm/notifyFollowup/:id                             controllers.Application.notifyFollowup(id: Long)
 
-GET     /callee/:id              controllers.Application.getCalleeFromAlarm(id: Long)
-GET     /prospectPatient/:id     controllers.Application.getProspectPatients(id: Long)
+GET         /callee/:id                                           controllers.Application.getCalleeFromAlarm(id: Long)
+GET         /prospectPatient/:id                                  controllers.Application.getProspectPatients(id: Long)
 #GET     /patientsByAddress/:address     controllers.Application.getPatientsByAddress(address: String)
-POST    /patient/new                    controllers.Application.insertPatientFromJson()
+POST        /patient/new                                          controllers.Application.insertPatientFromJson()
 
 #POST   /addPatientAndNoteAndClose       controllers.Application.addPatientAndNoteAndClose()
 #POST   /addPatientAndNoteAndGoForward   controllers.Application.addPatientAndGoForward()
 
 # Attendants          
-GET     /attendants                  controllers.AttendantControler.attendants()
-POST    /attendants                  controllers.AttendantControler.newAttendant()
-POST    /attendants/:id/delete       controllers.AttendantControler.deleteAttendant(id: Long)
+GET         /attendants                                           controllers.AttendantControler.attendants()
+POST        /attendants                                           controllers.AttendantControler.newAttendant()
+POST        /attendants/:id/delete                                controllers.AttendantControler.deleteAttendant(id: Long)
 
 # ComponentReading          
-GET     /component/:readingType/                  controllers.ComponentReadingController.getReadingsPerType(readingType: String)
+GET         /component/:readingType/                              controllers.ComponentReadingController.getReadingsPerType(readingType: String)
 
 # Websockets
-GET     /wsInterface                    controllers.Application.wsInterface()
+GET         /wsInterface                                          controllers.Application.wsInterface()
 
 #Building scala javascript files into javascript files
 #To be effectively called on the main html
-GET     /assets.javascript.ws.js        controllers.Application.wsJs()
-GET     /assets.javascript.alarmSelectTemplate.js        controllers.Application.getalarmSelectTemplateJs()
-GET     /assets.javascript.patientTemplateScripts.js      controllers.Application.getpatientTemplateScriptsJs()
-GET     /assets.javascript.actionsAndClosingScripts.js      controllers.Application.getactionsAndClosingScriptsJs()
-GET     /assets.javascript.assesmentPageScripts.js      controllers.Application.getassesmentPageScriptsJs()
+GET         /assets.javascript.ws.js                              controllers.Application.wsJs()
+GET         /assets.javascript.alarmSelectTemplate.js             controllers.Application.getalarmSelectTemplateJs()
+GET         /assets.javascript.patientTemplateScripts.js          controllers.Application.getpatientTemplateScriptsJs()
+GET         /assets.javascript.actionsAndClosingScripts.js        controllers.Application.getactionsAndClosingScriptsJs()
+GET         /assets.javascript.assesmentPageScripts.js            controllers.Application.getassesmentPageScriptsJs()
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file                                         controllers.Assets.at(path="/public", file)
 
-GET     /webjars/*file                    controllers.WebJarAssets.at(file)
+GET         /webjars/*file                                        controllers.WebJarAssets.at(file)

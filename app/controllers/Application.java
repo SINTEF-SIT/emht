@@ -30,11 +30,24 @@ public class Application extends Controller {
     }
 
 	/**
-	 * Default login view controller
+	 * Default login controller
 	 * @return A Result object containing the response body
 	 */
 	public static Result login() {
+		// If user is already logged in, redirect to dashboard
+		if (session().get("username") != null) {
+			return redirect(controllers.routes.Application.openAlarms());
+		}
 		return ok(views.html.login.render(Authentication.loginForm));
+	}
+
+	/**
+	 * Default logout controller
+	 * @return
+	 */
+	public static Result logout() {
+		session().clear();
+		return redirect(controllers.routes.Application.login());
 	}
 
 	/**
