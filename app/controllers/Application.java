@@ -61,9 +61,14 @@ public class Application extends Controller {
 
 		// Return a bad request if validation failed
 		if (filledForm.hasErrors()) return badRequest(views.html.login.render(filledForm));
+
 		else {
+			AlarmAttendant user = AlarmAttendant.getAttendantFromUsername(filledForm.get().username);
+
 			session().clear();
-			session("username", filledForm.get().username);
+			session("username", user.username);
+			session("role", Integer.toString(user.role));
+
 			return redirect(controllers.routes.Application.openAlarms());
 		}
 	}
@@ -71,8 +76,8 @@ public class Application extends Controller {
 	@Security.Authenticated(Authorization.Authorized.class)
     public static Result  openAlarms(){
     	List<Alarm> object = Global.alarmList.getAlarmList();
-    	
     	Content html = views.html.index.render(object, alarmForm);
+
     	return ok(html);
     }
     
