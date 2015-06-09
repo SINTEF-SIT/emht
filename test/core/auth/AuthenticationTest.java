@@ -18,7 +18,7 @@ public class AuthenticationTest extends WithApplication {
     @Before
     public void setUp() throws Exception {
         start(fakeApplication(inMemoryDatabase(), fakeGlobal()));
-        Ebean.save((List) Yaml.load("initial-data.yml"));
+        Ebean.save((List) Yaml.load("test-data.yml"));
     }
 
     @Test

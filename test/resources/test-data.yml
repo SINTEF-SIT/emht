@@ -1,0 +1,7 @@
+# AlarmAttendants
+# password field hash is resolved from key 'password'
+
+ - &karin !!models.AlarmAttendant
+   username:  Karin
+   password:  1149:5b424032386339376135:29ee59e11b1f502075abed5b39b8ca0557cac59975409335581d677efa2e6d06cd42e8bf71c124669ceeda95ed9df3142af23a0161bc95e817a8dcc6d76be211
+   role: 1
