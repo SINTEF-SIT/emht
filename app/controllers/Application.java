@@ -3,6 +3,7 @@ package controllers;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import controllers.auth.Authorization;
 import models.Alarm;
 import models.AlarmAttendant;
 import models.Callee;
@@ -67,6 +68,7 @@ public class Application extends Controller {
 		}
 	}
 
+	@Security.Authenticated(Authorization.Authorized.class)
     public static Result  openAlarms(){
     	List<Alarm> object = Global.alarmList.getAlarmList();
     	
