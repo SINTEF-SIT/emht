@@ -22,7 +22,7 @@ public class AuthenticationTest extends WithApplication {
     }
 
     @Test
-    public void testValidate() throws Exception {
+    public void testValidateSuccess() throws Exception {
         Result result = callAction(
             routes.ref.Application.authenticate(),
             fakeRequest().withFormUrlEncodedBody(
@@ -32,8 +32,11 @@ public class AuthenticationTest extends WithApplication {
 
         assertEquals(303, status(result));
         assertEquals("Karin", session(result).get("username"));
+    }
 
-        result = callAction(
+    @Test
+    public void testValidateFailure() throws Exception {
+        Result result = callAction(
                 routes.ref.Application.authenticate(),
                 fakeRequest().withFormUrlEncodedBody(
                         ImmutableMap.of("username", "Karin", "password", "wrongpassword")
