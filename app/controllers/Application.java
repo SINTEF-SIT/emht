@@ -26,7 +26,7 @@ public class Application extends Controller {
 	static Form<Alarm> alarmForm = Form.form(Alarm.class);
 	
     public static Result index() {
-    	return redirect(routes.Application.openAlarms());
+    	return redirect(controllers.routes.Application.openAlarms());
     }
 
 	/**
@@ -50,7 +50,7 @@ public class Application extends Controller {
 		else {
 			session().clear();
 			session("username", filledForm.get().username);
-			return redirect(routes.Application.openAlarms());
+			return redirect(controllers.routes.Application.openAlarms());
 		}
 	}
 
