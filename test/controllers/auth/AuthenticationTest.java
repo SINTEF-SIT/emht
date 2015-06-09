@@ -1,9 +1,8 @@
-package core.auth;
+package controllers.auth;
 
 import controllers.routes;
 import static org.junit.Assert.*;
 import org.junit.*;
-import java.util.*;
 import play.mvc.*;
 import play.libs.*;
 import play.test.*;

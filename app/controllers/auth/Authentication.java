@@ -1,4 +1,4 @@
-package core.auth;
+package controllers.auth;
 
 import models.AlarmAttendant;
 import play.data.Form;

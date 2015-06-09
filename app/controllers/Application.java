@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import core.Global;
 import core.MyWebSocketManager;
-import core.auth.Authentication;
+import controllers.auth.Authentication;
 
 public class Application extends Controller {
 
