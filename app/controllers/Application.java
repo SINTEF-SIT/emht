@@ -64,11 +64,13 @@ public class Application extends Controller {
 		if (filledForm.hasErrors()) return badRequest(views.html.login.render(filledForm));
 
 		else {
+			// Fetch the user object, as all invalid login attempts will cause the form to contain errors
 			AlarmAttendant user = AlarmAttendant.getAttendantFromUsername(filledForm.get().username);
 
 			session().clear();
 			session("username", user.username);
 			session("role", Integer.toString(user.role));
+			session("id", Long.toString(user.id));
 
 			return redirect(controllers.routes.Application.openAlarms());
 		}
