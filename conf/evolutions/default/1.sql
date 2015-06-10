@@ -29,8 +29,8 @@ create table alarm (
 create table alarm_attendant (
   id                        bigint not null,
   username                  varchar(255),
-  password                  varchar(255),
-  role                      integer,
+  password                  varchar(255) not null,
+  role                      integer not null,
   constraint uq_alarm_attendant_username unique (username),
   constraint pk_alarm_attendant primary key (id))
 ;

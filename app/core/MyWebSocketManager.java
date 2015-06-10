@@ -1,8 +1,6 @@
 package core;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Id;
@@ -20,13 +18,27 @@ import play.libs.F.Callback0;
 import play.mvc.WebSocket;
 
 public class MyWebSocketManager {
-	
-    // collect all websockets here
-    private static List<WebSocket.Out<JsonNode>> connections = new ArrayList<WebSocket.Out<JsonNode>>();
 
-    public static void start(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out){
+	/**
+	 * Helper class for creating a Tuple containing both in and out sockets of a connected user
+	 */
+	public static class ConnectionTuple {
+		public WebSocket.In<JsonNode> in;
+		public WebSocket.Out<JsonNode> out;
+
+		public ConnectionTuple(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
+			this.in = in;
+			this.out = out;
+		}
+	}
+
+	// Container for all connected users and their socket objects
+	private static HashMap<String, ConnectionTuple> connections = new HashMap<>();
+
+
+    public static void start(String username, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
         
-        connections.add(out);
+        connections.put(username, new ConnectionTuple(in, out));
         
         in.onMessage(new Callback<JsonNode>(){
             public void invoke(JsonNode event){
@@ -40,11 +52,14 @@ public class MyWebSocketManager {
             }
         });
     }
-    
-    // Iterate connection list and write incoming message
+
+	/**
+	 * Distribute a message to all registered websocket connections
+	 * @param message A JsonNode containing the message information
+	 */
     public static void notifyAll(ObjectNode message){
-        for (WebSocket.Out<JsonNode> out : connections) {
-            out.write(message);
+        for (ConnectionTuple connection : connections.values()) {
+			connection.out.write(message);
         }
     }
     

@@ -39,9 +39,9 @@ POST        /patient/new                                          controllers.Ap
 #POST   /addPatientAndNoteAndGoForward   controllers.Application.addPatientAndGoForward()
 
 # Attendants          
-GET         /attendants                                           controllers.AttendantControler.attendants()
-POST        /attendants                                           controllers.AttendantControler.newAttendant()
-POST        /attendants/:id/delete                                controllers.AttendantControler.deleteAttendant(id: Long)
+GET         /attendants                                           controllers.AttendantController.attendants()
+POST        /attendants                                           controllers.AttendantController.newAttendant()
+POST        /attendants/:id/delete                                controllers.AttendantController.deleteAttendant(id: Long)
 
 # ComponentReading          
 GET         /component/:readingType/                              controllers.ComponentReadingController.getReadingsPerType(readingType: String)
