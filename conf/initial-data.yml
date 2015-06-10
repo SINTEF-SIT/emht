@@ -109,9 +109,9 @@
     type:            safety_alarm
     callee:          *callee1
     patient:         *patient6
-    openingTime:     2014-09-15 11:02:57
-    dispatchingTime: 2014-09-15 11:06:57
-    closingTime:     2014-09-15 11:06:57
+    openingTime:     2015-09-10 11:02:57
+    dispatchingTime: null
+    closingTime:     null
 
  - &alarm104 !!models.Alarm
     type:            safety_alarm

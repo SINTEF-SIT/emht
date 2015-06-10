@@ -2,7 +2,11 @@ package controllers.auth;
 
 import controllers.routes;
 
+import models.AlarmAttendant;
+import play.Logger;
 import play.mvc.*;
+
+import java.util.Map;
 
 /**
  * Created by Aleksander Skraastad (myth) on 6/8/15.
@@ -25,14 +29,23 @@ public class Authorization {
         @Override
         public String getUsername(Http.Context ctx) {
 
-            String user = ctx.session().get("username");
+            String username = ctx.session().get("username");
 
-            // Do an API-KEY check
-            if (user == null) {
+            // Do an API-KEY check and return API-key canonical name if valid
+            if (username == null) {
                 // TODO: Implement API-Key support
+                return null;
+            } else {
+                // TODO: For now, just check if user still exists in database until a proper hook
+                // for per-user session invalidation on user delete is implemented.
+                AlarmAttendant user = AlarmAttendant.getAttendantFromUsername(username);
+                if (user == null) {
+                    ctx.session().clear();
+                    username = null;
+                }
             }
 
-            return user;
+            return username;
         }
 
         @Override
