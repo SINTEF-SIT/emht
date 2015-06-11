@@ -7,6 +7,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 
+@Security.Authenticated(Authorization.Authorized.class)
 public class AttendantController extends Controller {
 
 	static Form<AlarmAttendant> attendantForm = Form.form(AlarmAttendant.class);
@@ -15,7 +16,8 @@ public class AttendantController extends Controller {
 	 * Main controller of the /attendants endpoint
 	 * @return A Result object containing the HTTP response
 	 */
-	@Security.Authenticated(Authorization.Authorized.class)
+
+	@Authorization.PrivilegeLevel(Authorization.ADMINISTRATOR)
 	public static Result index() {
 		return redirect(controllers.routes.AttendantController.attendants());
 	}
@@ -24,7 +26,7 @@ public class AttendantController extends Controller {
 	 * Listing controller of the /attendants endpoint
 	 * @return A Result object containing the HTTP response
 	 */
-	@Security.Authenticated(Authorization.Authorized.class)
+	@Authorization.PrivilegeLevel(Authorization.ADMINISTRATOR)
 	public static Result attendants() {
 		return ok(views.html.attendantAdmin.render(AlarmAttendant.all(), attendantForm));
 	}
@@ -33,7 +35,7 @@ public class AttendantController extends Controller {
 	 * New attendant creation controller of the /attendants endpoint
 	 * @return A Result object containing the HTTP response
 	 */
-	@Security.Authenticated(Authorization.Authorized.class)
+	@Authorization.PrivilegeLevel(Authorization.ADMINISTRATOR)
 	public static Result newAttendant() {
 
 		Form<AlarmAttendant> filledForm = attendantForm.bindFromRequest();
@@ -50,7 +52,7 @@ public class AttendantController extends Controller {
 	 * Attendant deletion controller of the /attendants endpoint
 	 * @return A Result object containing the HTTP response
 	 */
-	@Security.Authenticated(Authorization.Authorized.class)
+	@Authorization.PrivilegeLevel(Authorization.ADMINISTRATOR)
 	public static Result deleteAttendant(Long id) {
 		AlarmAttendant.delete(id);
 		return redirect(controllers.routes.AttendantController.attendants());

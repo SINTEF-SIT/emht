@@ -30,7 +30,7 @@ public class AuthenticationTest extends WithApplication {
         );
 
         assertEquals(303, status(result));
-        assertEquals("Karin", session(result).get("username"));
+        assertEquals("1", session(result).get("id"));
     }
 
     @Test
@@ -43,6 +43,6 @@ public class AuthenticationTest extends WithApplication {
         );
 
         assertEquals(400, status(result));
-        assertNull(session(result).get("username"));
+        assertNull(session(result).get("id"));
     }
 }

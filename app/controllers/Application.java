@@ -10,6 +10,7 @@ import models.Callee;
 import models.Patient;
 import play.Logger;
 import play.Routes;
+import play.cache.Cache;
 import play.data.*;
 import play.libs.Json;
 import play.mvc.*;
@@ -37,7 +38,7 @@ public class Application extends Controller {
 	 */
 	public static Result login() {
 		// If user is already logged in, redirect to dashboard
-		if (session().get("username") != null) {
+		if (session().get("id") != null) {
 			return redirect(controllers.routes.Application.openAlarms());
 		}
 		return ok(views.html.login.render(Authentication.loginForm));
@@ -61,16 +62,19 @@ public class Application extends Controller {
 		Form<Authentication.Login> filledForm = Authentication.loginForm.bindFromRequest();
 
 		// Return a bad request if validation failed
-		if (filledForm.hasErrors()) return badRequest(views.html.login.render(filledForm));
+		if (filledForm.hasErrors()) {
+			Logger.debug("Failed authentication attempt for: " + filledForm.data().get("username"));
+			return badRequest(views.html.login.render(filledForm));
+		}
 
 		else {
 			// Fetch the user object, as all invalid login attempts will cause the form to contain errors
 			AlarmAttendant user = AlarmAttendant.getAttendantFromUsername(filledForm.get().username);
-
-			session().clear();
-			session("username", user.username);
-			session("role", Integer.toString(user.role));
+			Logger.debug("Successfull authentication from: " + user.username);
+			// Set the user ID in session and cache the user object
 			session("id", Long.toString(user.id));
+			session("role", Integer.toString(user.role));
+			Cache.set(Long.toString(user.id), user);
 
 			return redirect(controllers.routes.Application.openAlarms());
 		}
@@ -408,9 +412,7 @@ public class Application extends Controller {
 	@Security.Authenticated(Authorization.Authorized.class)
 	public static WebSocket<JsonNode> wsInterface() {
 
-		String username = session().get("username");
-
-		Logger.debug("Incoming websocket connection from: " + username);
+		String username = ((AlarmAttendant) Cache.get(session().get("id"))).username;
 
 		return new WebSocket<JsonNode>() {
 			// Called when WebSocket handshake is done

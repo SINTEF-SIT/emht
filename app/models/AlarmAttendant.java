@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import controllers.auth.Authentication;
+import play.cache.Cache;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder;
 
@@ -34,6 +35,10 @@ public class AlarmAttendant extends Model {
 		return find.all();
 	}
 
+	public static AlarmAttendant get(Long id) {
+		return find.byId(id);
+	}
+
 	public static void create(AlarmAttendant attendant) {
 		try {
 			attendant.password = Authentication.generatePasswordHash(attendant.password);
@@ -57,6 +62,17 @@ public class AlarmAttendant extends Model {
 			return "User must be either Administrator, Attendant or Field Operator";
 		}
 		return null;
+	}
+
+	/**
+	 * Retrieves a user object by its ID and injects it into the Cache
+	 * @param id The user ID of the user to be retrieved
+	 * @return The AlarmAttendant corresponding to the provided id
+	 */
+	public static AlarmAttendant getAndInjectIntoCache(Long id) {
+		AlarmAttendant user = find.byId(id);
+		if (Cache.get(id.toString()) == null) Cache.set(id.toString(), user);
+		return user;
 	}
 
 	public static void delete(Long id) {

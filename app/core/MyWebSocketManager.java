@@ -12,6 +12,7 @@ import models.Alarm;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import play.Logger;
 import play.libs.Json;
 import play.libs.F.Callback;
 import play.libs.F.Callback0;
@@ -35,23 +36,55 @@ public class MyWebSocketManager {
 	// Container for all connected users and their socket objects
 	private static HashMap<String, ConnectionTuple> connections = new HashMap<>();
 
-
+	/**
+	 *
+	 * @param username
+	 * @param in
+	 * @param out
+	 */
     public static void start(String username, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
         
         connections.put(username, new ConnectionTuple(in, out));
+		Logger.debug("Opened WebSocket connection from: " + username);
         
-        in.onMessage(new Callback<JsonNode>(){
-            public void invoke(JsonNode event){
-            	//MyWebSocketManager.notifyAll(event);
-            }
-        });
+        in.onMessage(new Callback<JsonNode>() {
+			public void invoke(JsonNode event) {
+				Logger.debug("Received event from " + getUsernameFromWebSocket(in) + ": " + event.asText());
+			}
+		});
         
         in.onClose(new Callback0(){ // TODO: possibly remove from the connection list
-            public void invoke(){
-            	//MyWebSocketManager.notifyAll("A connection closed");
+            public void invoke() {
+				String username = getUsernameFromWebSocket(in);
+            	Logger.debug("Closed WebSocket connection from: " + getUsernameFromWebSocket(in));
+				connections.remove(username);
             }
         });
     }
+
+	/**
+	 * Helper method that retrieves a related username from a WebSocket object.
+	 * @param in The socket object to retrieve the related username from.
+	 * @return Related username of the socket if found, null otherwise.
+	 */
+	public static String getUsernameFromWebSocket(WebSocket.In<JsonNode> in) {
+		for (Map.Entry<String, ConnectionTuple> entry : connections.entrySet()) {
+			if (entry.getValue().in == in) return entry.getKey();
+		}
+		return null;
+	}
+
+	/**
+	 * Helper method that retrieves a related username from a WebSocket object.
+	 * @param out The socket object to retrieve the related username from.
+	 * @return Related username of the socket if found, null otherwise.
+	 */
+	public static String getUsernameFromWebSocket(WebSocket.Out<JsonNode> out) {
+		for (Map.Entry<String, ConnectionTuple> entry : connections.entrySet()) {
+			if (entry.getValue().out == out) return entry.getKey();
+		}
+		return null;
+	}
 
 	/**
 	 * Distribute a message to all registered websocket connections
