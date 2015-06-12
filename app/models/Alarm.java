@@ -91,6 +91,17 @@ public class Alarm extends Model { // the model extension serves for having acce
 		return find.where().eq("patient.id",patientId).isNotNull("closingTime").orderBy("openingTime desc").findList();
 	}
 
+	/**
+	 * Retrieve all Alarms from the database that has been assigned to the provided AlarmAttendant object.
+	 * This method does not filter on open alarms only, instead it returns every alarm ever assigned to a particular
+	 * user.
+	 * @param attendant The AlarmAttendant user object for which assigned Alarms are to be retrieved
+	 * @return A list of alarms if any are found. An empty list is returned otherwise.
+	 */
+	public static List<Alarm> assignedToUser(AlarmAttendant attendant) {
+		return find.where().eq("attendant.id", attendant.id).findList();
+	}
+
 	public static Alarm assignAttendantToAlarm(Long alarmId, AlarmAttendant attendant){
 		Alarm a = find.ref(alarmId);
 		a.attendant = attendant;

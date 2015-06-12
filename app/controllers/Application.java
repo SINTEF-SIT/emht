@@ -73,6 +73,7 @@ public class Application extends Controller {
 			Logger.debug("Successfull authentication from: " + user.username);
 			// Set the user ID in session and cache the user object
 			session("id", Long.toString(user.id));
+			session("username", user.username);
 			session("role", Integer.toString(user.role));
 			Cache.set(Long.toString(user.id), user);
 
@@ -80,30 +81,91 @@ public class Application extends Controller {
 		}
 	}
 
+	/* BEGIN ENDPOINTS */
+
 	@Security.Authenticated(Authorization.Authorized.class)
-	public static Result  openAlarms(){
+	public static Result openAlarms(){
 		List<Alarm> object = Global.alarmList.getAlarmList();
 		Content html = views.html.index.render(object, alarmForm);
 
 		return ok(html);
 	}
 
-	public static Result  newAlarm(){
+	@Security.Authenticated(Authorization.Authorized.class)
+	@Authorization.PrivilegeLevel(Authorization.FIELD_OPERATOR)
+	public static Result alarmsAssignedToMe() {
+		ObjectNode jsonAlarms = Json.newObject();
+		AlarmAttendant currentUser = AlarmAttendant.get(Long.parseLong(session().get("id")));
+		List<Alarm> alarms = Alarm.assignedToUser(currentUser);
+
+		jsonAlarms.put("userId", currentUser.id);
+		jsonAlarms.put("username", currentUser.username);
+		jsonAlarms.put("role", currentUser.role);
+
+		ArrayNode assignedToUser = new ArrayNode(JsonNodeFactory.instance);
+		for (Alarm a : alarms) {
+			ObjectNode alarm = Json.newObject();
+			alarm.put("alarmLog", a.alarmLog == null);
+			alarm.put("notes", a.notes);
+			alarm.put("type", a.type);
+			alarm.put("openingTime", a.openingTime != null ? a.openingTime.toString() : null);
+			alarm.put("dispatchingTime", a.dispatchingTime != null ? a.dispatchingTime.toString() : null);
+			alarm.put("closingTime", a.closingTime != null ? a.closingTime.toString() : null);
+
+
+			// Add the callee object if present, otherwise write a null
+			if (a.callee != null) {
+				ObjectNode callee = Json.newObject();
+				callee.put("id", a.callee.id);
+				callee.put("name", a.callee.name);
+				callee.put("phoneNumber", a.callee.phoneNumber);
+				callee.put("address", a.callee.address);
+				alarm.put("callee", callee);
+			} else {
+				alarm.putNull("callee");
+			}
+
+			// Add the patient object if present, otherwise write a null
+			if (a.patient != null) {
+				ObjectNode patient = Json.newObject();
+				patient.put("id", a.patient.id);
+				patient.put("name", a.patient.name);
+				patient.put("persoNumber", a.patient.personalNumber);
+				patient.put("phoneNumber", a.patient.phoneNumber);
+				patient.put("address", a.patient.address);
+				patient.put("age", a.patient.age);
+				alarm.put("patient", patient);
+			} else {
+				alarm.putNull("patient");
+			}
+
+			// Insert the alarm into the alarmarray
+			assignedToUser.add(alarm);
+		}
+
+		// Add the alarm array to the wrapper object
+		jsonAlarms.put("alarms", assignedToUser);
+
+		return ok(jsonAlarms);
+	}
+
+
+	public static Result newAlarm(){
 		Form<Alarm> filledForm = alarmForm.bindFromRequest(); // create a new form with the request data
-		if(filledForm.hasErrors()) {
+		if (filledForm.hasErrors()) {
 			return badRequest();
 		} else {
 			Alarm formAlarm = filledForm.get();
 
 			ObjectNode jsonAlarm = Json.newObject();
 
-			if(null != formAlarm.callee){
+			if (null != formAlarm.callee) {
 				formAlarm.callee = Callee.getOrCreate(formAlarm.callee);
 				//formAlarm.patient = Patient.getOrCreate(formAlarm.patient);
 				Alarm a = Alarm.create(formAlarm);//
 				jsonAlarm.put("type", a.type);
 				jsonAlarm.put("alarmId", a.id);
-				if(null != a.callee){
+				if (null != a.callee){
 					ObjectNode calle = Json.newObject();
 					calle.put("id", a.callee.id);
 					calle.put("name", a.callee.name);
@@ -113,8 +175,7 @@ public class Application extends Controller {
 				}
 
 				return ok(jsonAlarm);
-			}
-			else{
+			} else {
 				System.out.println("calle was not found in the form");
 				return badRequest();
 			}
@@ -138,7 +199,7 @@ public class Application extends Controller {
 	// { "type": string, "notes": string, "alarmId": long,
 	//  "callee" : { "phoneNumber": string, "name": string, "address": string, "id": long },
 	//  "patient" : { "persoNumber": string, "name": string, "address": string,  "age": int, "id": long }}
-	public static Result  getAlarm(Long id){
+	public static Result getAlarm(Long id){
 
 		Alarm a = Alarm.get(id);
 
@@ -148,7 +209,7 @@ public class Application extends Controller {
 		jsonAlarm.put("alarmId", a.id);
 		jsonAlarm.put("occuranceAddress", a.occuranceAddress);
 
-		if(null != a.callee){
+		if (null != a.callee) {
 			ObjectNode calle = Json.newObject();
 			calle.put("id", a.callee.id);
 			calle.put("name", a.callee.name);
@@ -157,7 +218,7 @@ public class Application extends Controller {
 			jsonAlarm.put("calle", calle);
 		}
 
-		if(null != a.patient){
+		if (null != a.patient) {
 			ObjectNode  patient = Json.newObject();
 			patient.put("id", a.patient.id);
 			patient.put("name", a.patient.name);
@@ -174,23 +235,22 @@ public class Application extends Controller {
 
 
 	// Return the type and date of each one of the past alarms of the callee
-	public static Result  getPastAlarmsFromCallee(Long calleeId){
+	public static Result  getPastAlarmsFromCallee(Long calleeId) {
 		List<Alarm> alarmList = Alarm.pastAlarmsFromCallee(calleeId);
 		return alarmListToJsonAlarmLog(alarmList);
 	}
 	// Return the type and date of each one of the past alarms of the patient
-	public static Result  getPastAlarmsFromPatient(Long patientId){
+	public static Result  getPastAlarmsFromPatient(Long patientId) {
 		List<Alarm> alarmList = Alarm.pastAlarmsFromPatient(patientId);
 		return alarmListToJsonAlarmLog(alarmList);
 	}
 
 	// convert a list of alarms into json alarm logs containing date and
 	// type of alarms
-	private static Result alarmListToJsonAlarmLog(List<Alarm> alarmList){
+	private static Result alarmListToJsonAlarmLog(List<Alarm> alarmList) {
 
 		SimpleDateFormat ddMMyy = new SimpleDateFormat ("dd/MM yyyy");
 		SimpleDateFormat hhMin = new SimpleDateFormat ("HH:mm");
-
 
 		ObjectNode result = Json.newObject();
 
@@ -210,13 +270,13 @@ public class Application extends Controller {
 
 
 
-	public static Result  getProspectPatients(Long id){
+	public static Result getProspectPatients(Long id) {
 		List<Patient> patientList = Patient.prospectPatientsFromAlarm(id);
 
 		ObjectNode result = Json.newObject();
 
 		ArrayNode patientArray = new ArrayNode(JsonNodeFactory.instance);
-		if(null != patientList){
+		if (null != patientList) {
 			for (Patient temp : patientList) {
 				ObjectNode  patient = Json.newObject();
 				patient.put("id", temp.id);
@@ -237,7 +297,7 @@ public class Application extends Controller {
 
 	}
 
-	public static Result  getCalleeFromAlarm(Long id){
+	public static Result getCalleeFromAlarm(Long id) {
 		Alarm a = Alarm.get(id);
 
 		ObjectNode calle = Json.newObject();
@@ -245,13 +305,13 @@ public class Application extends Controller {
 		calle.put("name", a.callee.name);
 		calle.put("phoneNumber", a.callee.phoneNumber);
 		calle.put("address", a.callee.address);
-		return ok(calle);
 
+		return ok(calle);
 	}
 
 
 	@BodyParser.Of(BodyParser.Json.class)
-	public static Result  insertPatientFromJson(){
+	public static Result insertPatientFromJson(){
 		JsonNode json = request().body().asJson();
 		Patient p = new Patient();
 		p.name = json.findPath("name").textValue();
@@ -269,8 +329,8 @@ public class Application extends Controller {
 		patient.put("persoNumber", retObj.personalNumber);
 		patient.put("address", retObj.address);
 		patient.put("age", retObj.age);
-		return ok(patient);
 
+		return ok(patient);
 	}
     
 /*    @BodyParser.Of(BodyParser.Json.class)
@@ -304,10 +364,12 @@ public class Application extends Controller {
 		a.occuranceAddress = alarmOccurance;
 		a.id = alarmId;
 		a.notes = notes;
-		if(0 != patientId){
+
+		if (0 != patientId) {
 			a.patient = new Patient();
 			a.patient.id = patientId;
 		}
+
 		Alarm.closeAlarm(a);
 
 		return ok();
@@ -326,25 +388,27 @@ public class Application extends Controller {
 		a.occuranceAddress = alarmOccurance;
 		a.id = alarmId;
 		a.notes = notes;
-		if(0 != patientId){
+
+		if (0 != patientId) {
 			a.patient = new Patient();
 			a.patient.id = patientId;
 		}
+
 		Alarm.saveAndFollowupAlarm(a);
 
 		return ok();
 	}
 
 
-
+	@Security.Authenticated(Authorization.Authorized.class)
+	@Authorization.PrivilegeLevel(Authorization.ATTENDANT)
 	@BodyParser.Of(BodyParser.Json.class)
-	public static Result  assignAlarmFromJson(){
+	public static Result assignAlarmFromJson() {
 		JsonNode json = request().body().asJson();
-
-		String attendantUserName = json.findPath("attendant").textValue();
 		Long alarmId =  json.findPath("alarmId").asLong();
-		AlarmAttendant a = AlarmAttendant.getAttendantFromUsername(attendantUserName);
+		AlarmAttendant a = AlarmAttendant.getAttendantFromUsername(session().get("username"));
 		Alarm.assignAttendantToAlarm(alarmId, a);
+
 		return ok();
 	}
 
@@ -352,22 +416,17 @@ public class Application extends Controller {
 
 	// to be called when a followup alarm is triggered back again
 	// in other words, when the callee responsible for it call it back
-	public static Result  notifyFollowup(Long id){
-
+	public static Result notifyFollowup(Long id){
 		Alarm a = Alarm.get(id);
 		// test if alarm exists and is on following up list
-		if(null == a || a.dispatchingTime == null || a.closingTime != null){
+		if (null == a || a.dispatchingTime == null || a.closingTime != null) {
 			return badRequest();
 		}
-		else{
+		else {
 			MyWebSocketManager.notifyFollowUpAlarm(id);
 			return ok();
 		}
-
-
-
 	}
-
 
 	public static Result javascriptRoutes() {
 		response().setContentType("text/javascript");
@@ -411,8 +470,8 @@ public class Application extends Controller {
 
 	@Security.Authenticated(Authorization.Authorized.class)
 	public static WebSocket<JsonNode> wsInterface() {
-
-		String username = ((AlarmAttendant) Cache.get(session().get("id"))).username;
+		// Prefetch the username as it is not available in the returned WebSocket object's scope.
+		String username = session().get("username");
 
 		return new WebSocket<JsonNode>() {
 			// Called when WebSocket handshake is done
@@ -421,5 +480,4 @@ public class Application extends Controller {
 			}
 		};
 	}
-
 }

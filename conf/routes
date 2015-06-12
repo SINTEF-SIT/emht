@@ -16,7 +16,7 @@ GET         /logout                                               controllers.Ap
 
 # Alarms
 GET         /openAlarms                                           controllers.Application.openAlarms()
-#GET     /alarms                controllers.Application.alarms()
+GET         /alarms/assignedToMe                                  controllers.Application.alarmsAssignedToMe()
 GET         /pastAlarmsFromCalle/:calleeId                        controllers.Application.getPastAlarmsFromCallee(calleeId: Long)
 GET         /pastAlarmsFromPatient/:patientId                     controllers.Application.getPastAlarmsFromPatient(patientId: Long)
 GET         /alarm/:id                                            controllers.Application.getAlarm(id: Long)

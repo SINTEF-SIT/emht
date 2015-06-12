@@ -43,19 +43,15 @@ function assignAlarm(alarmIndex){
 	   // start by clearing the view
 	   //highlightBackListTab ();
 		clearUpData();
-       
-	   var attendant = "Karin";
+
 	   var assignAlarmReq = {
-	            'attendant' : attendant,
-	            'alarmId' : alarmIndex
-	          };
+		   'alarmId' : alarmIndex
+	   };
 		myJsRoutes.controllers.Application.assignAlarmFromJson().ajax({
 	            data : JSON.stringify(assignAlarmReq),
 	            contentType : 'application/json',
 	            success : function (data) {
-	            
-	            	
-	            	
+
 	              // unhighlight any highlighted alarm
 	              var currentSelected = $('.list-group-item.active.alarmItem');
 	              currentSelected.toggleClass("active");	
@@ -76,7 +72,6 @@ function assignAlarm(alarmIndex){
 	              resetAlarmCount();
 	            }// end of success
 	    });// end of ajax call
-		
 
 		//highlightArrowHeader("registrationArrowHeader");
 		populateAlarmDetails(alarmIndex);
