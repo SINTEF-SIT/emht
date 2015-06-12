@@ -4,7 +4,6 @@ import controllers.routes;
 import static org.junit.Assert.*;
 import org.junit.*;
 import play.mvc.*;
-import play.test.Helpers;
 import play.libs.*;
 import play.test.*;
 import static play.test.Helpers.*;
