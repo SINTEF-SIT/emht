@@ -32,9 +32,9 @@ var Alarms = (function ($) {
 
 			// those setup functions should be called just once as they may be binding buttons
 			// and one does not want to rebind
-			setupPatientPage();
-			setupAssesmentPage();
-			setupActionsAndClosingPage();
+			Patient.init();
+			Assessment.init();
+			Actions.init();
 
 			// if the modal is canceled, we clear the active item
 			handleModalCancel();
@@ -65,7 +65,7 @@ var Alarms = (function ($) {
 				var alarmIndex = currentSelected.attr("idnum");
 				currentSelected.toggleClass("active");
 
-				if( currentSelected.parent().attr('id') == "assignedAlarmList" ){
+				if (currentSelected.parent().attr('id') == "assignedAlarmList") {
 
 					// remove from assgined list
 					var openFollowUpListItem =  $('#Alarm' + alarmIndex).clone();
@@ -106,7 +106,7 @@ var Alarms = (function ($) {
 						createPatientDiv(data);
 						var patientListItem = $("#patientDropDownList li:first a");
 						patientListItem.click();
-						loadPatientSensor();
+						Assessment.loadPatientSensor();
 
 						// populate notebox
 						$.getJSON("/alarm/" + alarmIndex,
@@ -174,10 +174,10 @@ var Alarms = (function ($) {
 			},
 
 			clearUpData: function () {
-				clearUpCaleeData();
-				clearUpPatientData();
-				resetAssesmentPage();
-				resetActionsAndClosingPage();
+				Patient.clearUpCalleeData();
+				Patient.clearUpPatientData();
+				Assessment.reset();
+				Actions.reset();
 				$("#globalNotesBox").val("");
 			}
 		},

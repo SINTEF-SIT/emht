@@ -1,138 +1,114 @@
 @import play.i18n._
 
-function organizationTableClick(){
-    $(this).closest('table').find('tr.active').removeClass('active');
-    $(this).addClass('active');
-}
+var Actions = (function ($) {
+    /* Private methods here */
 
+    /* Public methods inside return object */
+    return {
+        init: function () {
+            $(".dispatch-ring-btn").click(function() { $('#calling_modal').modal("show") });
+            $(".dispatch-send-btn").click(function() {
+                //clear modal
+                $("#dispatch_data_modal").find(':checkbox').each(
+                    function() {
+                        $(this).prop("checked", "checked");
+                    }
+                );
 
-function setupActionsAndClosingPage(){
+                // show modal
+                $('#dispatch_data_modal').modal("show");
+            });
 
+            // setting up schedule time modal
+            $(".schedule-btn").click(function() {
+                //clear modal
+                $("#schedule_time_modal").find(':checkbox').each(
+                    function() {
+                        $(this).prop("checked", "checked");
+                    }
+                );
 
-    $(".dispatch-ring-btn").click(function() {
-        $('#calling_modal').modal("show");
-    });
-    $(".dispatch-send-btn").click(function() {
+                // show modal
+                $('#schedule_time_modal').modal("show");
+            });
 
-        //clear modal
-        $("#dispatch_data_modal").find(':checkbox').each(
-            function() {
-                $(this).prop("checked", "checked");
-            }
-        );
+            $("#schedule-time-picker").datetimepicker();
+            $("#schedule_time_modal_btn").click(Actions.closeCaseAtClosing);
+            // end of setting up schedule time modal
 
+            $("#closeCaseActionsButton").click(Actions.closeCaseAtClosing);
+            $("#saveAndFollowUpButton").click(Actions.saveAndFollowupAtClosing);
 
-        // show modal
-        $('#dispatch_data_modal').modal("show");
-    });
+            // setting up organization tables so that the rows can be selected
+            $("#kontaktpersonerTable > tbody").on("click","tr",Actions.organizationTableClick);
+            $("#ambulerendeTable > tbody").on("click","tr",Actions.organizationTableClick);
+            $("#legevaktTable > tbody").on("click","tr",Actions.organizationTableClick);
+            $("#tpTable > tbody").on("click","tr",Actions.organizationTableClick);
+            $("#hjemmesykepleienTable > tbody").on("click","tr",Actions.organizationTableClick);
 
-    // setting up schedule time modal
+            Actions.reset();
+            // make sure that no phone is expanded
+        },
 
-    $(".schedule-btn").click(function() {
+        organizationTableClick: function () {
+            $(this).closest('table').find('tr.active').removeClass('active');
+            $(this).addClass('active');
+        },
 
-        //clear modal
-        $("#schedule_time_modal").find(':checkbox').each(
-            function() {
-                $(this).prop("checked", "checked");
-            }
-        );
+        reset: function () {
+            $("#dynamicDispatchButtons").find(".in").removeClass("in");
+        },
 
+        //simple function that just gets the data from the  page and package it
+        //into a json object
+        getUpdatedAlarmFromPage: function () {
+            var patientId = $('#dynamicPatientInfo').find('#patientId').val();
+            var alarmId = $('#allListsSection').find('.list-group-item.active').attr("idnum");
+            var notes = $('#globalNotesBox').val();
 
-        // show modal
-        $('#schedule_time_modal').modal("show");
-    });
+            var occuranceAddress = $('#incidentAddress').val();
 
-    $("#schedule-time-picker").datetimepicker();
-    $("#schedule_time_modal_btn").click(closeCaseAtClosing);
-    // end of setting up schedule time modal
+            var updatedAlarm = {
+                'alarmId' : alarmId,
+                'notes' : notes,
+                'occuranceAddress' : occuranceAddress,
+                'patient' : {
+                    'patientId' : patientId
+                }
+            };
+            return updatedAlarm;
+        },
 
+        closeCaseAtClosing: function () {
+            var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 
-    $("#closeCaseActionsButton").click(closeCaseAtClosing);
-    $("#saveAndFollowUpButton").click(saveAndFollowupAtClosing);
+            myJsRoutes.controllers.Application.closeCase().ajax({
+                data : JSON.stringify(updatedAlarm),
+                contentType : 'application/json',
+                success : function (data) {
+                    Alarms.gui.removeHighlightedAlarmFromList();
+                    Alarms.gui.clearUpData();
+                    //highlightBackListTab ();
+                }// end of success
+            });// end of ajax call
+        },
 
-    // setting up organization tables so that the rows can be selected
+        saveAndFollowupAtClosing: function () {
+            var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 
-    $("#kontaktpersonerTable > tbody").on("click","tr",organizationTableClick);
-    $("#ambulerendeTable > tbody").on("click","tr",organizationTableClick);
-    $("#legevaktTable > tbody").on("click","tr",organizationTableClick);
-    $("#tpTable > tbody").on("click","tr",organizationTableClick);
-    $("#hjemmesykepleienTable > tbody").on("click","tr",organizationTableClick);
+            myJsRoutes.controllers.Application.saveAndFollowupCase().ajax({
+                data : JSON.stringify(updatedAlarm),
+                contentType : 'application/json',
+                success : function (data) {
+                    Alarms.gui.moveAlarmToFollowUpList();
+                    Alarms.gui.clearUpData();
+                    //highlightBackListTab ();
+                }// end of success
+            });// end of ajax call
+        },
 
-
-
-
-
-
-    resetActionsAndClosingPage();
-    // make sure that no phone is expanded
-
-}
-
-
-function resetActionsAndClosingPage(){
-
-    $("#dynamicDispatchButtons").find(".in").removeClass("in");
-}
-
-
-//simple function that just gets the data from the  page and package it
-//into a json object
-function getUpdatedAlarmFromPage(){
-    var patientId = $('#dynamicPatientInfo').find('#patientId').val();
-    var alarmId = $('#allListsSection').find('.list-group-item.active').attr("idnum");
-    var notes = $('#globalNotesBox').val();
-
-    var occuranceAddress = $('#incidentAddress').val();
-
-    var updatedAlarm = {
-        'alarmId' : alarmId,
-        'notes' : notes,
-        'occuranceAddress' : occuranceAddress,
-        'patient' : {
-            'patientId' : patientId
+        actionsDataSent: function () {
+            $('#send_confirmation_modal').modal();
         }
-    };
-    return updatedAlarm;
-}
-
-function closeCaseAtClosing(){
-
-    var updatedAlarm = getUpdatedAlarmFromPage();
-
-    myJsRoutes.controllers.Application.closeCase().ajax({
-        data : JSON.stringify(updatedAlarm),
-        contentType : 'application/json',
-        success : function (data) {
-            Alarms.gui.removeHighlightedAlarmFromList();
-            Alarms.gui.clearUpData();
-            //highlightBackListTab ();
-        }// end of success
-    });// end of ajax call
-
-}
-
-// called when one of the SEND buttons of the modals
-// is called
-function actionsDataSent(){
-    $('#send_confirmation_modal').modal();
-}
-
-
-
-
-function saveAndFollowupAtClosing(){
-
-    var updatedAlarm = getUpdatedAlarmFromPage();
-
-    myJsRoutes.controllers.Application.saveAndFollowupCase().ajax({
-        data : JSON.stringify(updatedAlarm),
-        contentType : 'application/json',
-        success : function (data) {
-            Alarms.gui.moveAlarmToFollowUpList();
-            Alarms.gui.clearUpData();
-            //highlightBackListTab ();
-        }// end of success
-    });// end of ajax call
-
-}
-
+    }
+})(jQuery);

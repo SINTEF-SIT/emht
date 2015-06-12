@@ -1,21 +1,21 @@
-@(sensorReadings: List[ComponentReading]) 
+@(sensorReadings: List[ComponentReading])
 
 
-@import helper._
+	@import helper._;
 
-@main("Sensor Reading") {
-    
+	@main("Sensor Reading") {
 
-    <header>
-    	<h1> Graph </h1>
-    </header>
 
-	<div id="placeholder" style="width: 800px; height: 400px;"></div>
-	 
-	<script id="source" language="javascript" type="text/javascript">
+		<header>
+			<h1> Graph </h1>
+		</header>
+
+		<div id="placeholder" style="width: 800px; height: 400px;"></div>
+
+		<script id="source" language="javascript" type="text/javascript">
 	$(function () {
 	    var options = {
-	          
+
 	            series: {
 	                lines: {show: true}
 	            },
@@ -23,18 +23,18 @@
 	            yaxis: { min: 0 },
 	            xaxis: {mode: "time", timeformat: "%d/%m/%y"}
 	        };
-	     
+
 	    var data = [];
 	   @for(sensorReading <- sensorReadings){
 	       data.push([@sensorReading.date.getTime(),@sensorReading.value]);
        }
         $.plot(placeholder, [ { label: "Label", data: data } ], options);
-      
+
 	});
 	</script>
-	  
-	</article>
-	 </section>
-	</div>
-    
-}
+
+		</article>
+		</section>
+		</div>
+
+	}

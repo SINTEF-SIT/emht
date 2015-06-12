@@ -1,5 +1,30 @@
 @import play.i18n._
 
+var Patient = (function ($) {
+	/* Private methods */
+
+	/* Public methods inside return object */
+	return {
+		init: function () {
+			$('#addPatientModalButton').click(function() {
+				addNewPatientFromModal();
+			});
+			$("#closeCaseFromPatientRegButton").click(Patient.closeCaseAtRegistration);
+			$("#goToAssesmentButton").click(Patient.fromRegistrationToAssesment);
+		},
+
+		clearUpCalleeData: function () {
+			$("#calleeName").text("");
+			$("#calleeAddress").text("");
+			$("#calleePhone").text("");
+		},
+
+		clearUpPatientData: function () {
+			$("#dynamicPatientInfo").empty();
+		}
+	}
+})(jQuery)
+
 function openAddPatientModal() {
 
 	//clear modal
@@ -14,14 +39,6 @@ function openAddPatientModal() {
 
 }
 
-
-// just to be called on the startup in order not to rebind the button
-function setupPatientPage() {
-	$('#addPatientModalButton').click(function() {
-		addNewPatientFromModal();
-	});
-
-}
 
 /* retrieve the callee and populate it */
 function  populateCalleFromAlarm(alarmId){
@@ -154,7 +171,7 @@ function populatePatient(patientId,patientName,personNumber,address,phoneNumber,
 	$('#patientAddress').text(address);
 	$('#patientAge').text(age);
 	$('#patientId').val(patientId);
-	loadPatientSensor(patientId);
+	Assessment.loadPatientSensor(patientId);
 
 
 	// set the obs field in the assesment page

@@ -1,41 +1,39 @@
 @import play.i18n._
 
- <script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript">
 
 $(function(){
 	var calleeAddress = $('#calleeAddress').text();
 	
 }); 
 
-   
-
 </script>
 
 
-    <div id="patientBox" class="row">
-            <div class="well well-sm">
-                <h4 >
-                    @Messages.get("patientpane.title")</h4>
-                <p>
-                    <div id="dynamicPatientInfo"/>
-            </div>
+<div id="patientBox" class="row">
+    <div class="well well-sm">
+        <h4 >
+        @Messages.get("patientpane.title")</h4>
+        <p>
+    <div id="dynamicPatientInfo"/>
     </div>
-    
-    
-    
-                   <!-- Add patient modal -->
-                      
-              <div class="modal fade" id="add_patient_modal">
-                  <div class="modal-dialog"><div class="modal-content">
-                      <div class="modal-body" >
-                        <h2> @Messages.get("patientmodal.title")</h2>
-                        <u>@Messages.get("patientpane.name")</u> <input type="text" class="form-control" id="modalInputPatientName">
-                        <u>@Messages.get("patientpane.address")</u> <input type="text" class="form-control" id="modalInputPatientAddress">
-                        <u>@Messages.get("patientpane.phonenumber")</u> <input type="text" class="form-control" id="modalInputPatientPhoneNumber">  
-                        <u>@Messages.get("patientpane.personumber"):</u> <input type="text" class="form-control" id="modalInputPatientNumber"> 
-                        <u>@Messages.get("patientpane.age")</u> <input type="text" class="form-control" id="modalInputPatientAge">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">@Messages.get("button.cancel")</button>  
-                        <a href="#" id="addPatientModalButton" class="btn btn-primary" data-dismiss="modal">@Messages.get("patientmodal.savebutton")</a>
-                      </div>
-                  </div></div>                               
-                </div>
+</div>
+
+
+
+<!-- Add patient modal -->
+
+<div class="modal fade" id="add_patient_modal">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-body" >
+            <h2> @Messages.get("patientmodal.title")</h2>
+            <u>@Messages.get("patientpane.name")</u> <input type="text" class="form-control" id="modalInputPatientName">
+            <u>@Messages.get("patientpane.address")</u> <input type="text" class="form-control" id="modalInputPatientAddress">
+            <u>@Messages.get("patientpane.phonenumber")</u> <input type="text" class="form-control" id="modalInputPatientPhoneNumber">
+            <u>@Messages.get("patientpane.personumber"):</u> <input type="text" class="form-control" id="modalInputPatientNumber">
+            <u>@Messages.get("patientpane.age")</u> <input type="text" class="form-control" id="modalInputPatientAge">
+            <button type="button" class="btn btn-default" data-dismiss="modal">@Messages.get("button.cancel")</button>
+            <a href="#" id="addPatientModalButton" class="btn btn-primary" data-dismiss="modal">@Messages.get("patientmodal.savebutton")</a>
+        </div>
+    </div></div>
+</div>

@@ -1,112 +1,107 @@
 @import play.i18n._
 
-function setupAssesmentPage(){
+var Assessment = (function ($) {
+	/* Private methods here */
 
+	/* Public methods inside the return object */
+	return {
+		init: function () {
+			// add actions on check buttons
+			$("#nmiTab").find(':radio').each(
+				function (i) {
+					// set the action to show the label
+					$(this).change(function () {
+						var radioId = $(this).attr('id');
+						var opositeRadioId = radioId.substring(0, radioId.length -1);
 
-	// add actions on check buttons
-	$("#nmiTab").find(':radio').each(
-		function(i) {
-			// set the action to show the label
-			$(this).change(function(){
-				var radioId = $(this).attr('id');
-				var opositeRadioId = radioId.substring(0, radioId.length -1);
-				if(radioId.charAt(radioId.length -1) == "Y"){
-					opositeRadioId += "N";
-				}else {
-					opositeRadioId += "Y";
+						if (radioId.charAt(radioId.length -1) == "Y") {
+							opositeRadioId += "N";
+						} else {
+							opositeRadioId += "Y";
+						}
+
+						var selectedLabel = $("#" + radioId + "label");
+						var unSelectedLabel = $("#" + opositeRadioId + "label");
+
+						if (this.checked) {
+							selectedLabel.show();
+							unSelectedLabel.hide();
+						} else {
+							selectedLabel.hide();
+							unSelectedLabel.show();
+						}
+					});
 				}
-				var selectedLabel = $("#" + radioId + "label");
-				var unSelectedLabel = $("#" + opositeRadioId + "label");
-				if(this.checked) {
-					selectedLabel.show();
-					unSelectedLabel.hide();
-				}else{
-					selectedLabel.hide();
-					unSelectedLabel.show();
-				}
+			);
 
+			// Add log actions to tabs
+			$("#infoTablink").click(function () {
+				$("#informationSensorlabel").show();
 			});
+
+			$("#sensorTablink").click(function () {
+				$("#assedmentSensorlabel").show();
+			});
+
+			// $("#closeCaseFromAssessButton").click(closeCaseAtAssesment);
+			// $("#goToClosingButton").click(fromAssementToClosing);
+
+			Assessment.reset();
+		},
+
+		reset: function () {
+			$("#nmiTab").find(':radio').each(
+				function(i) {
+					// clear all checkbockes
+					$(this).removeAttr('checked');
+				}
+			);
+
+			// hide all log labels
+			$("#assesmentLogPanel").children().each(
+				function(i) {
+					$(this).hide();
+				}
+			);
+
+			//set active tab to NMI
+			$("#nmiTab").addClass("active");
+			$("#infoTab").removeClass("active");
+			$("#sensorTab").removeClass("active");
+
+			$("#nmiNav").addClass("active");
+			$("#infoNav").removeClass("active");
+			$("#sensorNav").removeClass("active");
+		},
+
+		showGraphModal: function () {
+			$('#graph_modal').modal("show");
+		},
+
+		loadPatientSensor: function (patientId) {
+			// TODO retrieve NMI (but in another function)
+			Assessment.removeImageFromSensorTab();
+			if(0 != patientId){
+				var image = new Image();
+				image.src = "/assets/images/patient/" + patientId + ".png" ;
+				image.className = "img-responsive assesment-graph";
+				image.onerror = Assessment.removeImageFromSensorTab;
+				image.onclick = Assessment.showGraphModal;
+				//if (image.width != 0) {
+				$("#sensorTab").append(image);
+				$("#ampliphied-graph").attr("src", image.src);
+				//}
+			}
+		},
+
+		removeImageFromSensorTab: function () {
+			$(".assesment-graph").remove();
+			$("#ampliphied-graph").attr("src", "");
 		}
-	);
-
-
-	// add log actions to tabs
-	$("#infoTablink").click(function () {
-		$("#informationSensorlabel").show();
-	});
-
-	$("#sensorTablink").click(function () {
-		$("#assedmentSensorlabel").show();
-	});
-
-
-//    $("#closeCaseFromAssessButton").click(closeCaseAtAssesment);
-//    $("#goToClosingButton").click(fromAssementToClosing);
-
-
-
-
-	resetAssesmentPage();
-}
-
-
-
-function loadPatientSensor(patId){
-
-	// TODO retrieve NMI (but in another funtion)
-	removeImageFromSensorTab()
-	if(0 != patId){
-		var image = new Image();
-		image.src = "/assets/images/patient/" + patId + ".png" ;
-		image.className = "img-responsive assesment-graph";
-		image.onerror = removeImageFromSensorTab;
-		image.onclick = showGraphModal;
-		//if (image.width != 0) {
-		$("#sensorTab").append(image);
-		$("#ampliphied-graph").attr("src", image.src);
-		//}
 	}
-
-}
-
+})(jQuery);
 
 
-function removeImageFromSensorTab(){
-	$(".assesment-graph").remove();
-	$("#ampliphied-graph").attr("src", "");
-}
-
-function showGraphModal(){
-	$('#graph_modal').modal("show");
-}
-
-
-function resetAssesmentPage(){
-
-
-	$("#nmiTab").find(':radio').each(
-		function(i) {
-			// clear all checkbockes
-			$(this).removeAttr('checked');
-		}
-	);
-
-	// hide all log labels
-	$("#assesmentLogPanel").children().each(
-		function(i) {
-			$(this).hide();
-		}
-	);
-
-	//set active tab to NMI
-	$("#nmiTab").addClass("active");
-	$("#infoTab").removeClass("active");
-	$("#sensorTab").removeClass("active");
-
-	$("#nmiNav").addClass("active");
-	$("#infoNav").removeClass("active");
-	$("#sensorNav").removeClass("active");
-}
 
 /*
  function closeCaseAtAssesment(){
