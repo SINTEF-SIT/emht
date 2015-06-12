@@ -86,7 +86,7 @@ public class Application extends Controller {
 	@Security.Authenticated(Authorization.Authorized.class)
 	public static Result openAlarms(){
 		List<Alarm> object = Global.alarmList.getAlarmList();
-		Content html = views.html.index.render(object, alarmForm);
+		Content html = views.html.index.render(object, alarmForm, session().get("username"));
 
 		return ok(html);
 	}
@@ -104,42 +104,7 @@ public class Application extends Controller {
 
 		ArrayNode assignedToUser = new ArrayNode(JsonNodeFactory.instance);
 		for (Alarm a : alarms) {
-			ObjectNode alarm = Json.newObject();
-			alarm.put("alarmLog", a.alarmLog == null);
-			alarm.put("notes", a.notes);
-			alarm.put("type", a.type);
-			alarm.put("openingTime", a.openingTime != null ? a.openingTime.toString() : null);
-			alarm.put("dispatchingTime", a.dispatchingTime != null ? a.dispatchingTime.toString() : null);
-			alarm.put("closingTime", a.closingTime != null ? a.closingTime.toString() : null);
-
-
-			// Add the callee object if present, otherwise write a null
-			if (a.callee != null) {
-				ObjectNode callee = Json.newObject();
-				callee.put("id", a.callee.id);
-				callee.put("name", a.callee.name);
-				callee.put("phoneNumber", a.callee.phoneNumber);
-				callee.put("address", a.callee.address);
-				alarm.put("callee", callee);
-			} else {
-				alarm.putNull("callee");
-			}
-
-			// Add the patient object if present, otherwise write a null
-			if (a.patient != null) {
-				ObjectNode patient = Json.newObject();
-				patient.put("id", a.patient.id);
-				patient.put("name", a.patient.name);
-				patient.put("persoNumber", a.patient.personalNumber);
-				patient.put("phoneNumber", a.patient.phoneNumber);
-				patient.put("address", a.patient.address);
-				patient.put("age", a.patient.age);
-				alarm.put("patient", patient);
-			} else {
-				alarm.putNull("patient");
-			}
-
-			// Insert the alarm into the alarmarray
+			ObjectNode alarm = Alarm.toJson(a);
 			assignedToUser.add(alarm);
 		}
 
@@ -199,7 +164,7 @@ public class Application extends Controller {
 	// { "type": string, "notes": string, "alarmId": long,
 	//  "callee" : { "phoneNumber": string, "name": string, "address": string, "id": long },
 	//  "patient" : { "persoNumber": string, "name": string, "address": string,  "age": int, "id": long }}
-	public static Result getAlarm(Long id){
+	public static Result getAlarm(Long id) {
 
 		Alarm a = Alarm.get(id);
 
@@ -311,7 +276,7 @@ public class Application extends Controller {
 
 
 	@BodyParser.Of(BodyParser.Json.class)
-	public static Result insertPatientFromJson(){
+	public static Result insertPatientFromJson() {
 		JsonNode json = request().body().asJson();
 		Patient p = new Patient();
 		p.name = json.findPath("name").textValue();

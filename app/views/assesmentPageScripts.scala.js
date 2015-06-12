@@ -1,11 +1,11 @@
 @import play.i18n._
 
 function setupAssesmentPage(){
-	
-	
+
+
 	// add actions on check buttons
 	$("#nmiTab").find(':radio').each(
-		function(i) { 
+		function(i) {
 			// set the action to show the label
 			$(this).change(function(){
 				var radioId = $(this).attr('id');
@@ -17,56 +17,56 @@ function setupAssesmentPage(){
 				}
 				var selectedLabel = $("#" + radioId + "label");
 				var unSelectedLabel = $("#" + opositeRadioId + "label");
-			    if(this.checked) {
-			    	selectedLabel.show();
-			    	unSelectedLabel.hide();
-			    }else{
-			    	selectedLabel.hide();
-			    	unSelectedLabel.show();
-			    }
-				
+				if(this.checked) {
+					selectedLabel.show();
+					unSelectedLabel.hide();
+				}else{
+					selectedLabel.hide();
+					unSelectedLabel.show();
+				}
+
 			});
 		}
 	);
-	
-	
+
+
 	// add log actions to tabs
 	$("#infoTablink").click(function () {
 		$("#informationSensorlabel").show();
 	});
-	
+
 	$("#sensorTablink").click(function () {
 		$("#assedmentSensorlabel").show();
 	});
-	
-	
+
+
 //    $("#closeCaseFromAssessButton").click(closeCaseAtAssesment);
 //    $("#goToClosingButton").click(fromAssementToClosing);
 
 
-    
-    
-    resetAssesmentPage();
+
+
+	resetAssesmentPage();
 }
 
 
 
 function loadPatientSensor(patId){
-	
+
 	// TODO retrieve NMI (but in another funtion)
 	removeImageFromSensorTab()
 	if(0 != patId){
-		var image = new Image(); 
+		var image = new Image();
 		image.src = "/assets/images/patient/" + patId + ".png" ;
 		image.className = "img-responsive assesment-graph";
 		image.onerror = removeImageFromSensorTab;
 		image.onclick = showGraphModal;
 		//if (image.width != 0) {
-			$("#sensorTab").append(image);
-			$("#ampliphied-graph").attr("src", image.src);
+		$("#sensorTab").append(image);
+		$("#ampliphied-graph").attr("src", image.src);
 		//}
 	}
-	
+
 }
 
 
@@ -82,78 +82,78 @@ function showGraphModal(){
 
 
 function resetAssesmentPage(){
-	
+
 
 	$("#nmiTab").find(':radio').each(
-		function(i) { 
+		function(i) {
 			// clear all checkbockes
 			$(this).removeAttr('checked');
 		}
 	);
-	
+
 	// hide all log labels
 	$("#assesmentLogPanel").children().each(
-		function(i) { 
-		    $(this).hide();
+		function(i) {
+			$(this).hide();
 		}
 	);
-    
-    //set active tab to NMI
-    $("#nmiTab").addClass("active");
-    $("#infoTab").removeClass("active");
-    $("#sensorTab").removeClass("active");
-    
-    $("#nmiNav").addClass("active");
-    $("#infoNav").removeClass("active");
-    $("#sensorNav").removeClass("active");
+
+	//set active tab to NMI
+	$("#nmiTab").addClass("active");
+	$("#infoTab").removeClass("active");
+	$("#sensorTab").removeClass("active");
+
+	$("#nmiNav").addClass("active");
+	$("#infoNav").removeClass("active");
+	$("#sensorNav").removeClass("active");
 }
 
 /*
-function closeCaseAtAssesment(){
+ function closeCaseAtAssesment(){
 
-	// TODO: retrieve and save logs
-    var notes = $('#assesmentNotesBox').val();
-    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
+ // TODO: retrieve and save logs
+ var notes = $('#assesmentNotesBox').val();
+ var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
 
-    var updatedAlarm = {
-        'alarmId' : alarmId,
-        'notes' : notes,
-    };
+ var updatedAlarm = {
+ 'alarmId' : alarmId,
+ 'notes' : notes,
+ };
 
-	myJsRoutes.controllers.Application.closeCase().ajax({
-            data : JSON.stringify(updatedAlarm),
-            contentType : 'application/json',
-            success : function (data) {
-            	removeHighlightedAlarmFromList();
-            	highlightBackListTab ();
-            }// end of success
-    });// end of ajax call
+ myJsRoutes.controllers.Application.closeCase().ajax({
+ data : JSON.stringify(updatedAlarm),
+ contentType : 'application/json',
+ success : function (data) {
+ removeHighlightedAlarmFromList();
+ highlightBackListTab ();
+ }// end of success
+ });// end of ajax call
 
-}
+ }
 
-function fromAssementToClosing(){
+ function fromAssementToClosing(){
 
-	// TODO: retrieve and save logs
-    var notes = $('#assesmentNotesBox').val();
-    var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
+ // TODO: retrieve and save logs
+ var notes = $('#assesmentNotesBox').val();
+ var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
 
-    var updatedAlarm = {
-        'alarmId' : alarmId,
-        'notes' : notes,
-    };
-    
-	myJsRoutes.controllers.Application.saveCase().ajax({
-            data : JSON.stringify(updatedAlarm),
-            contentType : 'application/json',
-            success : function (data) {
-            	// TODO: possibly move some of this to a function
-            	highlightArrowHeader("closingArrowHeader");
-         	   $("#assesment").show();
-        	    $('#assementNotesDiv').hide();
-        	    $("#extraActionButtonsDiv").show();
-        	    $("#closingNotesAndButtons").show();
-        	    $('#closingNotesBox').val($('#assesmentNotesBox').val());
-            }// end of success
-    });// end of ajax call
-}
-*/
+ var updatedAlarm = {
+ 'alarmId' : alarmId,
+ 'notes' : notes,
+ };
+
+ myJsRoutes.controllers.Application.saveCase().ajax({
+ data : JSON.stringify(updatedAlarm),
+ contentType : 'application/json',
+ success : function (data) {
+ // TODO: possibly move some of this to a function
+ highlightArrowHeader("closingArrowHeader");
+ $("#assesment").show();
+ $('#assementNotesDiv').hide();
+ $("#extraActionButtonsDiv").show();
+ $("#closingNotesAndButtons").show();
+ $('#closingNotesBox').val($('#assesmentNotesBox').val());
+ }// end of success
+ });// end of ajax call
+ }
+ */

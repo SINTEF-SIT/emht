@@ -126,10 +126,11 @@
  - &alarm104 !!models.Alarm
     type:            safety_alarm
     callee:          *callee1
+    attendant:       *iver
     patient:         *patient6
     openingTime:     2014-09-15 21:02:57
-    dispatchingTime: 2014-09-15 21:06:57
-    closingTime:     2014-09-15 21:06:57
+    dispatchingTime: null
+    closingTime:     null
 
  - &alarm105 !!models.Alarm
     type:            safety_alarm

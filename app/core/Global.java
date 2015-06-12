@@ -25,8 +25,6 @@ public class Global extends GlobalSettings {
     	// Check if the AlarmAttendant db is empty
         if (AlarmAttendant.find.findRowCount() == 0) {
             Ebean.save((List) Yaml.load("initial-data.yml"));
-
-            
         }
         populateMemoryAlarmList();
 

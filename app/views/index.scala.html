@@ -1,36 +1,17 @@
-@(alarms: List[Alarm], alarmForm: Form[Alarm]) 
+@(alarms: List[Alarm], alarmForm: Form[Alarm], username: String)
 @* alarms and alarmForm are the 2 inputs to this template, where 
 alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
 @* template can not be started with a comment *@
 
 @import helper._
-@import play.api.libs.json._ 
+@import play.api.libs.json._
 @import play.i18n._
+@import play.api.mvc.Session
 
 @main("Alarm list") {
 
-
-<script type="text/javascript" charset="utf-8" src="@routes.Application.wsJs()"></script>
-    <script id="showInfoScripts" language="javascript" type="text/javascript">
-
-   /*function assignAlarm(alarmIndex){
-
-       $("#assignInputAttendant").val("Karin");
-       $("#assignInputAlarm").val(alarmIndex);
-       $("#assignForm").submit();
-	    
-   }*/
-
-   // on start
-   $(document).ready(function () {initApplication()});
-
-
-
-     
-    </script>
-
-
+	<script type="text/javascript" charset="utf-8" src="@routes.Application.wsJs()"></script>
 
  <div class="container-fluid">
     <div class="row" id="arrowHeaders">
@@ -48,7 +29,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			<div class="list-group" id="unassignedAlarmList" style="overflow-y: scroll; height: 250px;"> <!--index would reference to the iteration index, but we are not using it--> 
 			@for((alarm,index) <- alarms.zipWithIndex){
 	            @if(null == alarm.attendant){
-				    <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
+				    <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="Alarms.gui.selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
 				    <!-- <i class="icon-fire pull-left"></i> -->
 				    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
 				    @if(null != alarm.expired && true == alarm.expired){
@@ -65,8 +46,8 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			<h3><span id="nbOfAssignedAlarm"></span> @Messages.get("assignedlist.title")</h3>
 			<div class="list-group" id="assignedAlarmList" style="overflow-y: scroll; height: 185px;"> <!--index would reference to the iteration index, but we are not using it--> 
 	        @for((alarm,index) <- alarms.zipWithIndex){
-	            @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null == alarm.dispatchingTime)){
-	                    <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
+	            @if((null != alarm.attendant) && (alarm.attendant.username.equals(username)) && (null == alarm.dispatchingTime)){
+	                    <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="Alarms.gui.selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">
 	                <!-- <i class="icon-fire pull-left"></i> -->
 	                <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
 	                                @if(null != alarm.expired && true == alarm.expired){
@@ -83,8 +64,8 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
             <h3><span id="nbOfFollowUpAlarm"></span> @Messages.get("followuplist.title")</h3>
             <div class="list-group" id="followupAlarmList" style="overflow-y: scroll; height: 185px;">  
             @for((alarm,index) <- alarms.zipWithIndex){
-                @if((null != alarm.attendant) && (alarm.attendant.username == "Karin") && (null != alarm.dispatchingTime)){
-                        <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="selectFollowUpAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">               
+                @if((null != alarm.attendant) && (alarm.attendant.username.equals(username)) && (null != alarm.dispatchingTime)){
+                        <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="Alarms.gui.selectFollowUpAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">
                     <!-- <i class="icon-fire pull-left"></i> -->
                     <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
                                     @if(null != alarm.expired && true == alarm.expired){

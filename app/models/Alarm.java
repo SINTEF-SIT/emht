@@ -11,10 +11,13 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.Global;
 import core.MyWebSocketManager;
 
 import play.db.ebean.Model;
+import play.libs.Json;
 import play.mvc.Result;
 
 @Entity
@@ -25,7 +28,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 
 	public String type;
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	public Callee callee;
 	public Date openingTime;
 	public Date dispatchingTime; // TODO: implement dispatching
@@ -36,7 +39,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 	@Transient
 	public boolean expired = false;
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	public AlarmAttendant attendant;
 
 	@Lob
@@ -45,14 +48,10 @@ public class Alarm extends Model { // the model extension serves for having acce
 	@Lob
 	public String notes;
 
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.ALL)
 	public Patient patient;
 
-	public static Finder<Long,Alarm> find = new Finder(
-		Long.class, Alarm.class
-	);
-
-
+	public static Finder<Long, Alarm> find = new Finder(Long.class, Alarm.class);
 
 	public static List<Alarm> all() {
 		return find.orderBy("openingTime desc").findList();
@@ -83,18 +82,20 @@ public class Alarm extends Model { // the model extension serves for having acce
 	}
 
 	// TODO: investigate if it makes sense to explicitly tell that im not loading subobjects
-	public static List<Alarm>  pastAlarmsFromCallee(Long calleeId){
-		return find.where().eq("callee.id",calleeId).isNotNull("closingTime").orderBy("openingTime desc").findList();
+	public static List<Alarm> pastAlarmsFromCallee(Long calleeId) {
+		return find.where().eq("callee.id", calleeId).isNotNull("closingTime").orderBy("openingTime desc").findList();
 	}
+
 	// TODO: investigate if it makes sense to explicitly tell that im not loading subobjects
-	public static List<Alarm>  pastAlarmsFromPatient(Long patientId){
-		return find.where().eq("patient.id",patientId).isNotNull("closingTime").orderBy("openingTime desc").findList();
+	public static List<Alarm> pastAlarmsFromPatient(Long patientId) {
+		return find.where().eq("patient.id", patientId).isNotNull("closingTime").orderBy("openingTime desc").findList();
 	}
 
 	/**
 	 * Retrieve all Alarms from the database that has been assigned to the provided AlarmAttendant object.
 	 * This method does not filter on open alarms only, instead it returns every alarm ever assigned to a particular
 	 * user.
+	 *
 	 * @param attendant The AlarmAttendant user object for which assigned Alarms are to be retrieved
 	 * @return A list of alarms if any are found. An empty list is returned otherwise.
 	 */
@@ -102,7 +103,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 		return find.where().eq("attendant.id", attendant.id).findList();
 	}
 
-	public static Alarm assignAttendantToAlarm(Long alarmId, AlarmAttendant attendant){
+	public static Alarm assignAttendantToAlarm(Long alarmId, AlarmAttendant attendant) {
 		Alarm a = find.ref(alarmId);
 		a.attendant = attendant;
 		a.save();
@@ -114,44 +115,40 @@ public class Alarm extends Model { // the model extension serves for having acce
 		return a;
 	}
 
-
-
-
 	// receives some data in the dummy object a, and updates the data from A
 	// which is not yet in the database into an mirror from the DB object to
 	// be saved by the function calling this one
 	// the dummy object must contain at least the alarm id
-	private static Alarm updateFromDummy(Alarm dummy){
+	private static Alarm updateFromDummy(Alarm dummy) {
 		Alarm a = Alarm.get(dummy.id);
-		if(null != dummy.patient){
-			if(null == a.patient || (a.patient.id != dummy.patient.id)){ // no patient assigned to alarm, or different patient assgined
+		if (null != dummy.patient) {
+			if (null == a.patient || (a.patient.id != dummy.patient.id)) { // no patient assigned to alarm, or different patient assgined
 				Patient p = Patient.getFromId(dummy.patient.id);
 				a.patient = p;
 			}
 		}
-		if(null != dummy.notes) // Im assuming Ill alwasy update the notes
+		if (null != dummy.notes) // Im assuming Ill alwasy update the notes
 			a.notes = dummy.notes;
 
-		if(null != dummy.occuranceAddress) // Im assuming Ill alwasy update the address
+		if (null != dummy.occuranceAddress) // Im assuming Ill alwasy update the address
 			a.occuranceAddress = dummy.occuranceAddress;
 
 		// for the time fields, Ill not update them if they have already been set
-		if(null != dummy.dispatchingTime && null == a.dispatchingTime)
+		if (null != dummy.dispatchingTime && null == a.dispatchingTime)
 			a.dispatchingTime = dummy.dispatchingTime;
 
-		if(null != dummy.closingTime && null == a.closingTime)
+		if (null != dummy.closingTime && null == a.closingTime)
 			a.closingTime = dummy.closingTime;
 
 		return a;
 	}
 
-	public static void saveAlarm(Alarm dummy){
+	public static void saveAlarm(Alarm dummy) {
 		Alarm a = Alarm.updateFromDummy(dummy);
 		a.save();
-		return;
 	}
 
-	public static void saveAndFollowupAlarm(Alarm dummy){
+	public static void saveAndFollowupAlarm(Alarm dummy) {
 		Date dispatchTime = new Date();
 		dummy.dispatchingTime = dispatchTime;
 		// TODO: we should not update the dispatching time, if an incident is being save for followup
@@ -162,12 +159,10 @@ public class Alarm extends Model { // the model extension serves for having acce
 		Alarm listItem = Global.alarmList.list.get(dummy.id);
 		listItem.dispatchingTime = dispatchTime;
 		Global.localMonitor.registerFollowUp(listItem.id);
-		// TODO: add websocket call in the case of a real multi-user
-		return;
+
 	}
 
-
-	public static void closeAlarm(Alarm dummy){
+	public static void closeAlarm(Alarm dummy) {
 		dummy.closingTime = new Date();
 
 		// since we are already closing the alarm, we will automatically remove it from the list
@@ -182,5 +177,49 @@ public class Alarm extends Model { // the model extension serves for having acce
 		// and handle the GUI just based on the websocket
 		MyWebSocketManager.notifyCloseAlarm(dummy);
 		a.save();
+	}
+
+	/**
+	 * Translation method that takes in an Alarm instance A and converts it into a Jackson ObjectNode
+	 * @param a An alarm instance that is to be translated to a ObjectNode
+	 * @return An ObjectNode containing the Alarm data
+	 */
+	public static ObjectNode toJson(Alarm a) {
+
+		ObjectNode alarm = Json.newObject();
+		alarm.put("alarmLog", a.alarmLog);
+		alarm.put("notes", a.notes);
+		alarm.put("type", a.type);
+		alarm.put("openingTime", a.openingTime != null ? a.openingTime.toString() : null);
+		alarm.put("dispatchingTime", a.dispatchingTime != null ? a.dispatchingTime.toString() : null);
+		alarm.put("closingTime", a.closingTime != null ? a.closingTime.toString() : null);
+
+		// Add the callee object if present, otherwise write a null
+		if (a.callee != null) {
+			ObjectNode callee = Json.newObject();
+			callee.put("id", a.callee.id);
+			callee.put("name", a.callee.name);
+			callee.put("phoneNumber", a.callee.phoneNumber);
+			callee.put("address", a.callee.address);
+			alarm.put("callee", callee);
+		} else {
+			alarm.putNull("callee");
+		}
+
+		// Add the patient object if present, otherwise write a null
+		if (a.patient != null) {
+			ObjectNode patient = Json.newObject();
+			patient.put("id", a.patient.id);
+			patient.put("name", a.patient.name);
+			patient.put("persoNumber", a.patient.personalNumber);
+			patient.put("phoneNumber", a.patient.phoneNumber);
+			patient.put("address", a.patient.address);
+			patient.put("age", a.patient.age);
+			alarm.put("patient", patient);
+		} else {
+			alarm.putNull("patient");
+		}
+
+		return alarm;
 	}
 }
