@@ -32,6 +32,7 @@ var Alarms = (function ($) {
 
 			// those setup functions should be called just once as they may be binding buttons
 			// and one does not want to rebind
+			WebSocketManager.init();
 			Patient.init();
 			Assessment.init();
 			Actions.init();
@@ -48,8 +49,8 @@ var Alarms = (function ($) {
 			},
 
 			populateAlarmDetails: function (alarmIndex) {
-				populateCalleFromAlarm(alarmIndex);
-				retrivePatientsByAddress(alarmIndex);
+				Patient.populateCalleeFromAlarm(alarmIndex);
+				Patient.retrievePatientsByAddress(alarmIndex);
 			},
 
 			removeHighlightedAlarmFromList: function () {
@@ -97,13 +98,14 @@ var Alarms = (function ($) {
 				var recurring = currentSelected.children('.recurring-icon');
 				if (recurring != null) recurring.remove();
 
-				populateCalleFromAlarm(alarmIndex);
+				Patient.populateCalleeFromAlarm(alarmIndex);
 				// TODO: there is currently a bug in the sense that in case an alarm was set to followup with an
 				// unknown patient, it will be loaded here with a person as a patient
+
 				// TODO: and in case there was no patient assigned, it will select the "Add patient" option that will ask for adding a patient
 				$.getJSON("/prospectPatient/" + alarmIndex,
 					function (data) {
-						createPatientDiv(data);
+						Patient.createPatientDiv(data);
 						var patientListItem = $("#patientDropDownList li:first a");
 						patientListItem.click();
 						Assessment.loadPatientSensor();
