@@ -4,10 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import controllers.auth.Authorization;
-import models.Alarm;
-import models.AlarmAttendant;
-import models.Callee;
-import models.Patient;
+import models.*;
 import play.Logger;
 import play.Routes;
 import play.cache.Cache;
@@ -91,6 +88,10 @@ public class Application extends Controller {
 		return ok(html);
 	}
 
+	/**
+	 * Retrieves a list of alarms currently assigned to the logged in user
+	 * @return A JSON object containing an array of alarms
+	 */
 	@Security.Authenticated(Authorization.Authorized.class)
 	@Authorization.PrivilegeLevel(Authorization.FIELD_OPERATOR)
 	public static Result alarmsAssignedToMe() {
@@ -196,6 +197,44 @@ public class Application extends Controller {
 
 		return ok(jsonAlarm);
 
+	}
+
+	//@Security.Authenticated(Authorization.Authorized.class)
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result reportPosition() {
+		JsonNode json = request().body().asJson();
+		String currentUserFromSession = session().get("id");
+		AlarmAttendant currentUser;
+
+		// For dev testing
+		if (currentUserFromSession == null) {
+			Logger.debug("Failed to fetch current user from session, defaulting to provided id");
+			Long providedUserId = json.findPath("fieldOperator").asLong();
+			currentUser = AlarmAttendant.get(providedUserId);
+			// return unauthorized("Not authenticated");
+		} else {
+			currentUser = AlarmAttendant.get(Long.parseLong(currentUserFromSession));
+		}
+
+		Double latitude = json.findPath("latitude").asDouble();
+		Double longitude = json.findPath("longitude").asDouble();
+
+		FieldOperatorLocation fol = new FieldOperatorLocation();
+		fol.latitude = latitude;
+		fol.longitude = longitude;
+		fol.fieldOperator = currentUser;
+
+		FieldOperatorLocation savedFol = FieldOperatorLocation.create(fol);
+		if (savedFol == null) return badRequest("Missing required fields.");
+
+		ObjectNode jsonFol = Json.newObject();
+		jsonFol.put("id", savedFol.id);
+		jsonFol.put("fieldOperator", savedFol.fieldOperator.id);
+		jsonFol.put("latitude", savedFol.latitude);
+		jsonFol.put("longitude", savedFol.longitude);
+		jsonFol.put("timestamp", savedFol.timestamp.toString());
+
+		return ok(jsonFol);
 	}
 
 

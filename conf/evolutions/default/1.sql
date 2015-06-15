@@ -53,6 +53,15 @@ create table component_reading (
   constraint pk_component_reading primary key (id))
 ;
 
+create table field_operator_location (
+  id                        bigint not null,
+  field_operator_id         bigint,
+  timestamp                 timestamp,
+  latitude                  double,
+  longitude                 double,
+  constraint pk_field_operator_location primary key (id))
+;
+
 create table patient (
   id                        bigint not null,
   name                      varchar(255),
@@ -74,6 +83,8 @@ create sequence callee_seq;
 
 create sequence component_reading_seq;
 
+create sequence field_operator_location_seq;
+
 create sequence patient_seq;
 
 alter table AALCOMPONENT add constraint fk_AALCOMPONENT_patient_1 foreign key (patient_id) references patient (id) on delete restrict on update restrict;
@@ -86,6 +97,8 @@ alter table alarm add constraint fk_alarm_patient_4 foreign key (patient_id) ref
 create index ix_alarm_patient_4 on alarm (patient_id);
 alter table component_reading add constraint fk_component_reading_component_5 foreign key (component_id) references AALCOMPONENT (id) on delete restrict on update restrict;
 create index ix_component_reading_component_5 on component_reading (component_id);
+alter table field_operator_location add constraint fk_field_operator_location_fie_6 foreign key (field_operator_id) references alarm_attendant (id) on delete restrict on update restrict;
+create index ix_field_operator_location_fie_6 on field_operator_location (field_operator_id);
 
 
 
@@ -103,6 +116,8 @@ drop table if exists callee;
 
 drop table if exists component_reading;
 
+drop table if exists field_operator_location;
+
 drop table if exists patient;
 
 SET REFERENTIAL_INTEGRITY TRUE;
@@ -116,6 +131,8 @@ drop sequence if exists alarm_attendant_seq;
 drop sequence if exists callee_seq;
 
 drop sequence if exists component_reading_seq;
+
+drop sequence if exists field_operator_location_seq;
 
 drop sequence if exists patient_seq;
 
