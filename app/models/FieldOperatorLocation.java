@@ -1,11 +1,15 @@
 package models;
 
+import com.avaje.ebean.Ebean;
+import com.avaje.ebean.RawSql;
+import com.avaje.ebean.RawSqlBuilder;
+import com.avaje.ebean.SqlRow;
+import play.Logger;
 import play.db.ebean.Model;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,9 +46,27 @@ public class FieldOperatorLocation extends Model {
         return find.where().eq("fieldOperator.id", userId).orderBy("timestamp desc").findList();
     }
 
+    public static List<FieldOperatorLocation> byUserId(Long userId, Integer maxEntries) {
+        return find.where().eq("fieldOperator.id", userId).orderBy("timestamp desc").setMaxRows(maxEntries).findList();
+    }
+
+    // This should be done otherwise, but EBean aggregation is not straight forward and i did not
+    // want to spend too much time figuring out how to map raw SQL queries to custom aggregate models.
     public static FieldOperatorLocation current(Long userId) {
-        List<FieldOperatorLocation> locations = byUserId(userId);
-        if (locations.size() > 0) return locations.get(0);
-        return null;
+        List<FieldOperatorLocation> locs = byUserId(userId);
+        if (locs.size() == 0) return null;
+        return locs.get(0);
+    }
+
+    // This should be done otherwise, but EBean aggregation is not straight forward and i did not
+    // want to spend too much time figuring out how to map raw SQL queries to custom aggregate models.
+    public static List<FieldOperatorLocation> current() {
+        List<FieldOperatorLocation> locs = new ArrayList<>();
+        for (AlarmAttendant a: AlarmAttendant.all()) {
+            FieldOperatorLocation loc = current(a.id);
+            if (loc == null) continue;
+            locs.add(loc);
+        }
+        return locs;
     }
 }

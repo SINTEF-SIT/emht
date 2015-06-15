@@ -2,7 +2,6 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.AlarmAttendant;
 import models.FieldOperatorLocation;
@@ -12,6 +11,7 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,8 +87,18 @@ public class Location extends Controller {
      * @return A JSON object with all location entries of the specified user
      */
     public static Result byUserId(Long userId) {
-        List<FieldOperatorLocation> locations = FieldOperatorLocation.byUserId(userId);
-        ObjectNode jsonListObject = createUserObjectNode(locations);
+        List<FieldOperatorLocation> locations = FieldOperatorLocation.byUserId(userId, 25);
+        ObjectNode jsonListObject;
+        if (!locations.isEmpty()) {
+            jsonListObject = createUserObjectNode(locations);
+        } else {
+            AlarmAttendant a = AlarmAttendant.get(userId);
+            if (a == null) return notFound("Invalid user");
+            jsonListObject = Json.newObject();
+            jsonListObject.put("username", a.username);
+            jsonListObject.put("id", a.id);
+            jsonListObject.putArray("locations");
+        }
         return ok(jsonListObject);
     }
 
@@ -105,11 +115,35 @@ public class Location extends Controller {
         return ok(jsonLoc);
     }
 
+    /**
+     * Retrieve the last location entry for all users
+     * @return A JSON object with the latest location entry for all users
+     */
+    public static Result currentAll() {
+        List<FieldOperatorLocation> currentLocations = FieldOperatorLocation.current();
+        ObjectNode wrapper = Json.newObject();
+        wrapper.put("total", currentLocations.size());
+        ArrayNode users = wrapper.putArray("users");
+        for (FieldOperatorLocation loc : currentLocations) {
+            ObjectNode currentUserLoc = createLocationObjectNode(loc);
+            currentUserLoc.put("id", loc.fieldOperator.id);
+            currentUserLoc.put("username", loc.fieldOperator.username);
+            users.add(currentUserLoc);
+        }
+        return ok(wrapper);
+    }
+
+    /**
+     * Register the location of the currently logged in user. Anticipates a plain JSON object with latitude
+     * and longitude fields.
+     * @return A JSON object node containing the same information that was provided
+     */
     //@Security.Authenticated(Authorization.Authorized.class)
     @BodyParser.Of(BodyParser.Json.class)
     public static Result report() {
         JsonNode json = request().body().asJson();
         String currentUserFromSession = session().get("id");
+        Logger.debug("Location report from: " + session().get("username"));
         AlarmAttendant currentUser;
 
         // For dev testing
@@ -130,15 +164,11 @@ public class Location extends Controller {
         fol.longitude = longitude;
         fol.fieldOperator = currentUser;
 
+        // Save and check if everything is A-OK.
         FieldOperatorLocation savedFol = FieldOperatorLocation.create(fol);
         if (savedFol == null) return badRequest("Missing required fields.");
 
-        ObjectNode jsonFol = Json.newObject();
-        jsonFol.put("id", savedFol.id);
-        jsonFol.put("fieldOperator", savedFol.fieldOperator.id);
-        jsonFol.put("latitude", savedFol.latitude);
-        jsonFol.put("longitude", savedFol.longitude);
-        jsonFol.put("timestamp", savedFol.timestamp.toString());
+        ObjectNode jsonFol = createLocationObjectNode(savedFol);
 
         return ok(jsonFol);
     }

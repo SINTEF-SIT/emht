@@ -40,6 +40,7 @@ POST        /patient/new                                          controllers.Ap
 
 # Field Operator Locations
 GET         /location                                             controllers.Location.all()
+GET         /location/current                                     controllers.Location.currentAll()
 GET         /location/:id                                         controllers.Location.byUserId(id: Long)
 GET         /location/:id/current                                 controllers.Location.current(id: Long)
 POST        /location/report                                      controllers.Location.report()

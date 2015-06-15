@@ -4,12 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -187,6 +182,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 	public static ObjectNode toJson(Alarm a) {
 
 		ObjectNode alarm = Json.newObject();
+		alarm.put("id", a.id);
+		alarm.put("occuranceAddress", a.occuranceAddress);
 		alarm.put("alarmLog", a.alarmLog);
 		alarm.put("notes", a.notes);
 		alarm.put("type", a.type);
