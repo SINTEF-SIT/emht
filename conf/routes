@@ -38,8 +38,11 @@ POST        /patient/new                                          controllers.Ap
 #POST   /addPatientAndNoteAndClose       controllers.Application.addPatientAndNoteAndClose()
 #POST   /addPatientAndNoteAndGoForward   controllers.Application.addPatientAndGoForward()
 
-# Field Operator Location registration
-POST        /reportLocation                                       controllers.Application.reportPosition()
+# Field Operator Locations
+GET         /location                                             controllers.Location.all()
+GET         /location/:id                                         controllers.Location.byUserId(id: Long)
+GET         /location/:id/current                                 controllers.Location.current(id: Long)
+POST        /location/report                                      controllers.Location.report()
 
 # Attendants          
 GET         /attendants                                           controllers.AttendantController.attendants()
