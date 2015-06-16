@@ -1,8 +1,9 @@
 /**
  * Created by myth on 6/16/15.
  */
-// We need the map object to be on global scope
+// We need the map object and geocoder to be on global scope
 var map;
+var geocoder;
 
 // The main MapView module
 var MapView = (function ($) {
@@ -10,8 +11,11 @@ var MapView = (function ($) {
     var DEBUG = true;
     var FIRST_RUN = true;
     var UPDATE_INTERVAL = 15000;
+
     var fieldOperatorLocations = [];
     var markers = [];
+
+    var highlightedOperator = null;
 
     /* Private methods here */
 
@@ -21,6 +25,7 @@ var MapView = (function ($) {
             e.preventDefault();
             $('#main-dashboard').hide();
             $('#map-dashboard').show();
+
             /*
             Since the div containing the map is in display:none mode, the map will not render properly automatically.
             Thus, we have to trigger map initialization when the button is clicked, and the parent div has been
@@ -37,11 +42,11 @@ var MapView = (function ($) {
                 };
                 // Initialize the map
                 map = new google.maps.Map(document.getElementById("map-container"), mapOptions);
+
+                // Schedule frequent updating of current positions of operatives
+                MapView.getAllCurrentPositions();
+                setInterval(MapView.getAllCurrentPositions, UPDATE_INTERVAL);
             }
-
-            MapView.getAllCurrentPositions();
-            setInterval(MapView.getAllCurrentPositions, UPDATE_INTERVAL);
-
             // Flag firstRun as false to prevent having to re-initialize the map every time
             FIRST_RUN = false;
         });
@@ -49,6 +54,40 @@ var MapView = (function ($) {
             e.preventDefault();
             $('#map-dashboard').hide();
             $('#main-dashboard').show();
+        });
+    }
+
+    // Helper method that generates custom Image icons for map markers
+    var createMarkerIcon = function (imageUrl) {
+        return {
+            url: imageUrl,
+            size: new google.maps.Size(256, 256),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(20, 20),
+            scaledSize: new google.maps.Size(40, 40)
+        }
+    }
+
+    // Helper method that generates marker tooltips for map markers
+    var createMarkerTooltip = function (marker, title, text) {
+        var tooltip = '<div id="tooltip-' + marker.fieldOperator + '">' +
+                '<h4>' + title + '<h4><p>' + text + '</p></div>';
+        var info = new google.maps.InfoWindow({
+            content: tooltip
+        });
+        google.maps.event.addListener(marker, 'click', function () {
+           info.open(map, marker);
+        });
+    };
+
+    // Helper method that sets up an click event binding from a map marker to sidebar list items
+    var bindMarkerHighlight = function (marker) {
+        google.maps.event.addListener(marker, 'click', function () {
+            if (highlightedOperator !== null) {
+                highlightedOperator.removeClass('active');
+            }
+            highlightedOperator = $('#field-operator' + marker.fieldOperator);
+            highlightedOperator.addClass('active');
         });
     }
 
@@ -62,13 +101,22 @@ var MapView = (function ($) {
         // Add all field operators
         for (var i = 0; i < fieldOperatorLocations.length; i++) {
             var pos = new google.maps.LatLng(fieldOperatorLocations[i].latitude, fieldOperatorLocations[i].longitude);
+            var icon = createMarkerIcon('/assets/images/map/ambulance.png');
             var marker = new google.maps.Marker({
                 position: pos,
                 map: map,
+                icon: icon,
                 title: fieldOperatorLocations[i].username
             });
+            // Add the operator ID for future mapping reference
+            marker.fieldOperator = fieldOperatorLocations[i].id;
 
-            // Add the marker to cache
+            // Create a tooltip for the marker and add an event listener (Not used due to malformed anchoring)
+            // createMarkerTooltip(marker, fieldOperatorLocations[i].username, 'Dummy status data...');
+
+            // Add marker click event highlighting
+            bindMarkerHighlight(marker);
+
             markers.push(marker);
         }
     }
@@ -79,17 +127,20 @@ var MapView = (function ($) {
         for (var i = 0; i < fieldOperatorLocations.length; i++) {
             html += '<li id="field-operator' + fieldOperatorLocations[i].id + '"><strong>' +
                 fieldOperatorLocations[i].username + '</strong><br /><small>' +
-                fieldOperatorLocations[i].timestamp + '</small></li>';
+                new Date(fieldOperatorLocations[i].timestamp) + '</small></li>';
         }
         html += '</ul>'
         $('#map-sidebar-fieldoperators').html(html);
     }
 
     /* Public methods inside return object */
+
     return {
         init: function () {
             // Add click listeners to hide and show map buttons
             bindButtons();
+            // Initialize the GeoCoder so it may be used during incident registration
+            geocoder = new google.maps.Geocoder();
         },
         getAllCurrentPositions: function () {
             $.getJSON('/location/current', function (data) {
@@ -102,6 +153,7 @@ var MapView = (function ($) {
     }
 })(jQuery);
 
+// On page load complete
 $(document).ready(function () {
     MapView.init();
 })

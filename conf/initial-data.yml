@@ -124,21 +124,24 @@
     closingTime:     null
 
  - &alarm104 !!models.Alarm
-    type:            safety_alarm
-    callee:          *callee1
-    attendant:       *iver
-    patient:         *patient6
-    openingTime:     2014-09-15 21:02:57
-    dispatchingTime: null
-    closingTime:     null
+    type:             safety_alarm
+    callee:           *callee1
+    attendant:        *iver
+    patient:          *patient6
+    openingTime:      2014-09-15 21:02:57
+    dispatchingTime:  null
+    closingTime:      null
+    occuranceAddress: Høgskoleringen 3, 7048 Trondheim
 
  - &alarm105 !!models.Alarm
-    type:            safety_alarm
-    callee:          *callee2
-    patient:         *patient7
-    openingTime:     2014-09-15 20:02:57
-    dispatchingTime: 2014-09-15 20:06:57
-    closingTime:     2014-09-15 20:06:57
+    type:             safety_alarm
+    callee:           *callee2
+    attendant:        *iver
+    patient:          *patient7
+    openingTime:      2014-09-15 20:02:57
+    dispatchingTime:  null
+    closingTime:      null
+    occuranceAddress: Brøsetvegen 168, 7048 Trondheim
 
  - &alarm106 !!models.Alarm
     type:            safety_alarm

@@ -76,7 +76,7 @@ public class Global extends GlobalSettings {
 	 */
 	public static String formatDateAsISO (Date date) {
 		TimeZone tz = TimeZone.getTimeZone("UTC");
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		df.setTimeZone(tz);
 		String ISOtime = df.format(date);
 		return ISOtime;

@@ -205,7 +205,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 			ObjectNode patient = Json.newObject();
 			patient.put("id", a.patient.id);
 			patient.put("name", a.patient.name);
-			patient.put("persoNumber", a.patient.personalNumber);
+			patient.put("personalNumber", a.patient.personalNumber);
 			patient.put("phoneNumber", a.patient.phoneNumber);
 			patient.put("address", a.patient.address);
 			patient.put("age", a.patient.age);
