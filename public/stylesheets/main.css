@@ -103,3 +103,15 @@ html, body {
     padding: 0px;
     margin: 0px;
 }
+ul.map-field-operator { list-style-type: none; padding-left: 0px; }
+ul.map-field-operator > li {
+    margin: 0px;
+    padding: 5px 10px 5px 10px;
+    display: block;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+}
+ul.map-field-operator > li:hover {
+    background-color: #f3f3f3;
+    cursor: pointer;
+}

@@ -7,11 +7,14 @@ var map;
 // The main MapView module
 var MapView = (function ($) {
     /* Private fields */
+    var DEBUG = true;
     var firstRun = true;
-    var locations = {};
+    var fieldOperatorLocations = [];
     var markers = [];
 
     /* Private methods here */
+
+    // Helper method that sets up button listeners and map initialization
     var bindButtons = function () {
         $('#open-map-button').on('click', function (e) {
             e.preventDefault();
@@ -34,6 +37,10 @@ var MapView = (function ($) {
                 // Initialize the map
                 map = new google.maps.Map(document.getElementById("map-container"), mapOptions);
             }
+
+            MapView.getAllCurrentPositions();
+            setInterval(MapView.getAllCurrentPositions, 10000);
+
             // Flag firstRun as false to prevent having to re-initialize the map every time
             firstRun = false;
         });
@@ -44,8 +51,34 @@ var MapView = (function ($) {
         });
     }
 
+    // Helper method that draws markers on the map
     var updateMarkers = function () {
-        
+        // Clear the markers cache
+        markers = [];
+        // Add all field operators
+        for (var i = 0; i < fieldOperatorLocations.length; i++) {
+            var pos = new google.maps.LatLng(fieldOperatorLocations[i].latitude, fieldOperatorLocations[i].longitude);
+            var marker = new google.maps.Marker({
+                position: pos,
+                map: map,
+                title: fieldOperatorLocations[i].username
+            });
+
+            // Add the marker to cache
+            markers.push(marker);
+        }
+    }
+
+    // Helper method that updates the sidebar
+    var updateSidebar = function () {
+        var html = '<ul class="map-field-operator">';
+        for (var i = 0; i < fieldOperatorLocations.length; i++) {
+            html += '<li id="field-operator' + fieldOperatorLocations[i].id + '"><strong>' +
+                fieldOperatorLocations[i].username + '</strong><br /><small>' +
+                fieldOperatorLocations[i].timestamp + '</small></li>';
+        }
+        html += '</ul>'
+        $('#map-sidebar-fieldoperators').html(html);
     }
 
     /* Public methods inside return object */
@@ -57,7 +90,9 @@ var MapView = (function ($) {
         getAllCurrentPositions: function () {
             $.getJSON('/location/current', function (data) {
                 if (DEBUG) console.log("Fetched current locations.", data);
-                locations = data;
+                fieldOperatorLocations = data.users;
+                updateMarkers();
+                updateSidebar();
             });
         }
     }
