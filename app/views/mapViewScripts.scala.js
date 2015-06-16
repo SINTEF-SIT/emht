@@ -126,8 +126,9 @@ var MapView = (function ($) {
         var html = '<ul class="map-field-operator">';
         for (var i = 0; i < fieldOperatorLocations.length; i++) {
             html += '<li id="field-operator' + fieldOperatorLocations[i].id + '"><strong>' +
-                fieldOperatorLocations[i].username + '</strong><br /><small>' +
-                new Date(fieldOperatorLocations[i].timestamp) + '</small></li>';
+                fieldOperatorLocations[i].username + '</strong><br><small>' +
+                new Date(fieldOperatorLocations[i].timestamp) + '</small><br>' +
+                '<i>Trygghetspatrulje</i><br>Oppdrag: <span style="color: green;"><strong>LEDIG</strong></span></li>';
         }
         html += '</ul>'
         $('#map-sidebar-fieldoperators').html(html);
