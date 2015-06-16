@@ -3,6 +3,7 @@ package controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import core.Global;
 import models.AlarmAttendant;
 import models.FieldOperatorLocation;
 import play.Logger;
@@ -11,7 +12,6 @@ import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +35,7 @@ public class Location extends Controller {
         ObjectNode location = Json.newObject();
         location.put("latitude", loc.latitude);
         location.put("longitude", loc.longitude);
-        location.put("timestamp", loc.timestamp.toString());
+        location.put("timestamp", Global.formatDateAsISO(loc.timestamp));
         return location;
     }
 

@@ -8,7 +8,8 @@ var map;
 var MapView = (function ($) {
     /* Private fields */
     var DEBUG = true;
-    var firstRun = true;
+    var FIRST_RUN = true;
+    var UPDATE_INTERVAL = 15000;
     var fieldOperatorLocations = [];
     var markers = [];
 
@@ -26,7 +27,7 @@ var MapView = (function ($) {
             expanded to visible mode by the browser, and is renderable. Otherwise, the Google Maps library cannot
             render, as the containing div has a height and width of 0.
              */
-            if (firstRun) {
+            if (FIRST_RUN) {
                 // Scale the map container to the height of the screen
                 $('#map-container').css('height', $(window).height());
                 // Basic map configuration
@@ -39,10 +40,10 @@ var MapView = (function ($) {
             }
 
             MapView.getAllCurrentPositions();
-            setInterval(MapView.getAllCurrentPositions, 10000);
+            setInterval(MapView.getAllCurrentPositions, UPDATE_INTERVAL);
 
             // Flag firstRun as false to prevent having to re-initialize the map every time
-            firstRun = false;
+            FIRST_RUN = false;
         });
         $('#close-map-button').on('click', function (e) {
             e.preventDefault();
@@ -54,6 +55,9 @@ var MapView = (function ($) {
     // Helper method that draws markers on the map
     var updateMarkers = function () {
         // Clear the markers cache
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+        }
         markers = [];
         // Add all field operators
         for (var i = 0; i < fieldOperatorLocations.length; i++) {

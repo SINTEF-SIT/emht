@@ -1,6 +1,10 @@
 package core;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 import models.Alarm;
 import models.AlarmAttendant;
@@ -64,4 +68,17 @@ public class Global extends GlobalSettings {
 		return;
     	
     }
+
+	/**
+	 * Helper method that translates a Date object into an ISO8601 format
+	 * @param date A Date instance
+	 * @return The Date instance represented as ISO8601
+	 */
+	public static String formatDateAsISO (Date date) {
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+		df.setTimeZone(tz);
+		String ISOtime = df.format(date);
+		return ISOtime;
+	}
 }

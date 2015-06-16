@@ -1,19 +1,16 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.Global;
 import core.MyWebSocketManager;
 
 import play.db.ebean.Model;
 import play.libs.Json;
-import play.mvc.Result;
 
 @Entity
 public class Alarm extends Model { // the model extension serves for having access to Play built-in Ebean helper, such as the Finder
@@ -187,9 +184,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 		alarm.put("alarmLog", a.alarmLog);
 		alarm.put("notes", a.notes);
 		alarm.put("type", a.type);
-		alarm.put("openingTime", a.openingTime != null ? a.openingTime.toString() : null);
-		alarm.put("dispatchingTime", a.dispatchingTime != null ? a.dispatchingTime.toString() : null);
-		alarm.put("closingTime", a.closingTime != null ? a.closingTime.toString() : null);
+		alarm.put("openingTime", a.openingTime != null ? Global.formatDateAsISO(a.openingTime) : null);
+		alarm.put("dispatchingTime", a.dispatchingTime != null ? Global.formatDateAsISO(a.dispatchingTime) : null);
+		alarm.put("closingTime", a.closingTime != null ? Global.formatDateAsISO(a.closingTime) : null);
 
 		// Add the callee object if present, otherwise write a null
 		if (a.callee != null) {
