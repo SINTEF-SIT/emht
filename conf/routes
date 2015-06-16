@@ -63,6 +63,7 @@ GET         /assets.javascript.alarmSelectTemplate.js             controllers.Ap
 GET         /assets.javascript.patientTemplateScripts.js          controllers.Application.getpatientTemplateScriptsJs()
 GET         /assets.javascript.actionsAndClosingScripts.js        controllers.Application.getactionsAndClosingScriptsJs()
 GET         /assets.javascript.assesmentPageScripts.js            controllers.Application.getassesmentPageScriptsJs()
+GET         /assets.javascript.mapViewScripts.js                  controllers.Application.getmapViewScriptsJs()
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                                         controllers.Assets.at(path="/public", file)

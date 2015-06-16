@@ -1,5 +1,5 @@
 @(alarms: List[Alarm], alarmForm: Form[Alarm], username: String)
-@* alarms and alarmForm are the 2 inputs to this template, where 
+@* alarms and alarmForm are the 2 inputs to this template, where
 alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
 @* template can not be started with a comment *@
@@ -12,182 +12,183 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 @main("Alarm list") {
 
 	<script type="text/javascript" charset="utf-8" src="@routes.Application.wsJs()"></script>
-
- <div class="container-fluid">
-    <div class="row" id="arrowHeaders">
-            <div class="col-md-3"><h2 id="receptionArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.reception")</h2></div>
-            <div class="col-md-3"><h2 id="registrationArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.registration")</h2></div>
-            <div class="col-md-3"><h2 id="assesmentArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.assessment")</h2></div>
-            <div class="col-md-3"><h2 id="closingArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.actions")</h2></div>
-    </div>
-    <div class="row">
-     <section id="allListsSection" class="col-md-3 alarmListSection">
-
-	    <!-- <h2>@alarms.size() alarm(s)</h2>-->
-	    <div id="unassignedAlarmDiv"  >
-	    <h3><span id="nbOfUnassignedAlarm"></span> @Messages.get("unassignedlist.title")</h3>
-			<div class="list-group" id="unassignedAlarmList" style="overflow-y: scroll; height: 250px;"> <!--index would reference to the iteration index, but we are not using it--> 
-			@for((alarm,index) <- alarms.zipWithIndex){
-	            @if(null == alarm.attendant){
-				    <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="Alarms.gui.selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
-				    <!-- <i class="icon-fire pull-left"></i> -->
-				    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
-				    @if(null != alarm.expired && true == alarm.expired){
-				        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
-				    }
-				    <h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
-				    <p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
-				  </a>
-				 }
-			 }  
+	<section id="main-dashboard">
+		<div class="container-fluid">
+			<div class="row" id="arrowHeaders">
+				<div class="col-md-3"><h2 id="receptionArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.reception")</h2></div>
+				<div class="col-md-3"><h2 id="registrationArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.registration")</h2></div>
+				<div class="col-md-3"><h2 id="assesmentArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.assessment")</h2></div>
+				<div class="col-md-3"><h2 id="closingArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.actions")</h2></div>
 			</div>
-	   </div>
-		<div id="assignedAlarmDiv">
-			<h3><span id="nbOfAssignedAlarm"></span> @Messages.get("assignedlist.title")</h3>
-			<div class="list-group" id="assignedAlarmList" style="overflow-y: scroll; height: 185px;"> <!--index would reference to the iteration index, but we are not using it--> 
-	        @for((alarm,index) <- alarms.zipWithIndex){
-	            @if((null != alarm.attendant) && (alarm.attendant.username.equals(username)) && (null == alarm.dispatchingTime)){
-	                    <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="Alarms.gui.selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">
-	                <!-- <i class="icon-fire pull-left"></i> -->
-	                <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
-	                                @if(null != alarm.expired && true == alarm.expired){
-	                    <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
-	                }
-                    <h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
-                    <p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
-	              </a>
-	             }
-	         }  
-	        </div>
-	    </div>
-	     <div id="followupAlarmDiv">
-            <h3><span id="nbOfFollowUpAlarm"></span> @Messages.get("followuplist.title")</h3>
-            <div class="list-group" id="followupAlarmList" style="overflow-y: scroll; height: 185px;">  
-            @for((alarm,index) <- alarms.zipWithIndex){
-                @if((null != alarm.attendant) && (alarm.attendant.username.equals(username)) && (null != alarm.dispatchingTime)){
-                        <a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="Alarms.gui.selectFollowUpAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">
-                    <!-- <i class="icon-fire pull-left"></i> -->
-                    <img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
-                                    @if(null != alarm.expired && true == alarm.expired){
-                        <img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
-                    }
-                    <h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
-                    <p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
-                  </a>
-                 }
-             }  
-            </div>
-        </div>
+			<div class="row">
+				<section id="allListsSection" class="col-md-3 alarmListSection">
 
-		
-	</section>
-    
-    
-    <section class="col-md-3 detailsSection">
-
-    	<div id="details"/>
-
-    	    @requestInfoFrame()
-    </section>
-     <section class="col-md-3 assesmentSection">
-        <div id="assesment">
-			 <ul class="nav nav-tabs" id="assesmentTabHeader" role="tablist">
-				  <li id="nmiNav" class="active"><a href="#nmiTab" data-toggle="tab">@Messages.get("assessment.tab.nmi")</a></li>
-				  <li id="sensorNav" ><a id="sensorTablink" href="#sensorTab" data-toggle="tab">@Messages.get("assessment.tab.sensor")</a></li>
-				  <li id="infoNav"><a id="infoTablink" href="#infoTab" data-toggle="tab">@Messages.get("assessment.tab.obs")</a></li>
-			 </ul>
-			 <div class="tab-content" id="assessmentTabs">
-	               <div class="tab-pane active" id="nmiTab" >
-	                    <table class="table"><tbody>	               
-						    <tr><td>@Messages.get("assessment.tab.question.conscious") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious">@Messages.get("button.no")</label>       </td></tr>
-						    <tr><td>@Messages.get("assessment.tab.question.breathing") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normly">@Messages.get("button.yes")</label></td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breath normly">@Messages.get("button.no")</label> </td></tr>    
-						    <tr><td>@Messages.get("assessment.tab.question.move")      </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">@Messages.get("button.yes")</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox3N" name="NMIcheckBox3radio" value="Patient cant move">@Messages.get("button.no")</label>              </td></tr>
-						    <tr><td>@Messages.get("assessment.tab.question.standup")   </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox4N" name="NMIcheckBox4radio" value="Patient cant stand up">@Messages.get("button.no")</label>          </td></tr>
-						    <tr><td>@Messages.get("assessment.tab.question.talk")       </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">@Messages.get("button.yes")</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox5N" name="NMIcheckBox5radio" value="Patient cant talk">@Messages.get("button.no")</label>              </td></tr>
-					    </tbody></table>
-				  </div>
-				  <div class="tab-pane" id="infoTab" >
-					<div class="panel panel-default">
-					  <div id="obsBody"  class="panel-body">
-					  </div>
+						<!-- <h2>@alarms.size() alarm(s)</h2>-->
+					<div id="unassignedAlarmDiv"  >
+						<h3><span id="nbOfUnassignedAlarm"></span> @Messages.get("unassignedlist.title")</h3>
+						<div class="list-group" id="unassignedAlarmList" style="overflow-y: scroll; height: 250px;"> <!--index would reference to the iteration index, but we are not using it-->
+							@for((alarm,index) <- alarms.zipWithIndex){
+								@if(null == alarm.attendant){
+									<a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="Alarms.gui.selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
+									<!-- <i class="icon-fire pull-left"></i> -->
+									<img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
+									@if(null != alarm.expired && true == alarm.expired){
+										<img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
+									}
+									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
+									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
+									</a>
+								}
+							}
+						</div>
 					</div>
-				  </div>
-	              <div class="tab-pane" id="sensorTab" >
-	                    <!--  <img src="/assets/images/graph.png" class="img-responsive"/> --> 
-	              </div>
-              </div>
-               <div id="assementLogsDiv">
-                    <u>@Messages.get("assessment.log") :</u>
-                    <div class="panel panel-default">
-                      <div id="assesmentLogPanel" class="panel-body">
-                        <div class="logLabel" id="NMIassesmentLabel"> NMI assessment</div>
-                        <div class="logLabel" id="NMIcheckBox1Ylabel"> @Messages.get("assessment.log.affirmation.conscious")</div>
-                        <div class="logLabel" id="NMIcheckBox2Ylabel"> @Messages.get("assessment.log.affirmation.breathing")</div>    
-                        <div class="logLabel" id="NMIcheckBox3Ylabel"> @Messages.get("assessment.log.affirmation.move")</div>
-                        <div class="logLabel" id="NMIcheckBox4Ylabel"> @Messages.get("assessment.log.affirmation.standup")</div>
-                        <div class="logLabel" id="NMIcheckBox5Ylabel"> @Messages.get("assessment.log.affirmation.talk")</div>
-                        <div class="logLabel" id="NMIcheckBox1Nlabel"> @Messages.get("assessment.log.negation.conscious")</div>
-                        <div class="logLabel" id="NMIcheckBox2Nlabel"> @Messages.get("assessment.log.negation.breathing")</div>    
-                        <div class="logLabel" id="NMIcheckBox3Nlabel"> @Messages.get("assessment.log.negation.move")</div>
-                        <div class="logLabel" id="NMIcheckBox4Nlabel"> @Messages.get("assessment.log.negation.standup")</div>
-                        <div class="logLabel" id="NMIcheckBox5Nlabel"> @Messages.get("assessment.log.negation.talk")</div>
-                        <div class="logLabel" id="assedmentSensorlabel"> @Messages.get("assessment.log.sensor")</div>
-                        <div class="logLabel" id="informationSensorlabel"> @Messages.get("assessment.log.obs")</div>
-                      </div>
-                    </div>
-               </div>
-	   </div>
-    </section>  
-    
-     <section id="dispatchArea" class="col-md-3  dispatchSection">
-          @dispatchFrame()
-    </section>
-    
-
-    
-  </div>
-   <div class="row" id="notesRow">
-           <div class="col-md-3" id="statisticsDiv">
-		        <h4>@Messages.get("statistics.avgresp"): 20,1 @Messages.get("statistics.timeunit")</h4>
-		        <h4>@Messages.get("statistics.maxresptime"): 59 @Messages.get("statistics.timeunit")</h4>
-		        <h4>@Messages.get("statistics.numberRespAbov30sec"): 15</h4>
-		        <h4>@Messages.get("statistics.numberResponseToday"): 250 </h4>
-            </div>
-           <div class="col-md-9" id="globalNotesDiv">
-                  <u>@Messages.get("actions.popup.send.notes"):</u>
-                    <textarea id="globalNotesBox" class="form-control" rows="5"></textarea>
-              </div>
-           </div>
-   </div>
+					<div id="assignedAlarmDiv">
+						<h3><span id="nbOfAssignedAlarm"></span> @Messages.get("assignedlist.title")</h3>
+						<div class="list-group" id="assignedAlarmList" style="overflow-y: scroll; height: 185px;"> <!--index would reference to the iteration index, but we are not using it-->
+							@for((alarm,index) <- alarms.zipWithIndex){
+								@if((null != alarm.attendant) && (alarm.attendant.username.equals(username)) && (null == alarm.dispatchingTime)){
+									<a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="Alarms.gui.selectMyAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">
+											<!-- <i class="icon-fire pull-left"></i> -->
+										<img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
+										@if(null != alarm.expired && true == alarm.expired){
+											<img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
+										}
+										<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
+										<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
+									</a>
+								}
+							}
+						</div>
+					</div>
+					<div id="followupAlarmDiv">
+						<h3><span id="nbOfFollowUpAlarm"></span> @Messages.get("followuplist.title")</h3>
+						<div class="list-group" id="followupAlarmList" style="overflow-y: scroll; height: 185px;">
+						@for((alarm,index) <- alarms.zipWithIndex){
+							@if((null != alarm.attendant) && (alarm.attendant.username.equals(username)) && (null != alarm.dispatchingTime)){
+								<a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="Alarms.gui.selectFollowUpAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">
+										<!-- <i class="icon-fire pull-left"></i> -->
+									<img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
+									@if(null != alarm.expired && true == alarm.expired){
+										<img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
+									}
+									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
+									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
+								</a>
+							}
+						}
+						</div>
+					</div>
 
 
-               <!-- This is Bootstrap's modal popup plugin. Used to populate the response
+				</section>
+
+
+				<section class="col-md-3 detailsSection">
+
+					<div id="details"/>
+
+					@requestInfoFrame()
+				</section>
+				<section class="col-md-3 assesmentSection">
+					<div id="assesment">
+						<ul class="nav nav-tabs" id="assesmentTabHeader" role="tablist">
+							<li id="nmiNav" class="active"><a href="#nmiTab" data-toggle="tab">@Messages.get("assessment.tab.nmi")</a></li>
+							<li id="sensorNav" ><a id="sensorTablink" href="#sensorTab" data-toggle="tab">@Messages.get("assessment.tab.sensor")</a></li>
+							<li id="infoNav"><a id="infoTablink" href="#infoTab" data-toggle="tab">@Messages.get("assessment.tab.obs")</a></li>
+						</ul>
+						<div class="tab-content" id="assessmentTabs">
+							<div class="tab-pane active" id="nmiTab" >
+								<table class="table"><tbody>
+									<tr><td>@Messages.get("assessment.tab.question.conscious") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious">@Messages.get("button.no")</label>       </td></tr>
+									<tr><td>@Messages.get("assessment.tab.question.breathing") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normly">@Messages.get("button.yes")</label></td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breath normly">@Messages.get("button.no")</label> </td></tr>
+									<tr><td>@Messages.get("assessment.tab.question.move")      </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">@Messages.get("button.yes")</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox3N" name="NMIcheckBox3radio" value="Patient cant move">@Messages.get("button.no")</label>              </td></tr>
+									<tr><td>@Messages.get("assessment.tab.question.standup")   </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox4N" name="NMIcheckBox4radio" value="Patient cant stand up">@Messages.get("button.no")</label>          </td></tr>
+									<tr><td>@Messages.get("assessment.tab.question.talk")       </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">@Messages.get("button.yes")</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox5N" name="NMIcheckBox5radio" value="Patient cant talk">@Messages.get("button.no")</label>              </td></tr>
+								</tbody></table>
+							</div>
+							<div class="tab-pane" id="infoTab" >
+								<div class="panel panel-default">
+									<div id="obsBody"  class="panel-body">
+									</div>
+								</div>
+							</div>
+							<div class="tab-pane" id="sensorTab" >
+									<!--  <img src="/assets/images/graph.png" class="img-responsive"/> -->
+							</div>
+						</div>
+						<div id="assementLogsDiv">
+							<u>@Messages.get("assessment.log") :</u>
+							<div class="panel panel-default">
+								<div id="assesmentLogPanel" class="panel-body">
+									<div class="logLabel" id="NMIassesmentLabel"> NMI assessment</div>
+									<div class="logLabel" id="NMIcheckBox1Ylabel"> @Messages.get("assessment.log.affirmation.conscious")</div>
+									<div class="logLabel" id="NMIcheckBox2Ylabel"> @Messages.get("assessment.log.affirmation.breathing")</div>
+									<div class="logLabel" id="NMIcheckBox3Ylabel"> @Messages.get("assessment.log.affirmation.move")</div>
+									<div class="logLabel" id="NMIcheckBox4Ylabel"> @Messages.get("assessment.log.affirmation.standup")</div>
+									<div class="logLabel" id="NMIcheckBox5Ylabel"> @Messages.get("assessment.log.affirmation.talk")</div>
+									<div class="logLabel" id="NMIcheckBox1Nlabel"> @Messages.get("assessment.log.negation.conscious")</div>
+									<div class="logLabel" id="NMIcheckBox2Nlabel"> @Messages.get("assessment.log.negation.breathing")</div>
+									<div class="logLabel" id="NMIcheckBox3Nlabel"> @Messages.get("assessment.log.negation.move")</div>
+									<div class="logLabel" id="NMIcheckBox4Nlabel"> @Messages.get("assessment.log.negation.standup")</div>
+									<div class="logLabel" id="NMIcheckBox5Nlabel"> @Messages.get("assessment.log.negation.talk")</div>
+									<div class="logLabel" id="assedmentSensorlabel"> @Messages.get("assessment.log.sensor")</div>
+									<div class="logLabel" id="informationSensorlabel"> @Messages.get("assessment.log.obs")</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<section id="dispatchArea" class="col-md-3  dispatchSection">
+				@dispatchFrame()
+				</section>
+
+
+
+			</div>
+			<div class="row" id="notesRow">
+				<div class="col-md-3" id="statisticsDiv">
+					<h4>@Messages.get("statistics.avgresp"): 20,1 @Messages.get("statistics.timeunit")</h4>
+					<h4>@Messages.get("statistics.maxresptime"): 59 @Messages.get("statistics.timeunit")</h4>
+					<h4>@Messages.get("statistics.numberRespAbov30sec"): 15</h4>
+					<h4>@Messages.get("statistics.numberResponseToday"): 250 </h4>
+				</div>
+				<div class="col-md-9" id="globalNotesDiv">
+					<u>@Messages.get("actions.popup.send.notes"):</u>
+					<textarea id="globalNotesBox" class="form-control" rows="5"></textarea>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section id="map-dashboard">
+	@mapView()
+	</section>
+
+
+	<!-- This is Bootstrap's modal popup plugin. Used to populate the response
                       by clicking on the button TODO: peharps move it to a template -->
-                      
-                  <div class="modal fade" id="callee_info_modal">
-                  <div class="modal-dialog"><div class="modal-content">
-					  <div class="modal-body">
-					    @Messages.get("handling.popup.title")&nbsp;&nbsp;
-					    <a href="#" class="btn" data-dismiss="modal">@Messages.get("button.no")</a>
-					    <a href="#" id="confirmCalleeModalButton" class="btn btn-primary" data-dismiss="modal">@Messages.get("button.yes")</a>
-					      <p/>
-					      <div id="calleeLogTableDiv"></div>
-					  </div>
-					  </div></div>                               
-                </div>
-                
- 
- 
-	      <!-- graph modal -->
-	                      
-	     <div class="modal fade" id="graph_modal" style="top : 0%; right : 0%; outline: none;">
-	     <div class="modal-dialog modal-lg"><div class="modal-content">
-	         <div class="modal-body" style="text-align : center;">
-	            <img id="ampliphied-graph"  src="" class="img-responsive" style="margin:0 auto;">
-	         </div>
-	     </div></div>                               
-	     </div>
-    
 
-    
+	<div class="modal fade" id="callee_info_modal">
+		<div class="modal-dialog"><div class="modal-content">
+			<div class="modal-body">
+				@Messages.get("handling.popup.title")&nbsp;&nbsp;
+				<a href="#" class="btn" data-dismiss="modal">@Messages.get("button.no")</a>
+				<a href="#" id="confirmCalleeModalButton" class="btn btn-primary" data-dismiss="modal">@Messages.get("button.yes")</a>
+				<p/>
+				<div id="calleeLogTableDiv"></div>
+			</div>
+		</div></div>
+	</div>
+
+
+
+	<!-- graph modal -->
+
+	<div class="modal fade" id="graph_modal" style="top : 0%; right : 0%; outline: none;">
+		<div class="modal-dialog modal-lg"><div class="modal-content">
+			<div class="modal-body" style="text-align : center;">
+				<img id="ampliphied-graph"  src="" class="img-responsive" style="margin:0 auto;">
+			</div>
+		</div></div>
+	</div>
 }

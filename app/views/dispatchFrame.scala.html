@@ -3,235 +3,229 @@
 @import play.i18n._
 @import helper._
 
-
-
-
-    <div id="staticPhoneNumbers" class="row">
-        <h3>@Messages.get("actions.list.title")</h3>
-        <div class="well well-sm">
-                <div class="dispatcherTags">@Messages.get("actions.list.police")
-                <button type="button" class="btn btn-default dispatch-ring-btn">@Messages.get("button.ring")</button>
-                <button type="button" class="btn btn-default dispatch-send-btn">@Messages.get("button.send")</button></div>
-        </div>
-        <div class="well well-sm">
-                <div class="dispatcherTags">@Messages.get("actions.list.amk")
-                <button type="button" class="btn btn-default dispatch-ring-btn">@Messages.get("button.ring")</button>
-                <button type="button" class="btn btn-default dispatch-send-btn">@Messages.get("button.send")</button></div>
-        </div>
-        <div class="well well-sm">
-                <div class="dispatcherTags">@Messages.get("actions.list.fireman")
-                <button type="button" class="btn btn-default dispatch-ring-btn">@Messages.get("button.ring")</button>
-                <button type="button" class="btn btn-default dispatch-send-btn">@Messages.get("button.send")</button></div>
-        </div>
-
-        
+<div id="staticPhoneNumbers" class="row">
+    <h3>@Messages.get("actions.list.title")</h3>
+    <div class="well well-sm">
+        <div class="dispatcherTags">@Messages.get("actions.list.police")
+        <button type="button" class="btn btn-primary dispatch-ring-btn">@Messages.get("button.ring")</button>
+        <button type="button" class="btn btn-success dispatch-send-btn">@Messages.get("button.send")</button></div>
     </div>
-    
-    <div id="extraActionButtonsDiv" class="row">
-    
-        <div class="panel-group" id="dynamicDispatchButtons">
-          <div class="panel panel-default">
+    <div class="well well-sm">
+        <div class="dispatcherTags">@Messages.get("actions.list.amk")
+        <button type="button" class="btn btn-primary dispatch-ring-btn">@Messages.get("button.ring")</button>
+        <button type="button" class="btn btn-success dispatch-send-btn">@Messages.get("button.send")</button></div>
+    </div>
+    <div class="well well-sm">
+        <div class="dispatcherTags">@Messages.get("actions.list.fireman")
+        <button type="button" class="btn btn-primary dispatch-ring-btn">@Messages.get("button.ring")</button>
+        <button type="button" class="btn btn-success dispatch-send-btn">@Messages.get("button.send")</button></div>
+    </div>
+</div>
+
+<div id="extraActionButtonsDiv" class="row">
+
+    <div class="panel-group" id="dynamicDispatchButtons">
+        <div class="panel panel-default">
             <div class="panel-heading">
-              <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#hjemmesykepleienPanel">
-                  @Messages.get("actions.list.doctor")
-                </a>
-              </h4>
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#hjemmesykepleienPanel">
+                    @Messages.get("actions.list.doctor")
+                    </a>
+                </h4>
             </div>
             <div id="hjemmesykepleienPanel" class="panel-collapse collapse">
-              <div class="panel-body">
-                <table class="table table-bordered" id="hjemmesykepleienTable">
-                <thead><tr><td>@Messages.get("patientpane.name")</td><td>@Messages.get("patientpane.phonenumber")</td></tr></thead>
-                <tbody>
-                <tr><td>Ostbyen</td><td>7313 2255</td></tr>
-                <tr><td>Oya</td><td>7313 3155</td></tr>
-                </tbody>
-                </table>
-                <button type="button" class="btn btn-default dispatch-ring-btn">@Messages.get("button.ring")</button>
-                <button type="button" class="btn btn-default dispatch-send-btn">@Messages.get("button.send")</button>
-              </div>
+                <div class="panel-body">
+                    <table class="table table-bordered" id="hjemmesykepleienTable">
+                        <thead><tr><td>@Messages.get("patientpane.name")</td><td>@Messages.get("patientpane.phonenumber")</td></tr></thead>
+                        <tbody>
+                            <tr><td>Ostbyen</td><td>7313 2255</td></tr>
+                            <tr><td>Oya</td><td>7313 3155</td></tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary dispatch-ring-btn">@Messages.get("button.ring")</button>
+                    <button type="button" class="btn btn-success dispatch-send-btn">@Messages.get("button.send")</button>
+                </div>
             </div>
-          </div>
-          <div class="panel panel-default">
+        </div>
+        <div class="panel panel-default">
             <div class="panel-heading">
-              <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#TPpanel">
-                @Messages.get("actions.list.tp")
-                </a>
-              </h4>
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#TPpanel">
+                    @Messages.get("actions.list.tp")
+                    </a>
+                </h4>
             </div>
             <div id="TPpanel" class="panel-collapse collapse">
-              <div class="panel-body">
-                <table class="table table-bordered" id="tpTable">
-               <thead><tr>
-                <td>@Messages.get("legvaktapill.car")</td><td>@Messages.get("legvaktapill.driver")</td><td>@Messages.get("legvaktapill.phisician")</td><td>@Messages.get("patientpane.phonenumber")</td>
-                </tr></thead>
-                <tbody>
-                <tr><td>@Messages.get("legvaktapill.car") 1</td><td>A. Anderson</td><td>Å. Jakob</td><td>9622 5442</td></tr>
-                <tr><td>@Messages.get("legvaktapill.car") 2</td><td>F. Henriksen</td><td>R. Sande</td><td>9634 7456</td></tr>
-                </tbody>
-                </table>
-                <button type="button" class="btn btn-default dispatch-ring-btn">@Messages.get("button.ring")</button>
-                <button type="button" class="btn btn-default dispatch-send-btn">@Messages.get("button.send")</button>
-              </div>
+                <div class="panel-body">
+                    <table class="table table-bordered" id="tpTable">
+                        <thead><tr>
+                            <td>@Messages.get("legvaktapill.car")</td><td>@Messages.get("legvaktapill.driver")</td><td>@Messages.get("legvaktapill.phisician")</td><td>@Messages.get("patientpane.phonenumber")</td>
+                        </tr></thead>
+                        <tbody>
+                            <tr><td>@Messages.get("legvaktapill.car") 1</td><td>A. Anderson</td><td>Å. Jakob</td><td>9622 5442</td></tr>
+                            <tr><td>@Messages.get("legvaktapill.car") 2</td><td>F. Henriksen</td><td>R. Sande</td><td>9634 7456</td></tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary dispatch-ring-btn">@Messages.get("button.ring")</button>
+                    <button type="button" class="btn btn-success dispatch-send-btn">@Messages.get("button.send")</button>
+                </div>
             </div>
-          </div>
-          <div class="panel panel-default">
+        </div>
+        <div class="panel panel-default">
             <div class="panel-heading">
-              <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#legevaktPanel">
-                  @Messages.get("actions.list.alarmcentral")
-                </a>
-              </h4>
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#legevaktPanel">
+                    @Messages.get("actions.list.alarmcentral")
+                    </a>
+                </h4>
             </div>
             <div id="legevaktPanel" class="panel-collapse collapse">
-              <div class="panel-body">
-                <table class="table table-bordered" id="legevaktTable">
-                <thead><tr>
-                <td>@Messages.get("legvaktapill.car")</td><td>@Messages.get("legvaktapill.driver")</td><td>@Messages.get("legvaktapill.phisician")</td><td>@Messages.get("patientpane.phonenumber")</td>
-                </tr></thead>
-                <tbody>
-                <tr><td>@Messages.get("legvaktapill.car") 1</td><td>B. Nilsen</td><td>Å. Gran</td><td>9654 5342</td></tr>
-                <tr><td>@Messages.get("legvaktapill.car") 2</td><td>P. Aune</td><td>R. Sande</td><td>9234 5456</td></tr>
-                </tbody>
-                </table>
-                <button type="button" class="btn btn-default dispatch-ring-btn">@Messages.get("button.ring")</button>
-                <button type="button" class="btn btn-default dispatch-send-btn">@Messages.get("button.send")</button>
-              </div>
+                <div class="panel-body">
+                    <table class="table table-bordered" id="legevaktTable">
+                        <thead><tr>
+                            <td>@Messages.get("legvaktapill.car")</td><td>@Messages.get("legvaktapill.driver")</td><td>@Messages.get("legvaktapill.phisician")</td><td>@Messages.get("patientpane.phonenumber")</td>
+                        </tr></thead>
+                        <tbody>
+                            <tr><td>@Messages.get("legvaktapill.car") 1</td><td>B. Nilsen</td><td>Å. Gran</td><td>9654 5342</td></tr>
+                            <tr><td>@Messages.get("legvaktapill.car") 2</td><td>P. Aune</td><td>R. Sande</td><td>9234 5456</td></tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary dispatch-ring-btn">@Messages.get("button.ring")</button>
+                    <button type="button" class="btn btn-success dispatch-send-btn">@Messages.get("button.send")</button>
+                </div>
             </div>
-          </div>
-          
-          <div class="panel panel-default">
+        </div>
+
+        <div class="panel panel-default">
             <div class="panel-heading">
-              <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#ambulerendePanel">
-                  @Messages.get("actions.list.ambu")
-                </a>
-              </h4>
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#ambulerendePanel">
+                    @Messages.get("actions.list.ambu")
+                    </a>
+                </h4>
             </div>
             <div id="ambulerendePanel" class="panel-collapse collapse">
-              <div class="panel-body">
-                <table class="table table-bordered" id="ambulerendeTable">
-                <thead><tr><td>@Messages.get("patientpane.name")</td><td>@Messages.get("patientpane.phonenumber")</td></tr></thead>
-                <tbody>
-                <tr><td>Dr. P. Johansen</td><td>7213 2555</td></tr>
-                <tr><td>Dr. H. Taraldsen</td><td>7452 3315</td></tr>
-                </tbody>
-                </table>
-                <button type="button" class="btn btn-default dispatch-ring-btn">@Messages.get("button.ring")</button>
-                <button type="button" class="btn btn-default dispatch-send-btn">@Messages.get("button.send")</button>
-              </div>
+                <div class="panel-body">
+                    <table class="table table-bordered" id="ambulerendeTable">
+                        <thead><tr><td>@Messages.get("patientpane.name")</td><td>@Messages.get("patientpane.phonenumber")</td></tr></thead>
+                        <tbody>
+                            <tr><td>Dr. P. Johansen</td><td>7213 2555</td></tr>
+                            <tr><td>Dr. H. Taraldsen</td><td>7452 3315</td></tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary dispatch-ring-btn">@Messages.get("button.ring")</button>
+                    <button type="button" class="btn btn-success dispatch-send-btn">@Messages.get("button.send")</button>
+                </div>
             </div>
-          </div>
-          
-           <div class="panel panel-default">
+        </div>
+
+        <div class="panel panel-default">
             <div class="panel-heading">
-              <h4 class="panel-title">
-                <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#kontaktpersonerPanel">
-                  @Messages.get("actions.list.contact")
-                </a>
-              </h4>
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#kontaktpersonerPanel">
+                    @Messages.get("actions.list.contact")
+                    </a>
+                </h4>
             </div>
             <div id="kontaktpersonerPanel" class="panel-collapse collapse">
-              <div class="panel-body">
-                <table class="table table-bordered" id="kontaktpersonerTable">
-                <thead><tr><td>@Messages.get("patientpane.name")</td><td>@Messages.get("patientpane.phonenumber")</td></tr></thead>
-                <tbody>
-                <tr><td>Ola</td><td>9234 4482</td></tr>
-                <tr><td>Albert</td><td>9321 3155</td></tr>
-                </tbody>
-                </table>
-                <button type="button" class="btn btn-default dispatch-ring-btn">@Messages.get("button.ring")</button>
-                <button type="button" class="btn btn-default dispatch-send-btn">@Messages.get("button.send")</button>
-              </div>
+                <div class="panel-body">
+                    <table class="table table-bordered" id="kontaktpersonerTable">
+                        <thead><tr><td>@Messages.get("patientpane.name")</td><td>@Messages.get("patientpane.phonenumber")</td></tr></thead>
+                        <tbody>
+                            <tr><td>Ola</td><td>9234 4482</td></tr>
+                            <tr><td>Albert</td><td>9321 3155</td></tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-primary dispatch-ring-btn">@Messages.get("button.ring")</button>
+                    <button type="button" class="btn btn-success dispatch-send-btn">@Messages.get("button.send")</button>
+                </div>
             </div>
-          </div>
-          
         </div>
-    
-    
-    </div>
-    
-    <div id="closingNotesAndButtons" class="row">
-        <button type="button" class="btn btn-default schedule-btn">@Messages.get("actions.button.appointment.leg")</button>
-        <button type="button" class="btn btn-default schedule-btn">@Messages.get("actions.button.appointment.doctor")</button>
-       <br>
 
-       <button id="closeCaseActionsButton" type="button" class="btn btn-default">@Messages.get("actions.button.close")</button>
-       <button id="saveAndFollowUpButton" type="button" class="btn btn-default">@Messages.get("actions.button.followup")</button>
-    </div>   
-    
-    
-    
-     <!-- Send data modal -->
-                      
-     <div class="modal fade" id="dispatch_data_modal" style="top : 50%; right : 0%; outline: none;">
-     <div class="modal-dialog"><div class="modal-content">
-         <div class="modal-header">
-            <h4 class="modal-title">@Messages.get("actions.popup.send.title")</h4>
-         </div>
-         <div class="modal-body" >
-            <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.callee")</label></div>
-            <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.patient")</label></div>    
-            <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.nmi")</label></div>
-            <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.sensor")</label></div>
-            <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.obs")</label></div>
-            <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.notes")</label></div>
-         </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">@Messages.get("button.cancel")</button>
-            <button type="button" class="btn btn-primary" onclick="Actions.actionsDataSent()" data-dismiss="modal">@Messages.get("button.send")</button>
-         </div>
-         </div></div>                               
-   </div>
-   
-     <!-- calling modal -->
-                      
-     <div class="modal fade" id="calling_modal" style="top : 50%; right : 0%; outline: none;">
-     <div class="modal-dialog"><div class="modal-content">
-         <div class="modal-header">
+    </div>
+</div>
+
+<div id="closingNotesAndButtons" class="row">
+    <button type="button" class="btn btn-primary" id="open-map-button">@Messages.get("actions.button.map.open")</button>
+    <br />
+    <button type="button" class="btn btn-default schedule-btn">@Messages.get("actions.button.appointment.leg")</button>
+    <button type="button" class="btn btn-default schedule-btn">@Messages.get("actions.button.appointment.doctor")</button>
+    <br />
+    <button id="closeCaseActionsButton" type="button" class="btn btn-danger">@Messages.get("actions.button.close")</button>
+    <button id="saveAndFollowUpButton" type="button" class="btn btn-warning">@Messages.get("actions.button.followup")</button>
+</div>
+
+<!-- Send data modal -->
+
+<div class="modal fade" id="dispatch_data_modal" style="top : 50%; right : 0%; outline: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@Messages.get("actions.popup.send.title")</h4>
+            </div>
+            <div class="modal-body" >
+                <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.callee")</label></div>
+                <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.patient")</label></div>
+                <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.nmi")</label></div>
+                <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.sensor")</label></div>
+                <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.obs")</label></div>
+                <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.notes")</label></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-dismiss="modal">@Messages.get("button.cancel")</button>
+                <button type="button" class="btn btn-success" onclick="Actions.actionsDataSent()" data-dismiss="modal">@Messages.get("button.send")</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- calling modal -->
+
+<div class="modal fade" id="calling_modal" style="top : 50%; right : 0%; outline: none;">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header">
             <h4 class="modal-title">@Messages.get("actions.popup.call.title")</h4>
-         </div>
-         <div class="modal-footer">
+        </div>
+        <div class="modal-footer">
             <button type="button" class="btn btn-primary btn-default" data-dismiss="modal">@Messages.get("button.done")</button>
-         </div>
-         </div></div>                               
-   </div>
-    
-    
-         <!-- Schedule time modal -->
-                      
-     <div class="modal fade" id="schedule_time_modal" style="top : 50%; right : 0%; outline: none;">
-     <div class="modal-dialog"><div class="modal-content">
-         <div class="modal-header">
+        </div>
+    </div></div>
+</div>
+
+
+<!-- Schedule time modal -->
+
+<div class="modal fade" id="schedule_time_modal" style="top : 50%; right : 0%; outline: none;">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header">
             <h4 class="modal-title">@Messages.get("actions.popup.appointment.title")</h4>
-         </div>
-         <div class="modal-body" >
+        </div>
+        <div class="modal-body" >
             <div> @Messages.get("actions.popup.appointment.date"): <input type="text" id="schedule-time-picker"> </div>
             <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.callee")</label></div>
-            <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.patient")</label></div>    
+            <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.patient")</label></div>
             <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.nmi")</label></div>
             <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.sensor")</label></div>
             <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.obs")</label></div>
             <div class="checkbox"><label><input type="checkbox"> @Messages.get("actions.popup.send.notes")</label></div>
-         </div>
-         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">@Messages.get("button.cancel")</button>
-            <button type="button" class="btn btn-primary" onclick="Actions.actionsDataSent()" data-dismiss="modal">@Messages.get("button.send")</button>
-         </div>
-   </div></div>                               
-   </div>
-   
-        <!-- confirmation modal -->
-                      
-     <div class="modal fade" id="send_confirmation_modal" style="top : 50%; right : 0%; outline: none;">
-     <div class="modal-dialog"><div class="modal-content">
-         <div class="modal-header">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-warning" data-dismiss="modal">@Messages.get("button.cancel")</button>
+            <button type="button" class="btn btn-success left" onclick="Actions.actionsDataSent()" data-dismiss="modal">@Messages.get("button.send")</button>
+        </div>
+    </div></div>
+</div>
+
+<!-- confirmation modal -->
+
+<div class="modal fade" id="send_confirmation_modal" style="top : 50%; right : 0%; outline: none;">
+    <div class="modal-dialog"><div class="modal-content">
+        <div class="modal-header">
             <h4 class="modal-title">@Messages.get("actions.popup.send.confirmation")</h4>
-         </div>
-         <div class="modal-footer">
+        </div>
+        <div class="modal-footer">
             <button type="button" class="btn btn-primary btn-default" data-dismiss="modal">OK</button>
-         </div>
-         </div></div>                               
-   </div>
+        </div>
+    </div></div>
+</div>
     

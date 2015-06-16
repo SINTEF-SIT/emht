@@ -1,0 +1,17 @@
+@import helper._
+@import play.i18n._
+
+<script src="https://maps.googleapis.com/maps/api/js" type="text/javascript"></script>
+<div id="map-view">
+    <div class="row">
+        <div class="col-lg-9 map-view-fragment">
+            <div id="map-container"></div>
+        </div>
+        <div class="col-lg-3 map-view-fragment">
+            <h3>Dashboard</h3>
+            <hr />
+            <button id="close-map-button" class="btn btn-primary">@Messages.get("actions.button.map.close")</button>
+            <hr />
+        </div>
+    </div>
+</div>

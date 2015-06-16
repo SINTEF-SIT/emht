@@ -433,6 +433,7 @@ public class Application extends Controller {
 	public static Result getassesmentPageScriptsJs() {
 		return ok(views.js.assesmentPageScripts.render());
 	}
+	public static Result getmapViewScriptsJs() { return ok(views.js.mapViewScripts.render()); }
 
 	@Security.Authenticated(Authorization.Authorized.class)
 	public static WebSocket<JsonNode> wsInterface() {
