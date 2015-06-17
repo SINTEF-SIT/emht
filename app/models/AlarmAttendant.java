@@ -9,10 +9,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.auth.Authentication;
 import play.cache.Cache;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder;
+import play.libs.Json;
 
 @Entity
 public class AlarmAttendant extends Model {
@@ -76,6 +78,15 @@ public class AlarmAttendant extends Model {
 		return user;
 	}
 
+	/**
+	 * Retrieve a list of all Mobile Care Takers (Field operators). If no AlarmAttendants with that role
+	 * exists, an empty list is returned.
+	 * @return A List of AlarmAttendants with role == 3.
+	 */
+	public static List<AlarmAttendant> getMobileCareTakers() {
+		return find.where().eq("role", FIELDOPERATOR).findList();
+	}
+
 	public static void delete(Long id) {
 		find.ref(id).delete();
 	}
@@ -89,4 +100,17 @@ public class AlarmAttendant extends Model {
 	}
 	public static boolean isAttendant(AlarmAttendant attendant) { return attendant.role == ATTENDANT; }
 	public static boolean isFieldOperator(AlarmAttendant attendant) { return attendant.role == FIELDOPERATOR; }
+
+	/**
+	 * Helper method that returns an AlarmAttendant as JSON
+	 * @param a The AlarmAttendant to serialize
+	 * @return A JSON ObjectNode representing the AlarmAttendant
+	 */
+	public static ObjectNode toJson(AlarmAttendant a) {
+		ObjectNode alarmAttendant = Json.newObject();
+		alarmAttendant.put("id", Long.toString(a.id));
+		alarmAttendant.put("username", a.username);
+		alarmAttendant.put("role", Long.toString(a.role));
+		return alarmAttendant;
+	}
 }

@@ -97,7 +97,13 @@ public class Application extends Controller {
 	public static Result alarmsAssignedToMe() {
 		ObjectNode jsonAlarms = Json.newObject();
 		AlarmAttendant currentUser = AlarmAttendant.get(Long.parseLong(session().get("id")));
-		List<Alarm> alarms = Alarm.assignedToUser(currentUser);
+		List<Alarm> alarms;
+
+		if (currentUser.role == 3) {
+			alarms = Alarm.openAlarmsAssignedToMobileCareTaker(currentUser);
+		} else {
+			alarms = Alarm.assignedToUser(currentUser);
+		}
 
 		jsonAlarms.put("userId", currentUser.id);
 		jsonAlarms.put("username", currentUser.username);
@@ -116,7 +122,7 @@ public class Application extends Controller {
 	}
 
 
-	public static Result newAlarm(){
+	public static Result newAlarm() {
 		Form<Alarm> filledForm = alarmForm.bindFromRequest(); // create a new form with the request data
 		if (filledForm.hasErrors()) {
 			return badRequest();
@@ -166,37 +172,10 @@ public class Application extends Controller {
 	//  "callee" : { "phoneNumber": string, "name": string, "address": string, "id": long },
 	//  "patient" : { "persoNumber": string, "name": string, "address": string,  "age": int, "id": long }}
 	public static Result getAlarm(Long id) {
-
 		Alarm a = Alarm.get(id);
-
-		ObjectNode jsonAlarm = Json.newObject();
-		jsonAlarm.put("type", a.type);
-		jsonAlarm.put("notes", a.notes);
-		jsonAlarm.put("alarmId", a.id);
-		jsonAlarm.put("occuranceAddress", a.occuranceAddress);
-
-		if (null != a.callee) {
-			ObjectNode calle = Json.newObject();
-			calle.put("id", a.callee.id);
-			calle.put("name", a.callee.name);
-			calle.put("phoneNumber", a.callee.phoneNumber);
-			calle.put("address", a.callee.address);
-			jsonAlarm.put("calle", calle);
-		}
-
-		if (null != a.patient) {
-			ObjectNode  patient = Json.newObject();
-			patient.put("id", a.patient.id);
-			patient.put("name", a.patient.name);
-			patient.put("persoNumber", a.patient.personalNumber);
-			patient.put("phoneNumber", a.patient.phoneNumber);
-			patient.put("address", a.patient.address);
-			patient.put("age", a.patient.age);
-			jsonAlarm.put("patient", patient);
-		}
+		ObjectNode jsonAlarm = Alarm.toJson(a);
 
 		return ok(jsonAlarm);
-
 	}
 
 
@@ -349,6 +328,9 @@ public class Application extends Controller {
 		String notes = json.findPath("notes").asText();
 		String alarmOccurance = json.findPath("occuranceAddress").asText();
 		long alarmId = json.findPath("alarmId").asLong();
+		Long mobileCareTaker = json.findPath("mobileCareTaker").asLong();
+
+		Logger.debug("MobileCareTaker ID: " + mobileCareTaker);
 
 		Alarm a = new Alarm();
 		a.occuranceAddress = alarmOccurance;
@@ -358,6 +340,11 @@ public class Application extends Controller {
 		if (0 != patientId) {
 			a.patient = new Patient();
 			a.patient.id = patientId;
+		}
+
+		// If we have assigned a field operator of type mobileCareTaker (role == 3)
+		if (mobileCareTaker != null && mobileCareTaker > 0) {
+			a.mobileCareTaker = AlarmAttendant.get(mobileCareTaker);
 		}
 
 		Alarm.saveAndFollowupAlarm(a);

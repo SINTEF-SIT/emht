@@ -20,6 +20,7 @@ create table alarm (
   closing_time              timestamp,
   occurance_address         varchar(255),
   attendant_id              bigint,
+  mobile_care_taker_id      bigint,
   alarm_log                 clob,
   notes                     clob,
   patient_id                bigint,
@@ -93,12 +94,14 @@ alter table alarm add constraint fk_alarm_callee_2 foreign key (callee_id) refer
 create index ix_alarm_callee_2 on alarm (callee_id);
 alter table alarm add constraint fk_alarm_attendant_3 foreign key (attendant_id) references alarm_attendant (id) on delete restrict on update restrict;
 create index ix_alarm_attendant_3 on alarm (attendant_id);
-alter table alarm add constraint fk_alarm_patient_4 foreign key (patient_id) references patient (id) on delete restrict on update restrict;
-create index ix_alarm_patient_4 on alarm (patient_id);
-alter table component_reading add constraint fk_component_reading_component_5 foreign key (component_id) references AALCOMPONENT (id) on delete restrict on update restrict;
-create index ix_component_reading_component_5 on component_reading (component_id);
-alter table field_operator_location add constraint fk_field_operator_location_fie_6 foreign key (field_operator_id) references alarm_attendant (id) on delete restrict on update restrict;
-create index ix_field_operator_location_fie_6 on field_operator_location (field_operator_id);
+alter table alarm add constraint fk_alarm_mobileCareTaker_4 foreign key (mobile_care_taker_id) references alarm_attendant (id) on delete restrict on update restrict;
+create index ix_alarm_mobileCareTaker_4 on alarm (mobile_care_taker_id);
+alter table alarm add constraint fk_alarm_patient_5 foreign key (patient_id) references patient (id) on delete restrict on update restrict;
+create index ix_alarm_patient_5 on alarm (patient_id);
+alter table component_reading add constraint fk_component_reading_component_6 foreign key (component_id) references AALCOMPONENT (id) on delete restrict on update restrict;
+create index ix_component_reading_component_6 on component_reading (component_id);
+alter table field_operator_location add constraint fk_field_operator_location_fie_7 foreign key (field_operator_id) references alarm_attendant (id) on delete restrict on update restrict;
+create index ix_field_operator_location_fie_7 on field_operator_location (field_operator_id);
 
 
 

@@ -93,8 +93,17 @@ var Actions = (function ($) {
             });// end of ajax call
         },
 
-        saveAndFollowupAtClosing: function () {
+        saveAndFollowupAtClosing: function (followUp) {
             var updatedAlarm = Actions.getUpdatedAlarmFromPage();
+
+            // If we have a special followUp payload, add it to the alarm
+            if (followUp !== null && followUp !== undefined) {
+                console.log("saveAndFollowUpAtClosing received payload: ", followUp);
+                if (followUp.type === 'mobileCareTaker') {
+                    updatedAlarm.mobileCareTaker = followUp.id;
+                    console.log("saveAndFollowUpAtClosing type was mobileCareTaker with ID: " + updatedAlarm.mobileCareTaker);
+                }
+            }
 
             myJsRoutes.controllers.Application.saveAndFollowupCase().ajax({
                 data : JSON.stringify(updatedAlarm),

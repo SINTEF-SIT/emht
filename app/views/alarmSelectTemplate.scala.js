@@ -1,6 +1,8 @@
 @import play.i18n._
 
 var Alarms = (function ($) {
+	/* Private fields here */
+	var SELECTED_ALARM = null;
 
 	/* Private helper methods here */
 
@@ -112,7 +114,7 @@ var Alarms = (function ($) {
 
 						// populate notebox
 						$.getJSON("/alarm/" + alarmIndex,
-							function (data){
+							function (data) {
 								// TODO: check if the json is full before populating the DOM
 								var notes = data.notes;
 								var occuranceAddress = data.occuranceAddress;
@@ -173,14 +175,20 @@ var Alarms = (function ($) {
 			selectMyAlarm: function (alarmIndex) {
 				// TEMPORARY CODE
 				Alarms.assign(alarmIndex); // TODO: change this to a simple select of alarm instead of assign
+				SELECTED_ALARM = alarmIndex;
 			},
 
 			clearUpData: function () {
+				SELECTED_ALARM = null;
 				Patient.clearUpCalleeData();
 				Patient.clearUpPatientData();
 				Assessment.reset();
 				Actions.reset();
 				$("#globalNotesBox").val("");
+			},
+
+			getCurrentSelectedAlarmIndex: function () {
+				return SELECTED_ALARM;
 			}
 		},
 

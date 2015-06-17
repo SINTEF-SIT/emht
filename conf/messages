@@ -85,7 +85,7 @@ actions.list.police=Police
 actions.list.amk=AMK
 actions.list.fireman=Fireman
 actions.list.doctor=Doctor
-actions.list.tp=TP
+actions.list.tp=Mobile Caretaker
 actions.list.alarmcentral=Alarm Central
 actions.list.ambu=Ambulatory
 actions.list.contact=Contact Person
@@ -97,6 +97,8 @@ legvaktapill.phisician=Physician
 
 actions.button.map.open=View map
 actions.button.map.close=Close map
+actions.button.map.dispatch=Select
+actions.button.map.assign=Assign
 actions.button.appointment.leg=Schedule appointment with legvakta
 actions.button.appointment.doctor=Schedule appointment with personal doctor
 actions.button.close=Close Case

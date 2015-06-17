@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +34,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	public AlarmAttendant attendant;
+	@ManyToOne(cascade = CascadeType.ALL)
+	public AlarmAttendant mobileCareTaker;
 
 	@Lob
 	public String alarmLog;
@@ -95,6 +98,17 @@ public class Alarm extends Model { // the model extension serves for having acce
 		return find.where().eq("attendant.id", attendant.id).findList();
 	}
 
+	/**
+	 * Retrieve all Alarms from the database that has been assigned from an AlarmAttendant to a Mobile Care Taker,
+	 * which is an AlarmAttendant with role == 3.
+	 * @param caretaker The AlarmAttendant object to query
+	 * @return A list of open alarms assigned to an AlarmAttendant, where the attendant has role == 3:
+	 */
+	public static List<Alarm> openAlarmsAssignedToMobileCareTaker(AlarmAttendant caretaker) {
+		if (caretaker.role != 3) return new ArrayList<>();
+		return find.where().eq("mobileCareTaker.id", caretaker.id).isNull("closingTime").findList();
+	}
+
 	public static Alarm assignAttendantToAlarm(Long alarmId, AlarmAttendant attendant) {
 		Alarm a = find.ref(alarmId);
 		a.attendant = attendant;
@@ -122,8 +136,18 @@ public class Alarm extends Model { // the model extension serves for having acce
 		if (null != dummy.notes) // Im assuming Ill alwasy update the notes
 			a.notes = dummy.notes;
 
-		if (null != dummy.occuranceAddress) // Im assuming Ill alwasy update the address
+		if (null != dummy.occuranceAddress) // Im assuming Ill always update the address
 			a.occuranceAddress = dummy.occuranceAddress;
+
+		// Update attendant if it is set and different from the monitor
+		if (null != dummy.attendant && a.attendant != dummy.attendant) {
+			a.attendant = dummy.attendant;
+		}
+
+		// Update the mobile care taker if it is set and different from the monitor
+		if (null != dummy.mobileCareTaker && a.mobileCareTaker != dummy.mobileCareTaker) {
+			a.mobileCareTaker = dummy.mobileCareTaker;
+		}
 
 		// for the time fields, Ill not update them if they have already been set
 		if (null != dummy.dispatchingTime && null == a.dispatchingTime)
@@ -212,6 +236,20 @@ public class Alarm extends Model { // the model extension serves for having acce
 			alarm.put("patient", patient);
 		} else {
 			alarm.putNull("patient");
+		}
+
+		// Add the attendant object if assigned
+		if (a.attendant != null) {
+			alarm.put("attendant", AlarmAttendant.toJson(a.attendant));
+		} else {
+			alarm.putNull("attendant");
+		}
+
+		// Add the mobileCareTaker object if dispatched to a care taker
+		if (a.mobileCareTaker != null) {
+			alarm.put("mobileCareTaker", AlarmAttendant.toJson(a.mobileCareTaker));
+		} else {
+			alarm.putNull("mobileCareTaker");
 		}
 
 		return alarm;
