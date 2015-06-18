@@ -27,7 +27,7 @@
  - &karin !!models.AlarmAttendant
    username:  Karin
    password:  1149:5b424032386339376135:29ee59e11b1f502075abed5b39b8ca0557cac59975409335581d677efa2e6d06cd42e8bf71c124669ceeda95ed9df3142af23a0161bc95e817a8dcc6d76be211
-   role: 2
+   role: 3
 
  - &julio !!models.AlarmAttendant
    username:  Julio
@@ -126,20 +126,22 @@
  - &alarm104 !!models.Alarm
     type:             safety_alarm
     callee:           *callee1
-    attendant:        *iver
+    attendant:        *myth
+    mobileCareTaker:  *iver
     patient:          *patient6
     openingTime:      2014-09-15 21:02:57
-    dispatchingTime:  null
+    dispatchingTime:  2015-06-18 10:30:30
     closingTime:      null
     occuranceAddress: Høgskoleringen 3, 7048 Trondheim
 
  - &alarm105 !!models.Alarm
     type:             safety_alarm
     callee:           *callee2
-    attendant:        *iver
+    attendant:        *myth
+    mobileCareTaker:  *iver
     patient:          *patient7
     openingTime:      2014-09-15 20:02:57
-    dispatchingTime:  null
+    dispatchingTime:  2015-06-18 10:30:40
     closingTime:      null
     occuranceAddress: Brøsetvegen 168, 7048 Trondheim
 

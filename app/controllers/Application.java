@@ -121,6 +121,21 @@ public class Application extends Controller {
 		return ok(jsonAlarms);
 	}
 
+	/**
+	 * Retrieve all open alarms as JSON
+	 * @return A JSON Result
+	 */
+	public static Result allOpenAlarmsJson() {
+		List<Alarm> alarms = Alarm.allOpenAlarms();
+		ObjectNode wrapper = Json.newObject();
+		wrapper.put("total", alarms.size());
+		ArrayNode jsonAlarms = wrapper.putArray("alarms");
+		for (Alarm a : alarms) {
+			jsonAlarms.add(Alarm.toJson(a));
+		}
+		return ok(wrapper);
+	}
+
 
 	public static Result newAlarm() {
 		Form<Alarm> filledForm = alarmForm.bindFromRequest(); // create a new form with the request data

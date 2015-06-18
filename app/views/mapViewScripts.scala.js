@@ -35,10 +35,10 @@ var MapView = (function ($) {
             $('#map-dashboard').show();
 
             /*
-            Since the div containing the map is in display:none mode, the map will not render properly automatically.
-            Thus, we have to trigger map initialization when the button is clicked, and the parent div has been
-            expanded to visible mode by the browser, and is renderable. Otherwise, the Google Maps library cannot
-            render, as the containing div has a height and width of 0.
+             Since the div containing the map is in display:none mode, the map will not render properly automatically.
+             Thus, we have to trigger map initialization when the button is clicked, and the parent div has been
+             expanded to visible mode by the browser, and is renderable. Otherwise, the Google Maps library cannot
+             render, as the containing div has a height and width of 0.
              */
             if (FIRST_RUN) {
                 // Scale the map container to the height of the screen
@@ -109,12 +109,12 @@ var MapView = (function ($) {
     // Helper method that generates marker tooltips for map markers
     var createMarkerTooltip = function (marker, title, text) {
         var tooltip = '<div id="tooltip-' + marker.fieldOperator + '">' +
-                '<h4>' + title + '<h4><p>' + text + '</p></div>';
+            '<h4>' + title + '<h4><p>' + text + '</p></div>';
         var info = new google.maps.InfoWindow({
             content: tooltip
         });
         google.maps.event.addListener(marker, 'click', function () {
-           info.open(map, marker);
+            info.open(map, marker);
         });
     };
 
@@ -185,6 +185,15 @@ var MapView = (function ($) {
 
     // Helper method that updates the sidebar
     var updateSidebar = function () {
+
+        // Sort the fieldOperatorLocations by number of assignments
+        fieldOperatorLocations.sort(function (a, b) {
+            if (a.assignedAlarms.length < b.assignedAlarms.length) return -1;
+            else if (a.assignedAlarms.length > b.assignedAlarms.length) return 1;
+            return 0;
+        });
+
+        // Time to draw the list items
         var html = '<ul class="map-field-operator">';
         for (var i = 0; i < fieldOperatorLocations.length; i++) {
             html += '<li id="field-operator' + fieldOperatorLocations[i].id + '"><strong>' +
@@ -207,11 +216,11 @@ var MapView = (function ($) {
 
             html += '</li>';
         }
-        html += '</ul>'
+        html += '</ul>';
 
         $('#map-sidebar-fieldoperators').html(html);
         if (ACTIVE_ALARM !== null) bindAssignButtons();
-    }
+    };
 
     /* Public methods inside return object */
 
@@ -232,7 +241,17 @@ var MapView = (function ($) {
         },
         getAlarmLocations: function (id) {
             if (id === null || id === undefined) {
-                // TODO: Fetch all alarm locations and do proper things with the data
+                $.getJSON('/alarm/allOpen', function (data) {
+                    if (DEBUG) console.log("Fetched all open alarms", data);
+                    alarms = [];
+                    for (var i = 0; i < data.total; i++) {
+                        var alarm = data.alarms[i];
+                        alarm.latitude = 63.419720 + (-0.01 + (Math.random() / 100) * 2);
+                        alarm.longitude = 10.399124 + (-0.01 + (Math.random() / 100) * 2);
+                        alarms.push(alarm);
+                    }
+                    updateAlarmMarkers();
+                });
             } else {
                 $.getJSON('/alarm/' + id, function (data) {
                     if (DEBUG) console.log("Fetched active alarm.", data);
