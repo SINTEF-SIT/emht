@@ -106,7 +106,11 @@ public class Alarm extends Model { // the model extension serves for having acce
 	 */
 	public static List<Alarm> openAlarmsAssignedToMobileCareTaker(AlarmAttendant caretaker) {
 		if (caretaker.role != 3) return new ArrayList<>();
-		return find.where().eq("mobileCareTaker.id", caretaker.id).isNull("closingTime").findList();
+		return find.where()
+			.eq("mobileCareTaker.id", caretaker.id)
+			.isNull("closingTime")
+			.orderBy("dispatchingTime asc")
+			.findList();
 	}
 
 	public static Alarm assignAttendantToAlarm(Long alarmId, AlarmAttendant attendant) {

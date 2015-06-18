@@ -95,6 +95,7 @@ var Alarms = (function ($) {
 
 				var currentSelected = $('#Alarm' + alarmIndex);
 				currentSelected.toggleClass("active");
+				SELECTED_ALARM = alarmIndex;
 
 				// Remove recurring icon
 				var recurring = currentSelected.children('.recurring-icon');
@@ -220,6 +221,7 @@ var Alarms = (function ($) {
 					var clock = openAlarmListItem.children('.clock-icon');
 					if (clock != null) clock.remove();
 					$('#assignedAlarmList').prepend(openAlarmListItem);
+					SELECTED_ALARM = alarmIndex;
 
 					Alarms.gui.resetAlarmCount();
 				}// end of success

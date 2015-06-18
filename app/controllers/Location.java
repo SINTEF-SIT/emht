@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.Global;
+import models.Alarm;
 import models.AlarmAttendant;
 import models.FieldOperatorLocation;
 import play.Logger;
@@ -112,6 +113,11 @@ public class Location extends Controller {
         ObjectNode jsonLoc = createLocationObjectNode(loc);
         jsonLoc.put("username", loc.fieldOperator.username);
         jsonLoc.put("id", loc.fieldOperator.id);
+        ArrayNode alarms = jsonLoc.putArray("assignedAlarms");
+        List<Alarm> assignedAlarms = Alarm.openAlarmsAssignedToMobileCareTaker(loc.fieldOperator);
+        for (Alarm a : assignedAlarms) {
+            alarms.add(Alarm.toJson(a));
+        }
         return ok(jsonLoc);
     }
 
@@ -128,6 +134,11 @@ public class Location extends Controller {
             ObjectNode currentUserLoc = createLocationObjectNode(loc);
             currentUserLoc.put("id", loc.fieldOperator.id);
             currentUserLoc.put("username", loc.fieldOperator.username);
+            ArrayNode alarms = currentUserLoc.putArray("assignedAlarms");
+            List<Alarm> assignedAlarms = Alarm.openAlarmsAssignedToMobileCareTaker(loc.fieldOperator);
+            for (Alarm a : assignedAlarms) {
+                alarms.add(Alarm.toJson(a));
+            }
             users.add(currentUserLoc);
         }
         return ok(wrapper);

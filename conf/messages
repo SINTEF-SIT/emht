@@ -95,6 +95,12 @@ legvaktapill.car=Car
 legvaktapill.driver=Driver
 legvaktapill.phisician=Physician
 
+# Map information
+map.sidebar.title=Field Operators
+map.sidebar.assignments=Assignments
+map.sidebar.assignments.available=AVAILABLE
+map.sidebar.type.mobilecaretaker=Mobile Caretaker
+
 actions.button.map.open=View map
 actions.button.map.close=Close map
 actions.button.map.dispatch=Select

@@ -190,10 +190,19 @@ var MapView = (function ($) {
             html += '<li id="field-operator' + fieldOperatorLocations[i].id + '"><strong>' +
                 fieldOperatorLocations[i].username + '</strong><br><small>' +
                 new Date(fieldOperatorLocations[i].timestamp) + '</small><br>' +
-                '<i>Trygghetspatrulje</i><br>Oppdrag: <span style="color: green;"><strong>LEDIG</strong></span><br>';
+                '<i>@Messages.get("map.sidebar.type.mobilecaretaker")</i><br>@Messages.get("map.sidebar.assignments"): ';
 
+            // Display amount of assigned alarms
+            if (fieldOperatorLocations[i].assignedAlarms.length === 0) {
+                html += '<span style="color: green;"><strong>@Messages.get("map.sidebar.assignments.available")';
+            } else {
+                html += '<span style="color: blue;"><strong>' + fieldOperatorLocations[i].assignedAlarms.length;
+            }
+            html += '</strong></span><br>';
+
+            // Add the assign button if we have an active alarm to dispatch
             if (ACTIVE_ALARM !== null) {
-                html += '<button class="btn btn-default pull-right assign-map-button">@Messages.get("actions.button.map.assign")</button>';
+                html += '<button class="btn btn-default assign-map-button">@Messages.get("actions.button.map.assign")</button>';
             }
 
             html += '</li>';

@@ -330,8 +330,6 @@ public class Application extends Controller {
 		long alarmId = json.findPath("alarmId").asLong();
 		Long mobileCareTaker = json.findPath("mobileCareTaker").asLong();
 
-		Logger.debug("MobileCareTaker ID: " + mobileCareTaker);
-
 		Alarm a = new Alarm();
 		a.occuranceAddress = alarmOccurance;
 		a.id = alarmId;

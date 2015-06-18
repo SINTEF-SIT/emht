@@ -93,6 +93,11 @@ legvaktapill.car=Bil
 legvaktapill.driver=Sjåfør
 legvaktapill.phisician=Lege
 
+# Map information
+map.sidebar.title=Mobile Enheter
+map.sidebar.assignments=Oppdrag
+map.sidebar.assignments.available=LEDIG
+map.sidebar.type.mobilecaretaker=Trygghetspatrulje
 
 actions.button.map.open=Åpne kart
 actions.button.map.close=Lukk kart
