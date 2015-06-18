@@ -74,8 +74,11 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 									@if(null != alarm.expired && true == alarm.expired){
 										<img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 									}
-									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
-									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
+									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm")</h4>
+									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber};
+									@if(alarm.mobileCareTaker != null){
+										<br/>Assigned to: <strong>@{alarm.mobileCareTaker.username}</strong>
+									}</p>
 								</a>
 							}
 						}

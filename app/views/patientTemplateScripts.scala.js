@@ -131,7 +131,7 @@ var Patient = (function ($) {
 					if (locationData === null) {
 						alert('@Messages.get("patientpane.incident.checkaddress.fail"): ' + address);
 					} else {
-						myJsRoutes.controllers.Application.setLocationOfAlarm(currentSelected.attr('idnum')).ajax({
+						myJsRoutes.controllers.Application.setLocationOfAlarm(Alarms.gui.getCurrentSelectedAlarmIndex()).ajax({
 							data: JSON.stringify(locationData),
 							contentType: 'application/json',
 							success: function (data) {

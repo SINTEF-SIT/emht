@@ -133,8 +133,11 @@ var MapView = (function ($) {
             highlightedOperator = $('#field-operator' + marker.fieldOperator.id);
             highlightedOperator.addClass('active');
 
-            // Swap out alarms on display with alarms assigned to this field operator
-            MapView.displayCurrentAssignmentsForFieldOperator(marker.fieldOperator);
+            // If we have no active alarm assignment state, activate the fieldoperator to incident indicators
+            if (ACTIVE_ALARM === null) {
+                // Swap out alarms on display with alarms assigned to this field operator
+                MapView.displayCurrentAssignmentsForFieldOperator(marker.fieldOperator);
+            }
         });
     }
 
