@@ -41,15 +41,18 @@ patientpane.personumber=Personal Number
 patientpane.phonenumber=Phone Number
 patientpane.age=Age
 patientpane.incident.location=Incident location
+patientpane.incident.checkaddress=Verify
+patientpane.incident.checkaddress.success=Address was located and stored!
+patientpane.incident.checkaddress.fail=Failed to locate and resolve address
 patientpane.incident.same=Same address as residence
 patientpane.incident.other=Other Address
 patientpane.pill.patient=Patient
 patientpane.pill.other.patient=Other Patient...
 patientpane.pill.unknown=Unknown Patient
 patientpane.log.title=Patient Logs
-patientpane.log.date=date
-patientpane.log.hour=hour
-patientpane.log.type=type
+patientpane.log.date=Date
+patientpane.log.hour=Hour
+patientpane.log.type=Type
 
 #add patient modal
 patientmodal.title=Add Patient

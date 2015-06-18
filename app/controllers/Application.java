@@ -193,6 +193,15 @@ public class Application extends Controller {
 		return ok(jsonAlarm);
 	}
 
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result setLocationOfAlarm(Long id) {
+		JsonNode latLng = request().body().asJson();
+		Double latitude = latLng.findPath("latitude").asDouble();
+		Double longitude = latLng.findPath("longitude").asDouble();
+		Alarm.setLocationFromResolvedAddress(id, latitude, longitude);
+		return ok();
+	}
+
 
 	// Return the type and date of each one of the past alarms of the callee
 	public static Result  getPastAlarmsFromCallee(Long calleeId) {
@@ -409,7 +418,8 @@ public class Application extends Controller {
 				controllers.routes.javascript.Application.getCalleeFromAlarm(),
 				controllers.routes.javascript.Application.getProspectPatients(),
 				controllers.routes.javascript.Application.notifyFollowup(),
-				controllers.routes.javascript.Application.getAlarm()
+				controllers.routes.javascript.Application.getAlarm(),
+				controllers.routes.javascript.Application.setLocationOfAlarm()
 			)
 		);
 	}

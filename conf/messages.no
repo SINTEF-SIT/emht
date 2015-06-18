@@ -40,15 +40,18 @@ patientpane.personumber=Personnummer
 patientpane.phonenumber=Telefonnummer 
 patientpane.age=Alder
 patientpane.incident.location=Hvor befinner pasient seg
+patientpane.incident.checkaddress=Verifiser
+patientpane.incident.checkaddress.success=Addressen ble lokalisert og lagret
+patientpane.incident.checkaddress.fail=Klarte ikke lokalisere addressen
 patientpane.incident.same=Samme adresse som registrert adresse
 patientpane.incident.other=Annen addresse
 patientpane.pill.patient=Pasient
 patientpane.pill.other.patient=Annen pasient...
 patientpane.pill.unknown=Ukjent identitet
 patientpane.log.title=Hendelselog
-patientpane.log.date=dato
-patientpane.log.hour=tid
-patientpane.log.type=type
+patientpane.log.date=Dato
+patientpane.log.hour=Tid
+patientpane.log.type=Type
 
 #add patient modal
 patientmodal.title=Legge til pasient

@@ -21,6 +21,7 @@ GET         /pastAlarmsFromPatient/:patientId                     controllers.Ap
 GET         /alarm/assignedToMe                                   controllers.Application.alarmsAssignedToMe()
 GET         /alarm/allOpen                                        controllers.Application.allOpenAlarmsJson()
 GET         /alarm/:id                                            controllers.Application.getAlarm(id: Long)
+POST        /alarm/:id/setLocation                                controllers.Application.setLocationOfAlarm(id: Long)
 POST        /alarm                                                controllers.Application.newAlarm()
 #POST    /alarm/:id/delete       controllers.Application.deleteAlarm(id: Long)
 #POST    /assignAlarm/           controllers.Application.assignAlarm()

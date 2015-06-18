@@ -1,7 +1,11 @@
 @import play.i18n._
 
 var Patient = (function ($) {
+	/* Private fields */
+
+
 	/* Private methods */
+
 
 	/* Public methods inside return object */
 	return {
@@ -56,7 +60,7 @@ var Patient = (function ($) {
 		},
 
 		retrievePatientsByAddress: function (alarmIndex) {
-			if( $('#dynamicPatientInfo').length == 1){ //check if we have the dynamic data
+			if ( $('#dynamicPatientInfo').length == 1){ //check if we have the dynamic data
 				$.getJSON("/prospectPatient/" + alarmIndex,
 					function (data) { Patient.createPatientDiv(data) }
 				);
@@ -97,7 +101,9 @@ var Patient = (function ($) {
 				'<u>@Messages.get("patientpane.age"):</u>  <span id="patientAge"/><br><input id="patientId" type="hidden"><p><p><u>@Messages.get("patientpane.incident.location"):</u>';
 			patientDetails += '<span class="checkbox inline"><label><input id="sameAddressCheckbox" type="checkbox"> @Messages.get("patientpane.incident.same")</label>' +
 				'</span>'; // adds checkbox
+			patientDetails += '<div class="input-group">';
 			patientDetails += '<input type="text" class="form-control" id="incidentAddress" placeholder="@Messages.get("patientpane.incident.other")">';
+			patientDetails += '<span class="input-group-btn"><button class="btn btn-default" id="verifyPatientLocation">@Messages.get("patientpane.incident.checkaddress")</button></span></div>';
 
 			patientDetails += '<h5>@Messages.get("patientpane.log.title")</h5><table class="table table-bordered" id="patientLogTable"><thead><tr><td>@Messages.get("patientpane.log.date")</td><td>@Messages.get("patientpane.log.hour")</td><td>@Messages.get("patientpane.log.type")</td></tr></thead><tbody></tbody></table>';
 
@@ -115,10 +121,33 @@ var Patient = (function ($) {
 				}
 			});
 
+			var currentSelected = $('.list-group-item.active.alarmItem');
+
+			$('#verifyPatientLocation').on('click', function (e) {
+				e.preventDefault();
+				var address = $('#incidentAddress').val();
+				MapView.convertAddressToLatLng(address, function (locationData) {
+					console.log(locationData);
+					if (locationData === null) {
+						alert('@Messages.get("patientpane.incident.checkaddress.fail"): ' + address);
+					} else {
+						myJsRoutes.controllers.Application.setLocationOfAlarm(currentSelected.attr('idnum')).ajax({
+							data: JSON.stringify(locationData),
+							contentType: 'application/json',
+							success: function (data) {
+								alert('@Messages.get("patientpane.incident.checkaddress.success")');
+							},
+							error: function (xhr, statusText, thrownError) {
+								alert('Failed to save resolved address coordinates to alarm!!!');
+							}
+						});
+					}
+				});
+			});
+
 			//$("#patientBox").show();
 
 			//if it is an alarm of type: fire, safety_alarm or fall, I've set the patient as the callee
-			var currentSelected = $('.list-group-item.active.alarmItem');
 			var typeImage = currentSelected.find('.type-icon');
 			var currentAlarm_type = typeImage.attr('data-type');
 			if (currentAlarm_type == "fall" || currentAlarm_type == "fire" || currentAlarm_type == "safety_alarm") {

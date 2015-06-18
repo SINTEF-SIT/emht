@@ -28,6 +28,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 	public Date closingTime; // at the moment we are dispatching and closing all alarms
 
 	public String occuranceAddress; // address of where the incident took place
+	public Double latitude;
+	public Double longitude;
 
 	@Transient
 	public boolean expired = false;
@@ -125,6 +127,22 @@ public class Alarm extends Model { // the model extension serves for having acce
 		return a;
 	}
 
+	/**
+	 * Update the location coordinates of an alarm incident.
+	 * @param alarmId The ID of the alarm to update
+	 * @param latitude Latitude of location as Double
+	 * @param longitude Longitude of location as Double
+	 * @return The updated Alarm object
+	 */
+	public static Alarm setLocationFromResolvedAddress(Long alarmId, Double latitude, Double longitude) {
+		Alarm a = find.ref(alarmId);
+		a.latitude = latitude;
+		a.longitude = longitude;
+		updateFromDummy(a);
+		a.save();
+		return a;
+	}
+
 	// receives some data in the dummy object a, and updates the data from A
 	// which is not yet in the database into an mirror from the DB object to
 	// be saved by the function calling this one
@@ -159,6 +177,14 @@ public class Alarm extends Model { // the model extension serves for having acce
 
 		if (null != dummy.closingTime && null == a.closingTime)
 			a.closingTime = dummy.closingTime;
+
+		// If we have latitude and longitude set and they differ from local monitor, update them
+		if (dummy.latitude != null && a.latitude != dummy.latitude) {
+			a.latitude = dummy.latitude;
+		}
+		if (dummy.longitude != null && a.longitude != dummy.longitude) {
+			a.longitude = dummy.longitude;
+		}
 
 		return a;
 	}
@@ -209,6 +235,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 		ObjectNode alarm = Json.newObject();
 		alarm.put("id", a.id);
 		alarm.put("occuranceAddress", a.occuranceAddress);
+		alarm.put("latitude", a.latitude);
+		alarm.put("longitude", a.longitude);
 		alarm.put("alarmLog", a.alarmLog);
 		alarm.put("notes", a.notes);
 		alarm.put("type", a.type);

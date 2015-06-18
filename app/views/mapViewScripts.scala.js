@@ -21,7 +21,10 @@ var MapView = (function ($) {
     var fieldOperatorMarkers = [];
     var alarmMarkers = [];
 
-    var allAlarmsPeriodicUpdateTimer = null;
+    // Used when selecting subsets of all open alarms for display in map view
+    var alarmCache = null;
+
+    var fieldOperatorLocationPeriodicUpdateTimer = null;
 
     var highlightedOperator = null;
 
@@ -50,11 +53,14 @@ var MapView = (function ($) {
                 };
                 // Initialize the map
                 map = new google.maps.Map(document.getElementById("map-container"), mapOptions);
+                google.maps.event.addListener(map, 'click', function (e) {
+                    MapView.resetSelectedAlarmsOnDisplay();
+                });
             }
 
             // Schedule frequent updating of current positions of operatives
             MapView.getAllCurrentPositions();
-            allAlarmsPeriodicUpdateTimer = setInterval(MapView.getAllCurrentPositions, UPDATE_INTERVAL);
+            fieldOperatorLocationPeriodicUpdateTimer = setInterval(MapView.getAllCurrentPositions, UPDATE_INTERVAL);
 
             // Fetch alarm incident locations. The module method will decide what to do itself based on
             // the value of ACTIVE_ALARM
@@ -71,7 +77,7 @@ var MapView = (function ($) {
             // Reset any potential active alarm and stop the periodic update of locations and markers
             // since the map is in a closed state
             ACTIVE_ALARM = null;
-            clearInterval(allAlarmsPeriodicUpdateTimer);
+            clearInterval(fieldOperatorLocationPeriodicUpdateTimer);
         });
         // Select Mobile caretaker button in openAlarms dashboard
         $('#dispatch-map-button').on('click', function (e) {
@@ -90,7 +96,7 @@ var MapView = (function ($) {
             Actions.saveAndFollowupAtClosing({
                 type: 'mobileCareTaker',
                 id: Number($(this).parent().attr('id').replace('field-operator', ''))
-            })
+            });
             $('#close-map-button').click();
         });
     }
@@ -120,12 +126,15 @@ var MapView = (function ($) {
 
     // Helper method that sets up an click event binding from a map marker to sidebar list items
     var bindFieldOperatorMarkerHighlight = function (marker) {
-        google.maps.event.addListener(marker, 'click', function () {
+        google.maps.event.addListener(marker, 'click', function (e) {
             if (highlightedOperator !== null) {
                 highlightedOperator.removeClass('active');
             }
-            highlightedOperator = $('#field-operator' + marker.fieldOperator);
+            highlightedOperator = $('#field-operator' + marker.fieldOperator.id);
             highlightedOperator.addClass('active');
+
+            // Swap out alarms on display with alarms assigned to this field operator
+            MapView.displayCurrentAssignmentsForFieldOperator(marker.fieldOperator);
         });
     }
 
@@ -147,7 +156,7 @@ var MapView = (function ($) {
                 title: fieldOperatorLocations[i].username
             });
             // Add the operator ID for future mapping reference
-            marker.fieldOperator = fieldOperatorLocations[i].id;
+            marker.fieldOperator = fieldOperatorLocations[i];
 
             // Create a tooltip for the marker and add an event listener (Not used due to malformed anchoring)
             // createMarkerTooltip(marker, fieldOperatorLocations[i].username, 'Dummy status data...');
@@ -183,7 +192,7 @@ var MapView = (function ($) {
         }
     }
 
-    // Helper method that updates the sidebar
+    // Helper method that updates the sidebar with data about field operators, their types and assignments
     var updateSidebar = function () {
 
         // Sort the fieldOperatorLocations by number of assignments
@@ -231,6 +240,7 @@ var MapView = (function ($) {
             // Initialize the GeoCoder so it may be used during incident registration
             geocoder = new google.maps.Geocoder();
         },
+
         getAllCurrentPositions: function () {
             $.getJSON('/location/current', function (data) {
                 if (DEBUG) console.log("Fetched current locations.", data);
@@ -239,29 +249,70 @@ var MapView = (function ($) {
                 updateSidebar();
             });
         },
+
         getAlarmLocations: function (id) {
             if (id === null || id === undefined) {
                 $.getJSON('/alarm/allOpen', function (data) {
                     if (DEBUG) console.log("Fetched all open alarms", data);
                     alarms = [];
                     for (var i = 0; i < data.total; i++) {
-                        var alarm = data.alarms[i];
-                        alarm.latitude = 63.419720 + (-0.01 + (Math.random() / 100) * 2);
-                        alarm.longitude = 10.399124 + (-0.01 + (Math.random() / 100) * 2);
-                        alarms.push(alarm);
+                        alarms.push(data.alarms[i]);
                     }
+                    // Shallow clone the array into cache
+                    alarmCache = alarms.slice(0);
                     updateAlarmMarkers();
                 });
             } else {
                 $.getJSON('/alarm/' + id, function (data) {
                     if (DEBUG) console.log("Fetched active alarm.", data);
                     alarms = [];
-                    data.latitude = 63.419720;
-                    data.longitude = 10.399124;
                     alarms.push(data);
+                    // Shallow clone the array into cache
+                    alarmCache = alarms.slice(0);
                     updateAlarmMarkers();
                 });
             }
+        },
+
+        // When a specific field operator is clicked in the map view we only show alarms assigned to that operator.
+        displayCurrentAssignmentsForFieldOperator: function (fieldOperator) {
+            alarms = [];
+            for (var i = 0; i < alarmCache.length; i++) {
+                var alarm = alarmCache[i];
+                if (alarm.mobileCareTaker !== null && alarm.mobileCareTaker.id === fieldOperator.id) {
+                    alarms.push(alarm);
+                }
+            }
+            if (DEBUG) console.log("FieldOp marker clicked, selected subset:", alarms);
+            updateAlarmMarkers();
+        },
+
+        // Resetting the view from subset to complete set of alarm markers
+        resetSelectedAlarmsOnDisplay: function () {
+            // If currently displayed alarms differ from that of the cache, we update current display set
+            // and redraw the markers
+            if (alarmCache.length !== alarms.length) {
+                // Shallow clone the contents of the cache back into the display array
+                alarms = alarmCache.slice(0);
+                updateAlarmMarkers();
+            }
+        },
+
+        // Takes in a canonical address and attempts to geocode it. Callback is invoked with null as argument
+        // if geocoding failed, otherwise, a LatLng object is returned.
+        convertAddressToLatLng: function (address, callback) {
+            var adr = {'address': address};
+            geocoder.geocode(adr, function (results, status) {
+                if (DEBUG) console.log(results[0].geometry.location);
+                if (status === google.maps.GeocoderStatus.OK) {
+                    callback({
+                        latitude: results[0].geometry.location.A,
+                        longitude: results[0].geometry.location.F
+                    });
+                } else {
+                    callback(null);
+                }
+            });
         }
     }
 })(jQuery);

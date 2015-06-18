@@ -108,9 +108,9 @@ public class AlarmAttendant extends Model {
 	 */
 	public static ObjectNode toJson(AlarmAttendant a) {
 		ObjectNode alarmAttendant = Json.newObject();
-		alarmAttendant.put("id", Long.toString(a.id));
+		alarmAttendant.put("id", a.id);
 		alarmAttendant.put("username", a.username);
-		alarmAttendant.put("role", Long.toString(a.role));
+		alarmAttendant.put("role", a.role);
 		return alarmAttendant;
 	}
 }

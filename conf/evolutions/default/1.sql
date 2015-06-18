@@ -19,6 +19,8 @@ create table alarm (
   dispatching_time          timestamp,
   closing_time              timestamp,
   occurance_address         varchar(255),
+  latitude                  double,
+  longitude                 double,
   attendant_id              bigint,
   mobile_care_taker_id      bigint,
   alarm_log                 clob,
