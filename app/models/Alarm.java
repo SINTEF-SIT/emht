@@ -39,8 +39,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 	@ManyToOne(cascade = CascadeType.ALL)
 	public AlarmAttendant mobileCareTaker;
 
-	@Lob
-	public String alarmLog;
+	@ManyToOne(cascade = CascadeType.ALL)
+	public Assessment assessment;
 
 	@Lob
 	public String notes;
@@ -158,6 +158,10 @@ public class Alarm extends Model { // the model extension serves for having acce
 		if (null != dummy.notes) // Im assuming Ill alwasy update the notes
 			a.notes = dummy.notes;
 
+		if (null != dummy.assessment && a.assessment != dummy.assessment) {
+			a.assessment = dummy.assessment;
+		}
+
 		if (null != dummy.occuranceAddress) // Im assuming Ill always update the address
 			a.occuranceAddress = dummy.occuranceAddress;
 
@@ -237,7 +241,6 @@ public class Alarm extends Model { // the model extension serves for having acce
 		alarm.put("occuranceAddress", a.occuranceAddress);
 		alarm.put("latitude", a.latitude);
 		alarm.put("longitude", a.longitude);
-		alarm.put("alarmLog", a.alarmLog);
 		alarm.put("notes", a.notes);
 		alarm.put("type", a.type);
 		alarm.put("openingTime", a.openingTime != null ? Global.formatDateAsISO(a.openingTime) : null);
@@ -282,6 +285,13 @@ public class Alarm extends Model { // the model extension serves for having acce
 			alarm.put("mobileCareTaker", AlarmAttendant.toJson(a.mobileCareTaker));
 		} else {
 			alarm.putNull("mobileCareTaker");
+		}
+
+		// Add the assessment object if set
+		if (a.assessment != null) {
+			alarm.put("assessment", Assessment.toJson(a.assessment));
+		} else {
+			alarm.putNull("assessment");
 		}
 
 		return alarm;

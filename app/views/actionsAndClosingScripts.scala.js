@@ -71,6 +71,7 @@ var Actions = (function ($) {
             var updatedAlarm = {
                 'alarmId' : alarmId,
                 'notes' : notes,
+                'assessment' : Assessment.getAssessmentLog(),
                 'occuranceAddress' : occuranceAddress,
                 'patient' : {
                     'patientId' : patientId

@@ -53,6 +53,11 @@ var Alarms = (function ($) {
 			populateAlarmDetails: function (alarmIndex) {
 				Patient.populateCalleeFromAlarm(alarmIndex);
 				Patient.retrievePatientsByAddress(alarmIndex);
+				$.getJSON('/alarm/' + alarmIndex, function (data) {
+					if (data.assessment !== null) {
+						Assessment.pupulateDOMfromAssessment(data.assessment);
+					}
+				});
 			},
 
 			removeHighlightedAlarmFromList: function () {
@@ -88,6 +93,7 @@ var Alarms = (function ($) {
 			selectFollowUpAlarm: function (alarmIndex) {
 				// start by clearing the view
 				//highlightBackListTab ();
+				Assessment.reset();
 
 				// unhighlight any highlighted alarm
 				var currentSelected = $('.list-group-item.active.alarmItem');
@@ -112,20 +118,24 @@ var Alarms = (function ($) {
 						var patientListItem = $("#patientDropDownList li:first a");
 						patientListItem.click();
 						Assessment.loadPatientSensor();
-
-						// populate notebox
-						$.getJSON("/alarm/" + alarmIndex,
-							function (data) {
-								// TODO: check if the json is full before populating the DOM
-								var notes = data.notes;
-								var occuranceAddress = data.occuranceAddress;
-								$("#globalNotesBox").val(notes);
-								$("#incidentAddress").val(occuranceAddress);
-							}
-						);
-						// end of populate notebox
 					}
 				);
+
+				// populate notebox
+				$.getJSON("/alarm/" + alarmIndex,
+					function (data) {
+						console.log(data);
+						// TODO: check if the json is full before populating the DOM
+						if (data.assessment !== null) {
+							Assessment.pupulateDOMfromAssessment(data.assessment);
+						}
+						var notes = data.notes;
+						var occuranceAddress = data.occuranceAddress;
+						$("#globalNotesBox").val(notes);
+						$("#incidentAddress").val(occuranceAddress);
+					}
+				);
+				// end of populate notebox
 
 				//$("#assesment").show();
 				//$("#assesmentNotesDiv").hide();

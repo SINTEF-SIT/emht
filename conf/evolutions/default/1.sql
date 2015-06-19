@@ -23,7 +23,7 @@ create table alarm (
   longitude                 double,
   attendant_id              bigint,
   mobile_care_taker_id      bigint,
-  alarm_log                 clob,
+  assessment_id             bigint,
   notes                     clob,
   patient_id                bigint,
   constraint pk_alarm primary key (id))
@@ -36,6 +36,14 @@ create table alarm_attendant (
   role                      integer not null,
   constraint uq_alarm_attendant_username unique (username),
   constraint pk_alarm_attendant primary key (id))
+;
+
+create table assessment (
+  id                        bigint not null,
+  nmi_id                    bigint,
+  sensors_checked           boolean,
+  patient_information_checked boolean,
+  constraint pk_assessment primary key (id))
 ;
 
 create table callee (
@@ -65,6 +73,16 @@ create table field_operator_location (
   constraint pk_field_operator_location primary key (id))
 ;
 
+create table nmi (
+  id                        bigint not null,
+  conscious                 boolean,
+  breathing                 boolean,
+  movement                  boolean,
+  standing                  boolean,
+  talking                   boolean,
+  constraint pk_nmi primary key (id))
+;
+
 create table patient (
   id                        bigint not null,
   name                      varchar(255),
@@ -82,11 +100,15 @@ create sequence alarm_seq;
 
 create sequence alarm_attendant_seq;
 
+create sequence assessment_seq;
+
 create sequence callee_seq;
 
 create sequence component_reading_seq;
 
 create sequence field_operator_location_seq;
+
+create sequence nmi_seq;
 
 create sequence patient_seq;
 
@@ -98,12 +120,16 @@ alter table alarm add constraint fk_alarm_attendant_3 foreign key (attendant_id)
 create index ix_alarm_attendant_3 on alarm (attendant_id);
 alter table alarm add constraint fk_alarm_mobileCareTaker_4 foreign key (mobile_care_taker_id) references alarm_attendant (id) on delete restrict on update restrict;
 create index ix_alarm_mobileCareTaker_4 on alarm (mobile_care_taker_id);
-alter table alarm add constraint fk_alarm_patient_5 foreign key (patient_id) references patient (id) on delete restrict on update restrict;
-create index ix_alarm_patient_5 on alarm (patient_id);
-alter table component_reading add constraint fk_component_reading_component_6 foreign key (component_id) references AALCOMPONENT (id) on delete restrict on update restrict;
-create index ix_component_reading_component_6 on component_reading (component_id);
-alter table field_operator_location add constraint fk_field_operator_location_fie_7 foreign key (field_operator_id) references alarm_attendant (id) on delete restrict on update restrict;
-create index ix_field_operator_location_fie_7 on field_operator_location (field_operator_id);
+alter table alarm add constraint fk_alarm_assessment_5 foreign key (assessment_id) references assessment (id) on delete restrict on update restrict;
+create index ix_alarm_assessment_5 on alarm (assessment_id);
+alter table alarm add constraint fk_alarm_patient_6 foreign key (patient_id) references patient (id) on delete restrict on update restrict;
+create index ix_alarm_patient_6 on alarm (patient_id);
+alter table assessment add constraint fk_assessment_nmi_7 foreign key (nmi_id) references nmi (id) on delete restrict on update restrict;
+create index ix_assessment_nmi_7 on assessment (nmi_id);
+alter table component_reading add constraint fk_component_reading_component_8 foreign key (component_id) references AALCOMPONENT (id) on delete restrict on update restrict;
+create index ix_component_reading_component_8 on component_reading (component_id);
+alter table field_operator_location add constraint fk_field_operator_location_fie_9 foreign key (field_operator_id) references alarm_attendant (id) on delete restrict on update restrict;
+create index ix_field_operator_location_fie_9 on field_operator_location (field_operator_id);
 
 
 
@@ -117,11 +143,15 @@ drop table if exists alarm;
 
 drop table if exists alarm_attendant;
 
+drop table if exists assessment;
+
 drop table if exists callee;
 
 drop table if exists component_reading;
 
 drop table if exists field_operator_location;
+
+drop table if exists nmi;
 
 drop table if exists patient;
 
@@ -133,11 +163,15 @@ drop sequence if exists alarm_seq;
 
 drop sequence if exists alarm_attendant_seq;
 
+drop sequence if exists assessment_seq;
+
 drop sequence if exists callee_seq;
 
 drop sequence if exists component_reading_seq;
 
 drop sequence if exists field_operator_location_seq;
+
+drop sequence if exists nmi_seq;
 
 drop sequence if exists patient_seq;
 
