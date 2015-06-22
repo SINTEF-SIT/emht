@@ -23,23 +23,6 @@ public class Assessment extends Model {
 
     public static List<Assessment> all() { return find.all(); }
 
-    public static Assessment getOrCreate(Assessment a) {
-        if (a == null) return null;
-        Assessment dbAssessment;
-        if (a.id == null) {
-            dbAssessment = a;
-        } else {
-            dbAssessment = find.ref(a.id);
-            if (dbAssessment == null) {
-                a.id = null;
-            } else {
-                return dbAssessment;
-            }
-        }
-        dbAssessment.save();
-        return dbAssessment;
-    }
-
     /**
      * Transform an Assessment object into a JSON ObjectNode
      * @param a An instance of Assessment

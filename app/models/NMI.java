@@ -5,6 +5,7 @@ import play.db.ebean.Model;
 import play.libs.Json;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.Id;
 import java.util.List;
 
@@ -24,23 +25,6 @@ public class NMI extends Model {
     public static Finder<Long, NMI> find = new Finder(Long.class, NMI.class);
 
     public static List<NMI> all() { return find.all(); }
-
-    public static NMI getOrCreate(NMI n) {
-        if (n == null) return null;
-        NMI dbNMI;
-        if (n.id == null) {
-            dbNMI = n;
-        } else {
-            dbNMI = find.ref(n.id);
-            if (dbNMI == null) {
-                n.id = null;
-            } else {
-                return dbNMI;
-            }
-        }
-        dbNMI.save();
-        return dbNMI;
-    }
 
     /**
      * Transform an NMI object into a JSON ObjectNode

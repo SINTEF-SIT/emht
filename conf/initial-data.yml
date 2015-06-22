@@ -98,7 +98,7 @@
     personalNumber:  04064549789
     phoneNumber:     45091234
     age:             69
-    obs:                 
+    obs:             null
 
  - &patient9 !!models.Patient
     name:            Olav Strand
@@ -106,19 +106,51 @@
     personalNumber:  12093519117
     phoneNumber:     49987654
     age:             79
-    obs:                 
+    obs:             null
+
+# NMI
+
+ - &nmi001 !!models.NMI
+    conscious:        null
+    breathing:        null
+    movement:         null
+    standing:         null
+    talking:          null
+
+ - &nmi002 !!models.NMI
+    conscious:        null
+    breathing:        null
+    movement:         null
+    standing:         null
+    talking:          null
+
+ - &nmi003 !!models.NMI
+    conscious:        null
+    breathing:        null
+    movement:         null
+    standing:         null
+    talking:          null
+
+# Assessments
+
+ - &assessment001 !!models.Assessment
+    nmi:             *nmi001
+
+ - &assessment002 !!models.Assessment
+    nmi:             *nmi002
+
+ - &assessment003 !!models.Assessment
+    nmi:             *nmi003
 
 # Alarms
 
-    
-# closed alarms
-
-# closed alarms
+# open alarms
 
  - &alarm103 !!models.Alarm
     type:            safety_alarm
     callee:          *callee1
     patient:         *patient6
+    assessment:      *assessment001
     openingTime:     2015-09-10 11:02:57
     dispatchingTime: null
     closingTime:     null
@@ -128,6 +160,7 @@
     callee:           *callee1
     attendant:        *myth
     mobileCareTaker:  *iver
+    assessment:       *assessment002
     patient:          *patient6
     openingTime:      2014-09-15 21:02:57
     dispatchingTime:  2015-06-18 10:30:30
@@ -139,11 +172,14 @@
     callee:           *callee2
     attendant:        *myth
     mobileCareTaker:  *iver
+    assessment:       *assessment003
     patient:          *patient7
     openingTime:      2014-09-15 20:02:57
     dispatchingTime:  2015-06-18 10:30:40
     closingTime:      null
     occuranceAddress: Brøsetvegen 168, 7048 Trondheim
+
+# closed alarms
 
  - &alarm106 !!models.Alarm
     type:            safety_alarm

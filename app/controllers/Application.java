@@ -354,26 +354,26 @@ public class Application extends Controller {
 		long alarmId = json.findPath("alarmId").asLong();
 		Long mobileCareTaker = json.findPath("mobileCareTaker").asLong();
 
-		Alarm a = new Alarm();
+		Alarm a = Alarm.get(alarmId);
 		a.occuranceAddress = alarmOccurance;
-		a.id = alarmId;
 		a.notes = notes;
 
 
 		if (json.hasNonNull("assessment")) {
-			a.assessment = new Assessment();
-			a.assessment.id = json.hasNonNull("id") ? json.get("id").asLong() : null;
 			a.assessment.sensorsChecked = json.findPath("sensorsChecked").asBoolean();
 			a.assessment.patientInformationChecked = json.findPath("patientInformationChecked").asBoolean();
 			if (json.findPath("assessment").hasNonNull("nmi")) {
-				a.assessment.nmi = new NMI();
 				JsonNode nmi = json.findPath("nmi");
-				if (!nmi.get("id").isNull()) a.assessment.nmi.id = nmi.get("id").asLong();
 				if (!nmi.get("conscious").isNull()) a.assessment.nmi.conscious = nmi.get("conscious").asBoolean();
+				else a.assessment.nmi.conscious = null;
 				if (!nmi.get("breathing").isNull()) a.assessment.nmi.breathing = nmi.get("breathing").asBoolean();
+				else a.assessment.nmi.breathing = null;
 				if (!nmi.get("movement").isNull()) a.assessment.nmi.movement = nmi.get("movement").asBoolean();
+				else a.assessment.nmi.movement = null;
 				if (!nmi.get("standing").isNull()) a.assessment.nmi.standing = nmi.get("standing").asBoolean();
+				else a.assessment.nmi.standing = null;
 				if (!nmi.get("talking").isNull()) a.assessment.nmi.talking = nmi.get("talking").asBoolean();
+				else a.assessment.nmi.talking = null;
 			}
 		}
 

@@ -22,13 +22,10 @@ var WebSocketManager = (function ($, WS) {
                         '<h4 class="list-group-item-heading"> @Messages.get("listitem.arrived") '+ formatedTime  +' </h4>' +
                         '<p class="list-group-item-text">@Messages.get("listitem.callee") ' + alarm.callee.name + ' ' + alarm.callee.phoneNumber + '</p>';
                     $("#unassignedAlarmList").append(listItem);
-                    Alarms.gui.resetAlarmCount();
+                    Alarms.addAlarm(alarm);
                     break;
                 case "removeAlarm":
-                    var id = data.alarmId;
-                    var elementId ="#Alarm" + id;
-                    $(elementId).remove();
-                    Alarms.gui.resetAlarmCount();
+                    Alarms.removeAlarm(Alarms.getAlarm(data.alarmId));
                     break;
                 case "notifyFollowup":
                     var id = data.alarmId;

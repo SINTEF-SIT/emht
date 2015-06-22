@@ -62,6 +62,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 	// been saved on the db
 	public static Alarm create(Alarm alarm) {
 		alarm.openingTime = new Date();
+		if (alarm.assessment == null) alarm.assessment = new Assessment();
+		alarm.assessment.nmi = new NMI();
 		alarm.save();
 		Global.alarmList.list.put(alarm.id, alarm);
 		Global.localMonitor.registerNewAlert(alarm.id);

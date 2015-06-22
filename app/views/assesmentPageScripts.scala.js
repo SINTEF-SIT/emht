@@ -71,6 +71,7 @@ var Assessment = (function ($) {
 	};
 
 	var updateAssessmentInfo = function (radio) {
+		console.log("updateAssessmentInfo called");
 		var radioId = $(radio).attr('id');
 		var field = radioId.substring(0, radioId.length - 1);
 		var state = radioId.charAt(radioId.length - 1) === 'Y';
@@ -95,6 +96,7 @@ var Assessment = (function ($) {
 
 	// Helper method that sets the state of radio buttons to match that of the currentAssessment
 	var updateDOM = function () {
+		console.log("updateDOM called");
 		if (currentAssessment.nmi.conscious !== null) {
 			if (currentAssessment.nmi.conscious) {
 				$('#NMIcheckBox1Y').attr('checked', true);
@@ -202,6 +204,7 @@ var Assessment = (function ($) {
 		},
 
 		reset: function () {
+			console.log("reset assessment called");
 			$("#nmiTab").find(':radio').each(
 				function (i) {
 					// clear all checkbockes
@@ -254,6 +257,7 @@ var Assessment = (function ($) {
 		},
 
 		pupulateDOMfromAssessment: function (assessmentInfo) {
+			console.log("populateDOMfromAssessment called");
 			Assessment.reset();
 			currentAssessment = assessmentInfo;
 			updateDOM();

@@ -1,10 +1,83 @@
 @import play.i18n._
 
+DEBUG = true;
+
 var Alarms = (function ($) {
+
 	/* Private fields here */
 	var SELECTED_ALARM = null;
+	var ACTIVE_ALARM = null;
+
+	// We keep track of overall state of all alarms in a single array
+	var alarms = [];
+
+	/* Internal classes */
+
+	var Alarm = function (data) {
+		if (DEBUG) console.log("Alarm constructor called with data: " + data);
+		this.id = data.id;
+		this.selected = false;
+		this.data = data;
+		this.state = 'open';
+		this.DOM = null;
+		if (data.attendant !== null) {
+			this.state = 'assigned';
+			if (data.dispatchingTime !== null) {
+				this.state = 'followup';
+			}
+		}
+		if (data.closingTime !== null && data.closingTime !== undefined) {
+			this.state = 'closed';
+		}
+	};
+	Alarm.prototype = {
+		constructor: Alarm,
+		alarmState: function (state) {
+			if (state === null || state === undefined) return this.state;
+			else {
+				this.state = state;
+				return this.state;
+			}
+		},
+		alarmSelected: function (selected) {
+			if (selected === null || selected === undefined) return this.selected;
+			else {
+				this.selected = selected;
+				return this.selected;
+			}
+		},
+		isOpen: function () { return this.state === 'open'; },
+		isAssigned: function () { return this.state === 'assigned'; },
+		isFollowup: function () { return this.state === 'followup'; },
+		isClosed: function () { return this.state === 'closed'; },
+		isLocationVerified: function () { return this.data.latitude !== null && this.data.longitude !== null; },
+		toString: function () { return "Alarm " + this.id + " (Status: " + this.state + ") [Selected: " + this.selected + "]"; },
+		select: function () {
+			if (ACTIVE_ALARM !== null) {
+				ACTIVE_ALARM.selected = false;
+				ACTIVE_ALARM.DOM.removeClass('active');
+			}
+			ACTIVE_ALARM = this;
+			this.selected = true;
+			this.DOM.addClass('active');
+			return this;
+		},
+		deselect: function () {
+			if (this.selected && ACTIVE_ALARM === this) {
+				this.DOM.removeClass('active');
+				this.selected = false;
+			}
+		}
+	};
 
 	/* Private helper methods here */
+
+	// Premade sort function that sorts alarms with longest time since arrival first
+	var sortByTime = function (a, b) {
+		if (a.data.openingTime < b.data.openingTime) return -1;
+		else if (a.data.openingTime > b.data.openingTime) return 1;
+		return 0;
+	};
 
 	var handleModalCancel = function () {
 		$("#callee_info_modal").on('hide.bs.modal', function () {
@@ -12,15 +85,40 @@ var Alarms = (function ($) {
 			var currentSelected = $('.list-group-item.active.alarmItem');
 			currentSelected.toggleClass("active");
 		});
-	}
+	};
 
 	var handleResetAlarmCount = function () {
-		var unassignedAlarmCount = $("#unassignedAlarmList .list-group-item").length;
-		var assignedAlarmCount = $("#assignedAlarmList .list-group-item").length;
-		var followUpAlarmCount = $("#followupAlarmList .list-group-item").length;
+		var unassignedAlarmCount = Alarms.getNumberOfOpenAlarms();
+		var assignedAlarmCount = Alarms.getNumberOfAssignedAlarms();
+		var followUpAlarmCount = Alarms.getNumberOfFollowupAlarms();
 		$("#nbOfUnassignedAlarm").text(unassignedAlarmCount);
 		$("#nbOfAssignedAlarm").text(assignedAlarmCount);
 		$("#nbOfFollowUpAlarm").text(followUpAlarmCount);
+	};
+
+	var fetchAllOpenAlarms = function (callback) {
+		$.getJSON('/alarm/allOpen', function (data) {
+			alarms = [];
+			for (var i in data.alarms) {
+				if (data.alarms.hasOwnProperty(i)) {
+					var alarm = new Alarm(data.alarms[i]);
+					alarm.DOM = $('#Alarm' + alarm.id);
+					alarms.push(alarm);
+				}
+			}
+			if (DEBUG) console.log(alarms);
+			if (callback !== null && callback !== undefined) {
+				callback();
+			}
+		});
+	};
+
+	// Fetch alarm by ID
+	var getAlarm = function (id) {
+		for (var i in alarms) {
+			if (alarms[i].id === id) return alarms[i];
+		}
+		return null;
 	}
 
 	/* Public methods inside return object */
@@ -32,17 +130,18 @@ var Alarms = (function ($) {
 			$("#extraActionButtonsDiv").show();
 			$("#closingNotesAndButtons").show();
 
-			// those setup functions should be called just once as they may be binding buttons
-			// and one does not want to rebind
-			WebSocketManager.init();
-			Patient.init();
-			Assessment.init();
-			Actions.init();
+			fetchAllOpenAlarms(function () {
+
+				WebSocketManager.init();
+				Patient.init();
+				Assessment.init();
+				Actions.init();
+
+				Alarms.gui.resetAlarmCount();
+			});
 
 			// if the modal is canceled, we clear the active item
 			handleModalCancel();
-
-			Alarms.gui.resetAlarmCount();
 		},
 
 		gui: {
@@ -53,11 +152,7 @@ var Alarms = (function ($) {
 			populateAlarmDetails: function (alarmIndex) {
 				Patient.populateCalleeFromAlarm(alarmIndex);
 				Patient.retrievePatientsByAddress(alarmIndex);
-				$.getJSON('/alarm/' + alarmIndex, function (data) {
-					if (data.assessment !== null) {
-						Assessment.pupulateDOMfromAssessment(data.assessment);
-					}
-				});
+				Assessment.pupulateDOMfromAssessment(getAlarm(alarmIndex).assessment);
 			},
 
 			removeHighlightedAlarmFromList: function () {
@@ -145,9 +240,8 @@ var Alarms = (function ($) {
 			},
 
 			selectOpenAlarm: function (alarmIndex, calleeIndex) {
-				// highlight the alarm
-				var currentSelected = $('#Alarm' + alarmIndex);
-				currentSelected.toggleClass("active");
+				// Select the alarm
+				getAlarm(alarmIndex).select();
 
 				$.getJSON("/pastAlarmsFromCalle/" + calleeIndex,
 					function(data) {
@@ -184,6 +278,7 @@ var Alarms = (function ($) {
 			},
 
 			selectMyAlarm: function (alarmIndex) {
+				getAlarm(alarmIndex).select().DOM.
 				// TEMPORARY CODE
 				Alarms.assign(alarmIndex); // TODO: change this to a simple select of alarm instead of assign
 				SELECTED_ALARM = alarmIndex;
@@ -233,14 +328,60 @@ var Alarms = (function ($) {
 					$('#assignedAlarmList').prepend(openAlarmListItem);
 					SELECTED_ALARM = alarmIndex;
 
+					Alarms.gui.populateAlarmDetails(alarmIndex);
+
 					Alarms.gui.resetAlarmCount();
 				}// end of success
 			});// end of ajax call
-
-			Alarms.gui.populateAlarmDetails(alarmIndex);
 		},
 
+		addAlarm: function (alarm) {
+			var a = new Alarm(alarm);
+			a.DOM = $('#Alarm' + a.id);
+			alarms.push(a);
+			alarms.sort(sortByTime);
+			Alarms.gui.resetAlarmCount();
+		},
 
+		getAlarm: function (alarmId) {
+			return getAlarm(alarmId);
+		},
+
+		getActiveAlarm: function () {
+			return SELECTED_ALARM;
+		},
+
+		getNumberOfOpenAlarms: function () {
+			var tot = 0;
+			for (var i in alarms) {
+				if (alarms[i].alarmState() === 'open') tot++;
+			}
+			return tot;
+		},
+
+		getNumberOfAssignedAlarms: function () {
+			var tot = 0;
+			for (var i in alarms) {
+				if (alarms[i].alarmState() === 'assigned') tot++;
+			}
+			return tot;
+		},
+
+		getNumberOfFollowupAlarms: function () {
+			var tot = 0;
+			for (var i in alarms) {
+				if (alarms[i].alarmState() === 'followup') tot++;
+			}
+			return tot;
+		},
+
+		removeAlarm: function (alarm) {
+			alarm.deselect();
+			alarm.DOM.remove();
+			alarms.splice(alarms.indexOf(alarm), 1);
+			alarms.sort(sortByTime);
+			Alarms.gui.resetAlarmCount();
+		}
 	}
 })(jQuery);
 
