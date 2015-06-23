@@ -5,7 +5,6 @@ DEBUG = true;
 var Alarms = (function ($) {
 
 	/* Private fields here */
-	var SELECTED_ALARM = null;
 	var ACTIVE_ALARM = null;
 
 	// We keep track of overall state of all alarms in a single array
@@ -13,6 +12,8 @@ var Alarms = (function ($) {
 
 	/* Internal classes */
 
+	// The Alarm object is the main component used. It uses different state fields as well as prototype methods
+	// for selecting, deselecting, moving the alarm between different states etc.
 	var Alarm = function (data) {
 		if (DEBUG) console.log("Alarm constructor called with data: " + data);
 		this.id = data.id;
@@ -32,41 +33,107 @@ var Alarms = (function ($) {
 	};
 	Alarm.prototype = {
 		constructor: Alarm,
-		alarmState: function (state) {
-			if (state === null || state === undefined) return this.state;
-			else {
-				this.state = state;
-				return this.state;
-			}
-		},
-		alarmSelected: function (selected) {
-			if (selected === null || selected === undefined) return this.selected;
-			else {
-				this.selected = selected;
-				return this.selected;
-			}
-		},
+
 		isOpen: function () { return this.state === 'open'; },
+
 		isAssigned: function () { return this.state === 'assigned'; },
+
 		isFollowup: function () { return this.state === 'followup'; },
+
 		isClosed: function () { return this.state === 'closed'; },
+
 		isLocationVerified: function () { return this.data.latitude !== null && this.data.longitude !== null; },
+
+		moveToAssigned: function () {
+			// Select this Alarm, so previously selected are deselected
+			this.select();
+			var self = this;
+			// Make a new DOM item, unbind click listeners, update DOM ref, re-select and bind new click listeners
+			var newAlarmItem = this.DOM.clone();
+			this.DOM.remove();
+			this.DOM = newAlarmItem;
+			this.DOM.off('click');
+			this.DOM.unbind('click');
+			this.state = 'assigned';
+			this.select();
+			this.DOM.on('click', function (e) {
+				e.preventDefault();
+				Alarms.gui.selectMyAlarm(self.id);
+			});
+
+			// Remove the clock icon if it was set
+			var clock = this.DOM.children('.clock-icon');
+			if (clock != null) clock.remove();
+
+			// Prepend the new DOM object to the assigned alarm list.
+			$('#assignedAlarmList').prepend(newAlarmItem);
+
+			Alarms.gui.populateAlarmDetails(this.id);
+			Alarms.gui.resetAlarmCount();
+		},
+
+		moveToFollowup: function () {
+			this.select();
+			var self = this;
+			var newAlarmItem = this.DOM.clone();
+			this.DOM.remove();
+			this.DOM = newAlarmItem;
+			this.DOM.off('click');
+			this.DOM.unbind('click');
+			this.state = 'followup';
+			this.DOM.on('click', function (e) {
+				e.preventDefault();
+				Alarms.gui.selectFollowUpAlarm(self.id);
+			});
+			$('#followupAlarmList').append(this.DOM);
+			Alarms.gui.resetAlarmCount();
+		},
+
 		toString: function () { return "Alarm " + this.id + " (Status: " + this.state + ") [Selected: " + this.selected + "]"; },
+
 		select: function () {
 			if (ACTIVE_ALARM !== null) {
-				ACTIVE_ALARM.selected = false;
 				ACTIVE_ALARM.DOM.removeClass('active');
+				ACTIVE_ALARM.selected = false;
 			}
 			ACTIVE_ALARM = this;
 			this.selected = true;
 			this.DOM.addClass('active');
 			return this;
 		},
+
 		deselect: function () {
 			if (this.selected && ACTIVE_ALARM === this) {
 				this.DOM.removeClass('active');
 				this.selected = false;
+				ACTIVE_ALARM = null;
+				Alarms.gui.clearUpData();
 			}
+			return this;
+		},
+
+		// Updates the state of this alarm and performs a callback
+		update: function (callback) {
+			var self = this;
+			$.getJSON('/alarm/' + self.id, function (data) {
+				// Update backend data field and client-side state
+				self.data = data;
+				if (data.attendant !== null) {
+					self.state = 'assigned';
+					if (data.dispatchingTime !== null) {
+						self.state = 'followup';
+					}
+				}
+				if (data.closingTime !== null && data.closingTime !== undefined) {
+					self.state = 'closed';
+				}
+
+				// If it has been closed, remove it.
+				if (self.isClosed()) Alarms.removeAlarm(self);
+
+				// Do the callback and provide the updated Alarm object in return
+				callback(self);
+			});
 		}
 	};
 
@@ -96,6 +163,7 @@ var Alarms = (function ($) {
 		$("#nbOfFollowUpAlarm").text(followUpAlarmCount);
 	};
 
+	// Fetches all non-closed alarms from the database and populates the client-side alarm cache
 	var fetchAllOpenAlarms = function (callback) {
 		$.getJSON('/alarm/allOpen', function (data) {
 			alarms = [];
@@ -119,6 +187,56 @@ var Alarms = (function ($) {
 			if (alarms[i].id === id) return alarms[i];
 		}
 		return null;
+	};
+
+	// Takes in an Alarm object and an optional updateFunction. Creates the DOM representation of the Alarm
+	// object, and if provided, invokes the update function. The update function must accept the DOM alarm representation
+	// as an argument. Common uses of the updateFunction would be calling .html(), .append() etc and adding
+	// click event handlers.
+	var buildDOMAlarm = function (a, updateFunction) {
+		var alarm = a.data;
+		// Build DOM representation of alarm
+		var time = new Date(alarm.openingDate);
+		var formatedTime = $.format.date(time, "dd/MM HH:mm");
+		var listItem =
+			'<a href="#" idnum="' + alarm.id + '" id="Alarm' + alarm.id +
+			'" class="list-group-item alarmItem"><img src="/assets/images/' +
+			alarm.type + '.png" class="img-thumbnail pull-left type-icon" data-type="'+
+			alarm.type + '" width="48" height="48"/>' +
+			'<h4 class="list-group-item-heading"> @Messages.get("listitem.arrived") ' +
+			formatedTime  +' </h4><p class="list-group-item-text">@Messages.get("listitem.callee") ' +
+			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '</p>';
+
+		if (updateFunction === null || updateFunction === undefined) {
+			return listItem;
+		} else {
+			updateFunction(listItem);
+		}
+	};
+
+	// Retrieves a JSON array of all past alarms from a specific callee (represented by Callee ID)
+	var getPastAlarmsFromCallee = function (calleeIndex) {
+		$.getJSON("/pastAlarmsFromCalle/" + calleeIndex,
+			function(data) {
+				// TODO: check if the json is full before creating the table
+				$("#calleeLogTableDiv").empty();
+				var htmlTable = '<table class="table" id="pastCalleeAlarmsTable">' +
+					'<thead><tr><td>@Messages.get("handling.popup.date")</td>' +
+					'<td>@Messages.get("handling.popup.hour")</td>' +
+					'<td>@Messages.get("handling.popup.type")</td></tr></thead><tbody>';
+				// TODO: validate the json
+				// data is a JSON list, so we can iterate over it
+				var array = data.alarmArray;
+				for(var i in array){
+					var day = array[i].day;
+					var hour = array[i].hour;
+					var type = array[i].type;
+					htmlTable+= '<tr><td> ' + day + ' </td><td> ' + hour + ' </td><td> ' + type + ' </td></tr>';
+				}
+				htmlTable+= "</tbody></table>";
+				$("#calleeLogTableDiv").html(htmlTable);
+			}
+		);
 	}
 
 	/* Public methods inside return object */
@@ -131,7 +249,6 @@ var Alarms = (function ($) {
 			$("#closingNotesAndButtons").show();
 
 			fetchAllOpenAlarms(function () {
-
 				WebSocketManager.init();
 				Patient.init();
 				Assessment.init();
@@ -152,125 +269,42 @@ var Alarms = (function ($) {
 			populateAlarmDetails: function (alarmIndex) {
 				Patient.populateCalleeFromAlarm(alarmIndex);
 				Patient.retrievePatientsByAddress(alarmIndex);
-				Assessment.pupulateDOMfromAssessment(getAlarm(alarmIndex).assessment);
+				Assessment.pupulateDOMfromAssessment(getAlarm(alarmIndex).data.assessment);
 			},
 
 			removeHighlightedAlarmFromList: function () {
-				var currentSelected = $('.list-group-item.active.alarmItem');
-				currentSelected.remove();
-				Alarms.gui.resetAlarmCount();
+				Alarms.removeAlarm(ACTIVE_ALARM);
 			},
 
-			//this function will move back the incident from the My Incidents list to the follow-up lists
-			// or just clear it back in case the incident is already on the follow-up list
 			moveAlarmToFollowUpList: function () {
-				var currentSelected = $('.list-group-item.active.alarmItem');
-				var alarmIndex = currentSelected.attr("idnum");
-				currentSelected.toggleClass("active");
-
-				if (currentSelected.parent().attr('id') == "assignedAlarmList") {
-
-					// remove from assgined list
-					var openFollowUpListItem =  $('#Alarm' + alarmIndex).clone();
-					$('#Alarm' + alarmIndex).remove();
-
-					// customize and move into followup list
-					openFollowUpListItem.removeAttr('onclick');
-					openFollowUpListItem.attr("onclick","Alarms.gui.selectFollowUpAlarm(" + alarmIndex + ");return false;");
-
-					$('#followupAlarmList').append(openFollowUpListItem);
-					Alarms.gui.resetAlarmCount();
-				}
-				// else means it is on the followup list. In that case I do nothing, because I have already removed the focus of
-				// the element and the function calling this one is already showing back the incident list
+				ACTIVE_ALARM.moveToFollowup();
 			},
 
 			selectFollowUpAlarm: function (alarmIndex) {
-				// start by clearing the view
-				//highlightBackListTab ();
-				Assessment.reset();
+				if (DEBUG) {
+					console.log("selectFollowupAlarm called on index: " + alarmIndex);
+					console.log("state of alarm cache is: " + alarms);
+				}
+				var a = getAlarm(alarmIndex);
+				a.select();
 
-				// unhighlight any highlighted alarm
-				var currentSelected = $('.list-group-item.active.alarmItem');
-				currentSelected.toggleClass("active");
+				// Update the alarm with new data from the backend
+				a.update(function (alarm) {
+					// Remove recurring icon
+					var recurring = alarm.DOM.children('.recurring-icon');
+					if (recurring != null) recurring.remove();
 
-				var currentSelected = $('#Alarm' + alarmIndex);
-				currentSelected.toggleClass("active");
-				SELECTED_ALARM = alarmIndex;
-
-				// Remove recurring icon
-				var recurring = currentSelected.children('.recurring-icon');
-				if (recurring != null) recurring.remove();
-
-				Patient.populateCalleeFromAlarm(alarmIndex);
-				// TODO: there is currently a bug in the sense that in case an alarm was set to followup with an
-				// unknown patient, it will be loaded here with a person as a patient
-
-				// TODO: and in case there was no patient assigned, it will select the "Add patient" option that will ask for adding a patient
-				$.getJSON("/prospectPatient/" + alarmIndex,
-					function (data) {
-						Patient.createPatientDiv(data);
-						var patientListItem = $("#patientDropDownList li:first a");
-						patientListItem.click();
-						Assessment.loadPatientSensor();
-					}
-				);
-
-				// populate notebox
-				$.getJSON("/alarm/" + alarmIndex,
-					function (data) {
-						console.log(data);
-						// TODO: check if the json is full before populating the DOM
-						if (data.assessment !== null) {
-							Assessment.pupulateDOMfromAssessment(data.assessment);
-						}
-						var notes = data.notes;
-						var occuranceAddress = data.occuranceAddress;
-						$("#globalNotesBox").val(notes);
-						$("#incidentAddress").val(occuranceAddress);
-					}
-				);
-				// end of populate notebox
-
-				//$("#assesment").show();
-				//$("#assesmentNotesDiv").hide();
-				//$("#extraActionButtonsDiv").show();
-				//$("#closingNotesAndButtons").show();
-				//highlightArrowHeader("closingArrowHeader");
+					Alarms.gui.populateAlarmDetails(alarm.id);
+				});
 			},
 
 			selectOpenAlarm: function (alarmIndex, calleeIndex) {
 				// Select the alarm
 				getAlarm(alarmIndex).select();
 
-				$.getJSON("/pastAlarmsFromCalle/" + calleeIndex,
-					function(data) {
-						// TODO: check if the json is full before creating the table
-						$("#calleeLogTableDiv").empty();
-						var htmlTable = '<table class="table" id="pastCalleeAlarmsTable"><thead><tr><td>@Messages.get("handling.popup.date")</td><td>@Messages.get("handling.popup.hour")</td><td>@Messages.get("handling.popup.type")</td></tr></thead><tbody>';
-						// TODO: validate the json
-						// data is a JSON list, so we can iterate over it
-						var array = data.alarmArray;
-						for(var i in array){
-							var day = array[i].day;
-							var hour = array[i].hour;
-							var type = array[i].type;
-							htmlTable+= '<tr><td> ' + day + ' </td><td> ' + hour + ' </td><td> ' + type + ' </td></tr>';
-						}
-						htmlTable+= "</tbody></table>";
-						$("#calleeLogTableDiv").html(htmlTable);
-						// make it a datatable with pagination
-						/*$('#pastCalleeAlarmsTable').DataTable( {
-						 "paging": true,
-						 "searching": false,
-						 "ordering":  false,
-						 "pageLength": 5,
-						 "destroy": true,
-						 "lengthChange": false
-						 } );*/
-					});
+				// Update past alarms field
+				getPastAlarmsFromCallee(calleeIndex);
 
-				//populateAlarmInfo(alarmIndex);
 				$('#callee_info_modal').modal("show");
 				$('#confirmCalleeModalButton').unbind("click").click(function (e) {
 					Alarms.assign(alarmIndex);
@@ -278,14 +312,14 @@ var Alarms = (function ($) {
 			},
 
 			selectMyAlarm: function (alarmIndex) {
-				getAlarm(alarmIndex).select().DOM.
-				// TEMPORARY CODE
-				Alarms.assign(alarmIndex); // TODO: change this to a simple select of alarm instead of assign
-				SELECTED_ALARM = alarmIndex;
+				getAlarm(alarmIndex).select();
+				Alarms.gui.populateAlarmDetails(alarmIndex);
 			},
 
 			clearUpData: function () {
-				SELECTED_ALARM = null;
+				if (ACTIVE_ALARM !== null) {
+					ACTIVE_ALARM.deselect();
+				}
 				Patient.clearUpCalleeData();
 				Patient.clearUpPatientData();
 				Assessment.reset();
@@ -294,13 +328,13 @@ var Alarms = (function ($) {
 			},
 
 			getCurrentSelectedAlarmIndex: function () {
-				return SELECTED_ALARM;
+				if (ACTIVE_ALARM === null) return null;
+				return ACTIVE_ALARM.id;
 			}
 		},
 
 		assign: function (alarmIndex) {
-			// Start by clearing the view
-			Alarms.gui.clearUpData();
+			if (DEBUG) console.log("assign called on index: " + alarmIndex);
 
 			var assignAlarmReq = {
 				'alarmId' : alarmIndex
@@ -310,37 +344,25 @@ var Alarms = (function ($) {
 				data : JSON.stringify(assignAlarmReq),
 				contentType : 'application/json',
 				success : function (data) {
-					// unhighlight any highlighted alarm
-					var currentSelected = $('.list-group-item.active.alarmItem');
-					currentSelected.toggleClass("active");
-
-					// remove from unassgined list
-					var openAlarmListItem =  $('#Alarm' + alarmIndex).clone();
-					$('#Alarm' + alarmIndex).remove();
-
-					// customize and move into assigned list
-					openAlarmListItem.removeAttr('onclick');
-					openAlarmListItem.attr("onclick", "Alarms.gui.selectMyAlarm(" + alarmIndex + ");return false;");
-					openAlarmListItem.addClass("active" );
-					// remove clock icon
-					var clock = openAlarmListItem.children('.clock-icon');
-					if (clock != null) clock.remove();
-					$('#assignedAlarmList').prepend(openAlarmListItem);
-					SELECTED_ALARM = alarmIndex;
-
-					Alarms.gui.populateAlarmDetails(alarmIndex);
-
-					Alarms.gui.resetAlarmCount();
-				}// end of success
-			});// end of ajax call
+					getAlarm(alarmIndex).moveToAssigned();
+				}
+			});
 		},
 
 		addAlarm: function (alarm) {
 			var a = new Alarm(alarm);
-			a.DOM = $('#Alarm' + a.id);
-			alarms.push(a);
-			alarms.sort(sortByTime);
-			Alarms.gui.resetAlarmCount();
+			buildDOMAlarm(a, function (alarmDOM) {
+				// Update DOM, set the Alarm object DOM reference and add click listener
+				$("#unassignedAlarmList").append(alarmDOM);
+				a.DOM = $('#Alarm' + a.id);
+				a.DOM.on('click', function (e) {
+					e.preventDefault();
+					Alarms.gui.selectOpenAlarm(a.data.id, a.data.callee.id);
+				});
+				alarms.push(a);
+				alarms.sort(sortByTime);
+				Alarms.gui.resetAlarmCount();
+			});
 		},
 
 		getAlarm: function (alarmId) {
@@ -348,13 +370,13 @@ var Alarms = (function ($) {
 		},
 
 		getActiveAlarm: function () {
-			return SELECTED_ALARM;
+			return ACTIVE_ALARM;
 		},
 
 		getNumberOfOpenAlarms: function () {
 			var tot = 0;
 			for (var i in alarms) {
-				if (alarms[i].alarmState() === 'open') tot++;
+				if (alarms.hasOwnProperty(i) && alarms[i].state === 'open') tot++;
 			}
 			return tot;
 		},
@@ -362,7 +384,7 @@ var Alarms = (function ($) {
 		getNumberOfAssignedAlarms: function () {
 			var tot = 0;
 			for (var i in alarms) {
-				if (alarms[i].alarmState() === 'assigned') tot++;
+				if (alarms.hasOwnProperty(i) && alarms[i].state === 'assigned') tot++;
 			}
 			return tot;
 		},
@@ -370,7 +392,7 @@ var Alarms = (function ($) {
 		getNumberOfFollowupAlarms: function () {
 			var tot = 0;
 			for (var i in alarms) {
-				if (alarms[i].alarmState() === 'followup') tot++;
+				if (alarms.hasOwnProperty(i) && alarms[i].state === 'followup') tot++;
 			}
 			return tot;
 		},

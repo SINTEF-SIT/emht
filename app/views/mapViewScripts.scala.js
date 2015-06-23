@@ -14,7 +14,6 @@ var MapView = (function ($) {
     var DEBUG = true;
     var FIRST_RUN = true;
     var UPDATE_INTERVAL = 15000;
-    var ACTIVE_ALARM = null;
 
     var fieldOperatorLocations = [];
     var alarms = [];
@@ -30,60 +29,63 @@ var MapView = (function ($) {
 
     /* Private methods here */
 
+    // Helper method that handles initialization, drawing and updating map
+    var showMap = function () {
+        $('#main-dashboard').hide();
+        $('#map-dashboard').show();
+
+        /*
+         Since the div containing the map is in display:none mode, the map will not render properly automatically.
+         Thus, we have to trigger map initialization when the button is clicked, and the parent div has been
+         expanded to visible mode by the browser, and is renderable. Otherwise, the Google Maps library cannot
+         render, as the containing div has a height and width of 0.
+         */
+        if (FIRST_RUN) {
+            // Scale the map container to the height of the screen
+            $('#map-container').css('height', $(window).height());
+            // Basic map configuration
+            var mapOptions = {
+                center: new google.maps.LatLng(63.4137195, 10.4090516),
+                zoom: 13
+            };
+            // Initialize the map
+            map = new google.maps.Map(document.getElementById("map-container"), mapOptions);
+            google.maps.event.addListener(map, 'click', function (e) {
+                MapView.resetSelectedAlarmsOnDisplay();
+            });
+        }
+
+        // Schedule frequent updating of current positions of operatives
+        MapView.getAllCurrentPositions();
+        fieldOperatorLocationPeriodicUpdateTimer = setInterval(MapView.getAllCurrentPositions, UPDATE_INTERVAL);
+
+        // Fetch alarm incident locations. The module method will decide what to do itself based on
+        // the value of ACTIVE_ALARM
+        MapView.getAlarmLocations(Alarms.getActiveAlarm());
+
+        // Flag firstRun as false to prevent having to re-initialize the map every time
+        if (FIRST_RUN) FIRST_RUN = false;
+    };
+
     // Helper method that sets up button listeners and map initialization
     var bindButtons = function () {
         $('#open-map-button').on('click', function (e) {
             e.preventDefault();
-            $('#main-dashboard').hide();
-            $('#map-dashboard').show();
-
-            /*
-             Since the div containing the map is in display:none mode, the map will not render properly automatically.
-             Thus, we have to trigger map initialization when the button is clicked, and the parent div has been
-             expanded to visible mode by the browser, and is renderable. Otherwise, the Google Maps library cannot
-             render, as the containing div has a height and width of 0.
-             */
-            if (FIRST_RUN) {
-                // Scale the map container to the height of the screen
-                $('#map-container').css('height', $(window).height());
-                // Basic map configuration
-                var mapOptions = {
-                    center: new google.maps.LatLng(63.4137195, 10.4090516),
-                    zoom: 13
-                };
-                // Initialize the map
-                map = new google.maps.Map(document.getElementById("map-container"), mapOptions);
-                google.maps.event.addListener(map, 'click', function (e) {
-                    MapView.resetSelectedAlarmsOnDisplay();
-                });
-            }
-
-            // Schedule frequent updating of current positions of operatives
-            MapView.getAllCurrentPositions();
-            fieldOperatorLocationPeriodicUpdateTimer = setInterval(MapView.getAllCurrentPositions, UPDATE_INTERVAL);
-
-            // Fetch alarm incident locations. The module method will decide what to do itself based on
-            // the value of ACTIVE_ALARM
-            MapView.getAlarmLocations(ACTIVE_ALARM);
-
-            // Flag firstRun as false to prevent having to re-initialize the map every time
-            if (FIRST_RUN) FIRST_RUN = false;
+            // Since the regular open map button was pressed, we deselect any active alarm
+            if (Alarms.getActiveAlarm() !== null) Alarms.getActiveAlarm().deselect();
+            showMap();
         });
         // Regular close map button in Map View
         $('#close-map-button').on('click', function (e) {
             e.preventDefault();
             $('#map-dashboard').hide();
             $('#main-dashboard').show();
-            // Reset any potential active alarm and stop the periodic update of locations and markers
-            // since the map is in a closed state
-            ACTIVE_ALARM = null;
             clearInterval(fieldOperatorLocationPeriodicUpdateTimer);
         });
         // Select Mobile caretaker button in openAlarms dashboard
         $('#dispatch-map-button').on('click', function (e) {
             e.preventDefault();
-            ACTIVE_ALARM = Alarms.gui.getCurrentSelectedAlarmIndex();
-            $('#open-map-button').click();
+            showMap();
         });
         bindAssignButtons();
     };
@@ -98,6 +100,7 @@ var MapView = (function ($) {
                 id: Number($(this).parent().attr('id').replace('field-operator', ''))
             });
             $('#close-map-button').click();
+            Alarms.getActiveAlarm().deselect();
         });
     }
 
@@ -134,7 +137,7 @@ var MapView = (function ($) {
             highlightedOperator.addClass('active');
 
             // If we have no active alarm assignment state, activate the fieldoperator to incident indicators
-            if (ACTIVE_ALARM === null) {
+            if (Alarms.getActiveAlarm() === null) {
                 // Swap out alarms on display with alarms assigned to this field operator
                 MapView.displayCurrentAssignmentsForFieldOperator(marker.fieldOperator);
             }
@@ -222,7 +225,7 @@ var MapView = (function ($) {
             html += '</strong></span><br>';
 
             // Add the assign button if we have an active alarm to dispatch
-            if (ACTIVE_ALARM !== null) {
+            if (Alarms.getActiveAlarm() !== null) {
                 html += '<button class="btn btn-default assign-map-button">@Messages.get("actions.button.map.assign")</button>';
             }
 
@@ -231,7 +234,7 @@ var MapView = (function ($) {
         html += '</ul>';
 
         $('#map-sidebar-fieldoperators').html(html);
-        if (ACTIVE_ALARM !== null) bindAssignButtons();
+        if (Alarms.getActiveAlarm() !== null) bindAssignButtons();
     };
 
     /* Public methods inside return object */
@@ -244,7 +247,7 @@ var MapView = (function ($) {
             geocoder = new google.maps.Geocoder();
         },
 
-        getAllCurrentPositions: function () {
+        getAllCurrentPositions: function (str, fn) {
             $.getJSON('/location/current', function (data) {
                 if (DEBUG) console.log("Fetched current locations.", data);
                 fieldOperatorLocations = data.users;
@@ -253,8 +256,8 @@ var MapView = (function ($) {
             });
         },
 
-        getAlarmLocations: function (id) {
-            if (id === null || id === undefined) {
+        getAlarmLocations: function (alarm) {
+            if (alarm === null || alarm === undefined) {
                 $.getJSON('/alarm/allOpen', function (data) {
                     if (DEBUG) console.log("Fetched all open alarms", data);
                     alarms = [];
@@ -266,7 +269,7 @@ var MapView = (function ($) {
                     updateAlarmMarkers();
                 });
             } else {
-                $.getJSON('/alarm/' + id, function (data) {
+                $.getJSON('/alarm/' + alarm.id, function (data) {
                     if (DEBUG) console.log("Fetched active alarm.", data);
                     alarms = [];
                     alarms.push(data);

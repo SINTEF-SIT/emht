@@ -9,7 +9,7 @@ var Assessment = (function ($) {
 	/* Private methods here */
 
 	// nmi constructor
-	var nmi = function (id, conscious, breathing, movement, standing, talking) {
+	var NMI = function (id, conscious, breathing, movement, standing, talking) {
 		this.id = id;
 		this.conscious = conscious;
 		this.breathing = breathing;
@@ -17,13 +17,27 @@ var Assessment = (function ($) {
 		this.standing = standing;
 		this.talking = talking;
 	};
+	NMI.prototype = {
+		constructor: NMI,
+		toString: function () {
+			return 'NMI ' + this.id + ': Concious:'+this.conscious+ ' Breathing:' + this.breathing + ' Movement:' +
+					this.movement + ' Standing:'+this.standing+' Talking:' + this.talking;
+		}
+	};
 
 	// assessmentInfo constructor
-	var assessmentInfo = function (id, nmiAssessment, sensors, patientInfo) {
+	var AssessmentInfo = function (id, nmiAssessment, sensors, patientInfo) {
 		this.id = id;
 		this.nmi = nmiAssessment;
 		this.sensorsChecked = sensors;
 		this.patientInformationChecked = patientInfo;
+	};
+	AssessmentInfo.prototype = {
+		constructor: AssessmentInfo,
+		toString: function () {
+			return 'Assessment ' + this.id + ' Sensors:'+this.sensorsChecked + ' PatInfo:' + this.patientInformationChecked +
+					' ' + this.nmi;
+		}
 	};
 
 	// Helper method that returns the assessment object as a newline separated string.
@@ -96,7 +110,7 @@ var Assessment = (function ($) {
 
 	// Helper method that sets the state of radio buttons to match that of the currentAssessment
 	var updateDOM = function () {
-		console.log("updateDOM called");
+		if (DEBUG) console.log("updateDOM called with current assessment: " + currentAssessment);
 		if (currentAssessment.nmi.conscious !== null) {
 			if (currentAssessment.nmi.conscious) {
 				$('#NMIcheckBox1Y').attr('checked', true);
@@ -148,6 +162,8 @@ var Assessment = (function ($) {
 		if (currentAssessment.patientInformationChecked) {
 			$("#assedmentSensorlabel").show();
 		}
+
+		if (DEBUG) console.log("updateDOM complete");
 	};
 
 	var removeImageFromSensorTab = function () {
@@ -198,9 +214,6 @@ var Assessment = (function ($) {
 				currentAssessment.sensorsChecked = true;
 				$("#assedmentSensorlabel").show();
 			});
-
-			// $("#closeCaseFromAssessButton").click(closeCaseAtAssesment);
-			// $("#goToClosingButton").click(fromAssementToClosing);
 		},
 
 		reset: function () {
@@ -229,7 +242,8 @@ var Assessment = (function ($) {
 			$("#sensorNav").removeClass("active");
 
 			// Reset the current assessment object
-			currentAssessment = new assessmentInfo(null, new nmi(null, null, null, null, null, null), false, false);
+			currentAssessment = new AssessmentInfo(null, new NMI(null, null, null, null, null, null), false, false);
+			console.log("reset assessment complete");
 		},
 
 		showGraphModal: function () {
@@ -239,16 +253,16 @@ var Assessment = (function ($) {
 		loadPatientSensor: function (patientId) {
 			// TODO retrieve NMI (but in another function)
 			removeImageFromSensorTab();
-			if(0 != patientId){
+			if (0 != patientId){
 				var image = new Image();
 				image.src = "/assets/images/patient/" + patientId + ".png" ;
 				image.className = "img-responsive assesment-graph";
 				image.onerror = removeImageFromSensorTab;
 				image.onclick = Assessment.showGraphModal;
-				//if (image.width != 0) {
+
 				$("#sensorTab").append(image);
 				$("#ampliphied-graph").attr("src", image.src);
-				//}
+
 			}
 		},
 
@@ -256,12 +270,25 @@ var Assessment = (function ($) {
 			return currentAssessment;
 		},
 
-		pupulateDOMfromAssessment: function (assessmentInfo) {
-			console.log("populateDOMfromAssessment called");
+		pupulateDOMfromAssessment: function () {
 			Assessment.reset();
-			currentAssessment = assessmentInfo;
+			if (DEBUG) console.log("populateDOMfromAssessment called");
+			var a = Alarms.getActiveAlarm().data.assessment;
+			currentAssessment = new AssessmentInfo(
+				a.id,
+				new NMI(
+					a.nmi.id,
+					a.nmi.conscious,
+					a.nmi.breathing,
+					a.nmi.movement,
+					a.nmi.standing,
+					a.nmi.talking
+				),
+				a.sensorsChecked,
+				a.patientInformationChecked
+			);
 			updateDOM();
-			console.log(currentAssessment);
+			if (DEBUG) console.log("populateDOMfromAssessment complete");
 		}
 	}
 })(jQuery);

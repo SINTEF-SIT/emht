@@ -470,7 +470,7 @@ public class Application extends Controller {
 
 		return new WebSocket<JsonNode>() {
 			// Called when WebSocket handshake is done
-			public void onReady(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out){
+			public void onReady(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
 				MyWebSocketManager.start(username, in, out);
 			}
 		};

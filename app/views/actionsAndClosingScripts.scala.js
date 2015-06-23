@@ -63,7 +63,7 @@ var Actions = (function ($) {
         //into a json object
         getUpdatedAlarmFromPage: function () {
             var patientId = $('#dynamicPatientInfo').find('#patientId').val();
-            var alarmId = $('#allListsSection').find('.list-group-item.active').attr("idnum");
+            var alarmId = Alarms.getActiveAlarm().id;
             var notes = $('#globalNotesBox').val();
 
             var occuranceAddress = $('#incidentAddress').val();
@@ -81,6 +81,7 @@ var Actions = (function ($) {
         },
 
         closeCaseAtClosing: function () {
+            if (Alarms.getActiveAlarm() === null) alert('No active alarm');
             var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 
             myJsRoutes.controllers.Application.closeCase().ajax({
@@ -94,11 +95,12 @@ var Actions = (function ($) {
             });// end of ajax call
         },
 
-        saveAndFollowupAtClosing: function (followUp) {
+        saveAndFollowupAtClosing: function (followUp, e) {
+            if (Alarms.getActiveAlarm() === null) alert('No active alarm');
             var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 
             // If we have a special followUp payload, add it to the alarm
-            if (followUp !== null && followUp !== undefined) {
+            if (followUp !== null && followUp !== undefined && e !== undefined) {
                 console.log("saveAndFollowUpAtClosing received payload: ", followUp);
                 if (followUp.type === 'mobileCareTaker') {
                     updatedAlarm.mobileCareTaker = followUp.id;
@@ -111,8 +113,7 @@ var Actions = (function ($) {
                 contentType : 'application/json',
                 success : function (data) {
                     Alarms.gui.moveAlarmToFollowUpList();
-                    Alarms.gui.clearUpData();
-                    //highlightBackListTab ();
+                    Alarms.getActiveAlarm().deselect();
                 }// end of success
             });// end of ajax call
         },

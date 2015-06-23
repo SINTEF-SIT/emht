@@ -121,7 +121,15 @@ var Patient = (function ($) {
 				}
 			});
 
-			var currentSelected = $('.list-group-item.active.alarmItem');
+			var notes = Alarms.getActiveAlarm().data.notes;
+			var occuranceAddress = Alarms.getActiveAlarm().data.occuranceAddress;
+			$("#globalNotesBox").val(notes);
+			if (occuranceAddress !== null) {
+				$("#incidentAddress").val(occuranceAddress);
+				$('#sameAddressCheckbox').attr('checked', true);
+			}
+
+			var currentSelected = Alarms.getActiveAlarm().DOM;
 
 			$('#verifyPatientLocation').on('click', function (e) {
 				e.preventDefault();
@@ -192,8 +200,8 @@ var Patient = (function ($) {
 			//if it is an alarm of type: fire, safety_alarm or fall, I've set obs to the front
 			var currentAlarm_type = $('.list-group-item.active.alarmItem').find('.type-icon').attr('data-type');
 			if (currentAlarm_type == "fall" || currentAlarm_type == "fire" || currentAlarm_type == "safety_alarm"){
-				$('#assesmentTabHeader a[href="#infoTab"]').tab('show');
-				$("#informationSensorlabel").show();
+				//$('#assesmentTabHeader a[href="#infoTab"]').tab('show');
+				//$("#informationSensorlabel").show();
 			}
 
 
@@ -256,10 +264,13 @@ var Patient = (function ($) {
 				contentType : 'application/json',
 				success : function (outpuPatient) {
 					// add it to list
-					var patientListItem =  '<li><a onclick="Patient.populatePatient(\'' + outpuPatient.id + '\',\'' + outpuPatient.name + '\',\'' + outpuPatient.persoNumber + '\',\'' + outpuPatient.address +
-						'\',\'' + outpuPatient.phoneNumber +'\',\'' + outpuPatient.age + '\'\,\'\');" href="#">' + outpuPatient.name +'</a></li>'
+					var patientListItem =  '<li><a href="#" id="Patient"'+outpuPatient.id+'">' + outpuPatient.name +'</a></li>';
 					$('#patientDropDownList').prepend(patientListItem);
 					Patient.populatePatient(outpuPatient.id,outpuPatient.name,outpuPatient.persoNumber,outpuPatient.address,outpuPatient.phoneNumber,outpuPatient.age,'');
+					$('#Patient'+outpuPatient.id).on('click', function (e) {
+						e.preventDefault();
+						Patient.populatePatient(outpuPatient.id,outpuPatient.name,outpuPatient.persoNumber,outpuPatient.address,outpuPatient.phoneNumber,outpuPatient.age,'');
+					});
 
 				}// end of success
 			});// end of ajax call
