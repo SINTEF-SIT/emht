@@ -42,7 +42,8 @@
     type:             safety_alarm
     callee:           *callee1
     patient:          *patient1
-    attendant:        *bernt
+    attendant:        *admin
+    mobileCareTaker:  *bernt
     openingTime:      2015-09-10 11:02:57
     dispatchingTime:  null
     closingTime:      null
@@ -53,4 +54,4 @@
     patient:          *patient1
     openingTime:      2014-09-15 21:02:57
     dispatchingTime:  2014-09-15 21:06:57
-    closingTime:      2014-09-15 21:06:57
+    closingTime:      null

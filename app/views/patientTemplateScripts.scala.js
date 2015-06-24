@@ -1,11 +1,230 @@
 @import play.i18n._
 
+var DEBUG = true;
+
 var Patient = (function ($) {
 	/* Private fields */
 
-
 	/* Private methods */
 
+	// Generate the Patient information div and bind address checkbox
+	var generatePatientContainer = function () {
+		if (DEBUG) console.log("Generating patient container");
+		// Start by clearing the wrapper
+		var wrapper = $('#dynamicPatientInfo');
+		wrapper.empty();
+
+		// building Patient Drop Down Block
+		var patientDropDownBox =
+			'<u>@Messages.get("patientpane.name"):</u> ' +
+			'<span class="btn-group" id="patientDropDown">' +
+			'<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">' +
+			'<span class="selection">@Messages.get("patientpane.pill.patient")</span>' +
+			'<span class="caret"></span></button>' +
+			'<ul id="patientDropDownList" class="dropdown-menu"></ul></span><br>';
+
+		var patientDetails =
+			'<u>@Messages.get("patientpane.address"):</u> <span id="patientAddress"></span><br>' +
+			'<u>@Messages.get("patientpane.personumber"):</u> <span id="patientPersonalNumber"></span><br>' +
+			'<u>@Messages.get("patientpane.phonenumber"):</u> <span id="patientPhoneNumber"></span><br>' +
+			'<u>@Messages.get("patientpane.age"):</u> <span id="patientAge"></span><br>' +
+			'<input type="hidden" id="patientId" />' +
+			'<p/><p/>' +
+			'<u>@Messages.get("patientpane.incident.location"):</u>' +
+			'<span class="checkbox inline"><label><input id="sameAddressCheckbox" type="checkbox">' +
+			'@Messages.get("patientpane.incident.same"):</label></span>' +
+			'<div class="input-group">' +
+			'<input type="text" class="form-control" id="incidentAddress" placeholder="@Messages.get("patientpane.incident.other")">' +
+			'<span class="input-group-btn"><button class="btn btn-default" id="verifyPatientLocation">' +
+			'@Messages.get("patientpane.incident.checkaddress")</button>' +
+			'</span></div>' +
+			'<h5>@Messages.get("patientpane.log.title")</h5>' +
+			'<table class="table table-bordered" id="patientLogTable">' +
+			'<thead><tr><th>' +
+			'@Messages.get("patientpane.log.date")</th><th>@Messages.get("patientpane.log.hour")</th>' +
+			'<th>@Messages.get("patientpane.log.type")</th></tr></thead><tbody></tbody></table>';
+
+		$('#dynamicPatientInfo').html(patientDropDownBox + patientDetails);
+
+		// Bind the checkbox to copy patient address to incident location
+		$("#sameAddressCheckbox").click(function () {
+			var addr = $("#patientAddress").text();
+			if (this.checked) {
+				$("#incidentAddress").val(addr);
+			} else {
+				$('#incidentAddress').val('@Messages.get("patientpane.incident.other")');
+			}
+		});
+
+		// Bind the verify button that checks the location and updates with Lat / Long coordinates if successful
+		$('#verifyPatientLocation').on('click', function (e) {
+			e.preventDefault();
+			var address = $('#incidentAddress').val();
+			MapView.convertAddressToLatLng(address, function (locationData) {
+				if (DEBUG) console.log(locationData);
+				if (locationData === null) {
+					alert('@Messages.get("patientpane.incident.checkaddress.fail"): ' + address);
+				} else {
+					locationData.location = address;
+					myJsRoutes.controllers.Application.setLocationOfAlarm(Alarms.gui.getCurrentSelectedAlarmIndex()).ajax({
+						data: JSON.stringify(locationData),
+						contentType: 'application/json',
+						success: function (data) {
+							alert('@Messages.get("patientpane.incident.checkaddress.success")');
+							Alarms.getActiveAlarm().update(function (data) {
+								Alarms.gui.populateAlarmDetails(data.id);
+							})
+						},
+						error: function (xhr, statusText, thrownError) {
+							alert('Failed to save resolved address coordinates to alarm!!!');
+						}
+					});
+				}
+			});
+		});
+
+		if (DEBUG) console.log("Patient container generation complete");
+	};
+
+	// Generate the dropdown list of possible patients based on a patient list
+	var generateProspectPatients = function (patientList) {
+		if (DEBUG) console.log("generateProspectPatients called: " + patientList);
+		var activePatient = Alarms.getActiveAlarm().data.patient;
+		var patInProspects = false;
+		var dropDown = $('#patientDropDownList');
+		for (var i in patientList) {
+			var listItem = $('<li></li>').html('<a href="#">' + patientList[i].name + '</a>');
+			listItem.on('click', function (e) {
+				e.preventDefault();
+				populatePatientInformation(patientList[i]);
+			});
+			dropDown.attr('id', 'Patient' + patientList[i].id);
+			if (activePatient !== null && activePatient.id === patientList[i].id) {
+				dropDown.prepend(listItem);
+				patInProspects = true;
+			} else {
+				dropDown.append(listItem);
+			}
+		}
+		// If the registered patient was not returned from prospect patients, prepend it into dropdown
+		if (!patInProspects && activePatient !== null) {
+			var listItem = $('<li></li>').html('<a href="#">' + activePatient.name + '</a>');
+			listItem.on('click', function (e) {
+				e.preventDefault();
+				populatePatientInformation(activePatient);
+			});
+			dropDown.prepend(listItem);
+		}
+
+
+		if ($.isArray(patientList) && patientList.length != 0) {
+			listItem.append('<li class="divider"></li>');
+		}
+		var otherPatient = $('<li></li>').html('<a href="#">@Messages.get("patientpane.pill.other.patient")</a>');
+		otherPatient.on('click', function (e) {
+			e.preventDefault();
+			Patient.openAddPatientModal();
+		});
+		var unknownPatient = $('<li></li>').html('<a href="#">@Messages.get("patientpane.pill.unknown")</a>');
+		unknownPatient.on('click', function (e) {
+			e.preventDefault();
+			Patient.fillUnknownPatient();
+		});
+		dropDown.append(otherPatient);
+		dropDown.append(unknownPatient);
+
+		if (DEBUG) console.log("generateProspectPatients complete");
+
+		/** LEGACY - KEEPING FOR REFERENCE
+		 //if it is an alarm of type: fire, safety_alarm or fall, I've set the patient as the callee
+		 var typeImage = currentSelected.find('.type-icon');
+		 var currentAlarm_type = typeImage.attr('data-type');
+		 if (currentAlarm_type == "fall" || currentAlarm_type == "fire" || currentAlarm_type == "safety_alarm") {
+			for (var i in array) {
+				var patName = array[i].name;
+				var patAddress = array[i].address;
+				if (patName == $("#calleeName").text() && patAddress == $("#calleeAddress").text()) {
+					var patPersoNum = array[i].persoNumber;
+					var patId = array[i].id;
+					var patAge = array[i].age;
+					var patPhoneNum = array[i].phoneNumber;
+					var patObs = array[i].obs;
+					Patient.populatePatient(patId, patName, patPersoNum, patAddress, patPhoneNum, patAge, patObs);
+
+					break;
+				}
+			}
+		}*/
+	};
+
+	// Updates the dynamic patient information with the provided patient object
+	var populatePatientInformation = function (pat) {
+		if (DEBUG) console.log("populatePatientInformation called: ");
+		if (DEBUG) console.log("id:" + pat.id, "name:" + pat.name, "personalNumber:" + pat.personalNumber, "address:"+pat.address);
+		// Cache the active alarm DOM object
+		var currentSelected = Alarms.getActiveAlarm();
+
+		// for the personalNumber, if it is more than 6 digits, we add a space after the first 6 digits
+		var formattedPersonalNumber;
+		if (pat.personalNumber.length > 6) {
+			formattedPersonalNumber = pat.personalNumber.substring(0, 6) + " " + pat.personalNumber.substring(6);
+		} else {
+			formattedPersonalNumber = pat.personalNumber;
+		}
+
+		// Update fields
+		$('#patientAddress').text(pat.address);
+		$('#patientPersonalNumber').text(formattedPersonalNumber);
+		$('#patientPhoneNumber').text(pat.phoneNumber);
+		$('#patientAge').text(pat.age);
+		$('#patientId').text(pat.id);
+		// Set the obs field in the Assessment page
+		if (pat.obs != null) $('#obsBody').text(pat.obs);
+
+		Assessment.loadPatientSensor(pat.id);
+
+		// Update notes and set occurrance address if set
+		var notes = currentSelected.data.notes;
+		var occurranceAddress = currentSelected.data.occuranceAddress;
+		$("#globalNotesBox").val(notes);
+		if (occurranceAddress !== null) {
+			$("#incidentAddress").val(occurranceAddress);
+			if ($('#patientAddress').val() == occurranceAddress) {
+				$('#sameAddressCheckbox').attr('checked', true);
+			}
+		}
+
+		populatePastAlarmsFromPatient(pat);
+	};
+
+	// Fetch previous alarms asynchronously and update the alarm history in the patient panel
+	var populatePastAlarmsFromPatient = function (pat) {
+		// Empty the tbody of the log table
+		var tbody = $("#patientLogTable > tbody");
+		tbody.html = "";
+
+		if (0 != pat.id) {
+			$.getJSON("/pastAlarmsFromPatient/" + pat.id, function(data) {
+				if (null!= data && null != data.alarmArray) {
+					var list = data.alarmArray;
+					if (DEBUG) console.log("Fetched past alarms for " + pat.name + ":", list);
+					for(var i in list) {
+						var day = list[i].day;
+						var hour = list[i].hour;
+						var type = list[i].type;
+						var notes = list[i].notes;
+						var htmlRow = '<tr data-toggle="tooltip" data-placement="right" ' +
+							'title="@Messages.get("actions.popup.send.notes"): ' + notes+'">' +
+							'<td>' + day + '</td><td>' + hour + '</td><td>' + type + '</td></tr>';
+						tbody.prepend(htmlRow);
+					}
+					$('[data-toggle="tooltip"]').tooltip({'placement': 'right'});
+				}
+
+				if (DEBUG) console.log("populatePatientInformation complete");
+			});
+		}
+	}
 
 	/* Public methods inside return object */
 	return {
@@ -15,6 +234,10 @@ var Patient = (function ($) {
 			});
 			$("#closeCaseFromPatientRegButton").click(Patient.closeCaseAtRegistration);
 			$("#goToAssesmentButton").click(Patient.fromRegistrationToAssesment);
+		},
+
+		generatePatientContainer: function () {
+			generatePatientContainer();
 		},
 
 		getCalleeAddress: function () {
@@ -54,195 +277,21 @@ var Patient = (function ($) {
 					$("#calleeName").text(calleeName);
 					$("#calleeAddress").text(calleeAddress);
 					$("#calleePhone").text(calleePhone);
-					//$("#calleeBox").show();
 				}
 			);
 		},
 
 		retrievePatientsByAddress: function (alarmIndex) {
-			if ( $('#dynamicPatientInfo').length == 1){ //check if we have the dynamic data
+			if ($('#dynamicPatientInfo').length === 1) {
 				$.getJSON("/prospectPatient/" + alarmIndex,
-					function (data) { Patient.createPatientDiv(data) }
+					function (data) { generateProspectPatients(data) }
 				);
 			}
 		},
 
-		createPatientDiv: function (data) {
-			// function to be called by the json function retrieving the prospect patients
-			// TODO: check if the json is full before creating the table
-			$("#dynamicPatientInfo").empty();
-			var dynamicPatientBlock = '<u>@Messages.get("patientpane.name"):</u> ';
-
-			// building Patient Drop Down Block
-			var patientDropDownBox = '<span class="btn-group"  id="patientDropDown" ><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">' +
-				'<span class="selection">@Messages.get("patientpane.pill.patient")</span><span class="caret"></span></button><ul id="patientDropDownList" class="dropdown-menu">';
-			var array = data.patientArray;
-			for (var i in array) {
-				var patientId = array[i].id;
-				var patientName = array[i].name;
-				var patientPersoNum = array[i].persoNumber;
-				var patientAddress = array[i].address;
-				var patientAge = array[i].age;
-				var patientPhoneNum = array[i].phoneNumber;
-				var patientObs = array[i].obs;
-				patientDropDownBox += '<li><a onclick="Patient.populatePatient(\'' + patientId + '\',\'' + patientName + '\',\'' + patientPersoNum + '\',\'' + patientAddress +
-					'\',\'' + patientPhoneNum + '\',\'' + patientAge + '\',\'' + patientObs + '\');" href="#">' + patientName + '</a></li>';
-			}
-			if ($.isArray(array) && array.length != 0) {
-				patientDropDownBox += '<li class="divider"></li>';
-			}
-			patientDropDownBox += '<li><a onclick="Patient.openAddPatientModal();" href="#">@Messages.get("patientpane.pill.other.patient")</a></li>'
-			patientDropDownBox += '<li><a onclick="Patient.fillUnknownPatient();" href="#">@Messages.get("patientpane.pill.unknown")</a></li>'
-			patientDropDownBox += '</ul></span>';
-
-			// building Patient Details
-			var patientDetails = '<u>@Messages.get("patientpane.address"):</u>  <span id="patientAddress"/><br><u>@Messages.get("patientpane.personumber"):</u>  <span id="patientPersoNum"/><br>' +
-				'<u>@Messages.get("patientpane.phonenumber"):</u>  <span id="patientPhoneNum"/><br>' +
-				'<u>@Messages.get("patientpane.age"):</u>  <span id="patientAge"/><br><input id="patientId" type="hidden"><p><p><u>@Messages.get("patientpane.incident.location"):</u>';
-			patientDetails += '<span class="checkbox inline"><label><input id="sameAddressCheckbox" type="checkbox"> @Messages.get("patientpane.incident.same")</label>' +
-				'</span>'; // adds checkbox
-			patientDetails += '<div class="input-group">';
-			patientDetails += '<input type="text" class="form-control" id="incidentAddress" placeholder="@Messages.get("patientpane.incident.other")">';
-			patientDetails += '<span class="input-group-btn"><button class="btn btn-default" id="verifyPatientLocation">@Messages.get("patientpane.incident.checkaddress")</button></span></div>';
-
-			patientDetails += '<h5>@Messages.get("patientpane.log.title")</h5><table class="table table-bordered" id="patientLogTable"><thead><tr><td>@Messages.get("patientpane.log.date")</td><td>@Messages.get("patientpane.log.hour")</td><td>@Messages.get("patientpane.log.type")</td></tr></thead><tbody></tbody></table>';
-
-			dynamicPatientBlock += patientDropDownBox + '<br>' + patientDetails + '<br>';// + identity;
-
-
-			$("#dynamicPatientInfo").html(dynamicPatientBlock);
-
-			$("#sameAddressCheckbox").click(function () {
-				var addr = $("#patientAddress").text();
-				if (this.checked) {
-					$("#incidentAddress").val(addr);
-				} else {
-					$('#incidentAddress').val('@Messages.get("patientpane.incident.other")');
-				}
-			});
-
-			var notes = Alarms.getActiveAlarm().data.notes;
-			var occuranceAddress = Alarms.getActiveAlarm().data.occuranceAddress;
-			$("#globalNotesBox").val(notes);
-			if (occuranceAddress !== null) {
-				$("#incidentAddress").val(occuranceAddress);
-				$('#sameAddressCheckbox').attr('checked', true);
-			}
-
-			var currentSelected = Alarms.getActiveAlarm().DOM;
-
-			$('#verifyPatientLocation').on('click', function (e) {
-				e.preventDefault();
-				var address = $('#incidentAddress').val();
-				MapView.convertAddressToLatLng(address, function (locationData) {
-					console.log(locationData);
-					if (locationData === null) {
-						alert('@Messages.get("patientpane.incident.checkaddress.fail"): ' + address);
-					} else {
-						myJsRoutes.controllers.Application.setLocationOfAlarm(Alarms.gui.getCurrentSelectedAlarmIndex()).ajax({
-							data: JSON.stringify(locationData),
-							contentType: 'application/json',
-							success: function (data) {
-								alert('@Messages.get("patientpane.incident.checkaddress.success")');
-							},
-							error: function (xhr, statusText, thrownError) {
-								alert('Failed to save resolved address coordinates to alarm!!!');
-							}
-						});
-					}
-				});
-			});
-
-			//$("#patientBox").show();
-
-			//if it is an alarm of type: fire, safety_alarm or fall, I've set the patient as the callee
-			var typeImage = currentSelected.find('.type-icon');
-			var currentAlarm_type = typeImage.attr('data-type');
-			if (currentAlarm_type == "fall" || currentAlarm_type == "fire" || currentAlarm_type == "safety_alarm") {
-				for (var i in array) {
-					var patName = array[i].name;
-					var patAddress = array[i].address;
-					if (patName == $("#calleeName").text() && patAddress == $("#calleeAddress").text()) {
-						var patPersoNum = array[i].persoNumber;
-						var patId = array[i].id;
-						var patAge = array[i].age;
-						var patPhoneNum = array[i].phoneNumber;
-						var patObs = array[i].obs;
-						Patient.populatePatient(patId, patName, patPersoNum, patAddress, patPhoneNum, patAge, patObs);
-
-						break;
-					}
-				}
-			}
-		},
-
-		populatePatient: function (patientId, patientName, personNumber, address, phoneNumber, age, obs) {
-			$('#patientAddress').text(address);
-
-			// for the personNumber, if it is more than 6 digits, we add a space after the first 6 digits
-			var formattedPersoNumber;
-			if (personNumber.length > 6) {
-				formattedPersoNumber = personNumber.substring(0, 6) + " " + personNumber.substring(6);
-			} else {
-				formattedPersoNumber = personNumber;
-			}
-
-			$('#patientPersoNum').text(formattedPersoNumber);
-			$('#patientPhoneNum').text(phoneNumber);
-			$('#patientAddress').text(address);
-			$('#patientAge').text(age);
-			$('#patientId').val(patientId);
-			Assessment.loadPatientSensor(patientId);
-
-			// set the obs field in the assesment page
-			if (obs != null) $('#obsBody').text(obs);
-
-			//if it is an alarm of type: fire, safety_alarm or fall, I've set obs to the front
-			var currentAlarm_type = $('.list-group-item.active.alarmItem').find('.type-icon').attr('data-type');
-			if (currentAlarm_type == "fall" || currentAlarm_type == "fire" || currentAlarm_type == "safety_alarm"){
-				//$('#assesmentTabHeader a[href="#infoTab"]').tab('show');
-				//$("#informationSensorlabel").show();
-			}
-
-
-			// empty existing table
-			$("#patientLogTable > tbody").html("");
-			// destroying the datatable
-			//var table = $('#patientLogTable').DataTable();
-			//table.destroy();
-
-			if (0 != patientId) {
-				$.getJSON("/pastAlarmsFromPatient/" + patientId,
-					function(data) {
-						if (null!= data && null != data.alarmArray) {
-							// data is a JSON list, so we can iterate over it
-							var array = data.alarmArray;
-							for(var i in array) {
-								var day = array[i].day;
-								var hour = array[i].hour;
-								var type = array[i].type;
-								var notes = array[i].notes;
-								htmlRow= '<tr data-toggle="tooltip" data-placement="right" title="@Messages.get("actions.popup.send.notes"): ' +notes+'"><td> ' + day + ' </td><td> ' + hour + ' </td><td> ' + type + ' </td></tr>';
-								$("#patientLogTable > tbody").prepend(htmlRow);
-							}
-							$('[data-toggle="tooltip"]').tooltip({'placement': 'right'});
-						}
-
-						// make it a datatable with pagination, TODO: investigate further if we want to commit the
-						// datatable code
-						/*$('#patientLogTable').DataTable( {
-						 "paging": true,
-						 "searching": false,
-						 "ordering":  false,
-						 "pageLength": 5,
-						 "destroy": true,
-						 "lengthChange": false
-						 } );*/
-					}
-				);
-			}
-
-			$('#patientDropDown').find('.selection').text(patientName);
+		populatePatient: function (pat) {
+			populatePatientInformation(pat);
+			$('#patientDropDown').find('.selection').text(pat.name);
 		},
 
 		addNewPatientFromModal: function () {
@@ -255,21 +304,21 @@ var Patient = (function ($) {
 			var inputPatient = {
 				'name' : name,
 				'address' : address,
-				'persoNumber' : number,
+				'personnalNumber' : number,
 				'phoneNumber' : phoneNumber,
 				'age' : age
 			};
 			myJsRoutes.controllers.Application.insertPatientFromJson().ajax({
 				data : JSON.stringify(inputPatient),
 				contentType : 'application/json',
-				success : function (outpuPatient) {
+				success : function (outputPatient) {
 					// add it to list
-					var patientListItem =  '<li><a href="#" id="Patient"'+outpuPatient.id+'">' + outpuPatient.name +'</a></li>';
+					var patientListItem = '<li><a href="#" id="Patient"'+outputPatient.id+'">' + outputPatient.name +'</a></li>';
 					$('#patientDropDownList').prepend(patientListItem);
-					Patient.populatePatient(outpuPatient.id,outpuPatient.name,outpuPatient.persoNumber,outpuPatient.address,outpuPatient.phoneNumber,outpuPatient.age,'');
+					populatePatientInformation(outputPatient);
 					$('#Patient'+outpuPatient.id).on('click', function (e) {
 						e.preventDefault();
-						Patient.populatePatient(outpuPatient.id,outpuPatient.name,outpuPatient.persoNumber,outpuPatient.address,outpuPatient.phoneNumber,outpuPatient.age,'');
+						populatePatientInformation(outputPatient);
 					});
 
 				}// end of success
@@ -277,7 +326,16 @@ var Patient = (function ($) {
 		},
 
 		fillUnknownPatient: function () {
-			Patient.populatePatient('','@Messages.get("patientpane.pill.unknown")','','','','','');
+			var pat = {
+				'id': '',
+				'name': '@Messages.get("patientpane.pill.unknown")',
+				'address': '',
+				'personalNumber': '',
+				'phoneNumber': '',
+				'age': '',
+				'obs': null
+			}
+			populatePatientInformation(pat);
 		}
 	}
 })(jQuery)

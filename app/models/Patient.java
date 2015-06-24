@@ -73,17 +73,14 @@ public class Patient extends Model {
 		List<Patient> list = new ArrayList<Patient>();
 		String calleeAdr = a.callee.address;
 
-		if(null != a.patient){ // if the alarm has an assigned patient
+		if (null != a.patient){ // if the alarm has an assigned patient
 			list.add(a.patient);
-		}else{ // otherwise I get the list of residents
+		} else { // otherwise I get the list of residents
 			if (null != calleeAdr && (calleeAdr.isEmpty() == false)){ // if we have the callee address
 				list.addAll(find.where().ieq("address", calleeAdr).findList());// add all people in that address
 			}
 		}
 
 		return list;
-
 	}
-
-
 }

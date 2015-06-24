@@ -198,7 +198,8 @@ public class Application extends Controller {
 		JsonNode latLng = request().body().asJson();
 		Double latitude = latLng.findPath("latitude").asDouble();
 		Double longitude = latLng.findPath("longitude").asDouble();
-		Alarm.setLocationFromResolvedAddress(id, latitude, longitude);
+		String location = latLng.findPath("location").asText();
+		Alarm.setLocationFromResolvedAddress(id, location, latitude, longitude);
 		return ok();
 	}
 
@@ -250,11 +251,11 @@ public class Application extends Controller {
 				ObjectNode  patient = Json.newObject();
 				patient.put("id", temp.id);
 				patient.put("name", temp.name);
-				patient.put("persoNumber", temp.personalNumber);
+				patient.put("personalNumber", temp.personalNumber);
 				patient.put("phoneNumber", temp.phoneNumber);
 				patient.put("address", temp.address);
 				patient.put("age", temp.age);
-				if(null != temp.obs)
+				if (null != temp.obs)
 					patient.put("obs", temp.obs);
 				else
 					patient.put("obs", "");
@@ -284,7 +285,7 @@ public class Application extends Controller {
 		JsonNode json = request().body().asJson();
 		Patient p = new Patient();
 		p.name = json.findPath("name").textValue();
-		p.personalNumber = json.findPath("persoNumber").textValue();
+		p.personalNumber = json.findPath("personalNumber").textValue();
 		p.phoneNumber = json.findPath("phoneNumber").textValue();
 		p.address = json.findPath("address").textValue();
 		p.age = json.findPath("age").asInt();
@@ -295,7 +296,7 @@ public class Application extends Controller {
 		patient.put("id", retObj.id);
 		patient.put("name", retObj.name);
 		patient.put("phoneNumber", retObj.phoneNumber);
-		patient.put("persoNumber", retObj.personalNumber);
+		patient.put("personalNumber", retObj.personalNumber);
 		patient.put("address", retObj.address);
 		patient.put("age", retObj.age);
 
@@ -451,7 +452,6 @@ public class Application extends Controller {
 	public static Result getalarmSelectTemplateJs() {
 		return ok(views.js.alarmSelectTemplate.render());
 	}
-
 	public static Result getpatientTemplateScriptsJs() {
 		return ok(views.js.patientTemplateScripts.render());
 	}

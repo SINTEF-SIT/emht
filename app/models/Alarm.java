@@ -136,10 +136,11 @@ public class Alarm extends Model { // the model extension serves for having acce
 	 * @param longitude Longitude of location as Double
 	 * @return The updated Alarm object
 	 */
-	public static Alarm setLocationFromResolvedAddress(Long alarmId, Double latitude, Double longitude) {
+	public static Alarm setLocationFromResolvedAddress(Long alarmId, String location, Double latitude, Double longitude) {
 		Alarm a = find.ref(alarmId);
 		a.latitude = latitude;
 		a.longitude = longitude;
+		a.occuranceAddress = location;
 		updateFromDummy(a);
 		a.save();
 		return a;

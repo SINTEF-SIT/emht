@@ -4,6 +4,7 @@ import com.avaje.ebean.Ebean;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Before;
 import org.junit.Test;
+import play.Logger;
 import play.libs.Yaml;
 import static org.junit.Assert.*;
 import play.mvc.*;
@@ -20,10 +21,10 @@ import static play.test.Helpers.inMemoryDatabase;
 
 /**
  * Created by Aleksander Skraastad (myth) on 6/12/15.
- * <p>
- * emht is licenced under the MIT licence.
  */
 public class ApplicationTest extends WithApplication {
+
+    Logger log;
 
     @Before
     public void setUp() throws Exception {
@@ -39,7 +40,7 @@ public class ApplicationTest extends WithApplication {
         assertEquals(200, status(result));
         JsonNode json = Json.parse(contentAsString(result));
         assertNotNull(json.findPath("alarms"));
-        assertEquals(json.findPath("alarms").size(), 0);
+        assertEquals(0, json.findPath("alarms").size());
 
         // Perform a fake request from Bernt (which has one of the two alarms assigned)
         result = callAction(controllers.routes.ref.Application.alarmsAssignedToMe(),
@@ -47,6 +48,6 @@ public class ApplicationTest extends WithApplication {
         assertEquals(200, status(result));
         json = Json.parse(contentAsString(result));
         assertNotNull(json.findPath("alarms"));
-        assertEquals(json.findPath("alarms").size(), 1);
+        assertEquals(1, json.findPath("alarms").size());
     }
 }

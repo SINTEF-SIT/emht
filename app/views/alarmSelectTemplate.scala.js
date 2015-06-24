@@ -45,6 +45,9 @@ var Alarms = (function ($) {
 		isLocationVerified: function () { return this.data.latitude !== null && this.data.longitude !== null; },
 
 		moveToAssigned: function () {
+			// If we already are in assigned, just ignore the call
+			if (this.state === 'assigned') return;
+			this.DOM.removeAttr('onclick');
 			// Select this Alarm, so previously selected are deselected
 			this.select();
 			var self = this;
@@ -73,6 +76,9 @@ var Alarms = (function ($) {
 		},
 
 		moveToFollowup: function () {
+			// If we already are in followup, just ignore the call
+			if (this.state === 'followup') return;
+			this.DOM.removeAttr('onclick');
 			this.select();
 			var self = this;
 			var newAlarmItem = this.DOM.clone();
@@ -267,9 +273,14 @@ var Alarms = (function ($) {
 			},
 
 			populateAlarmDetails: function (alarmIndex) {
+				var a = getAlarm(alarmIndex);
+				Patient.generatePatientContainer();
 				Patient.populateCalleeFromAlarm(alarmIndex);
 				Patient.retrievePatientsByAddress(alarmIndex);
-				Assessment.pupulateDOMfromAssessment(getAlarm(alarmIndex).data.assessment);
+				if (a.data.patient !== null) {
+					Patient.populatePatient(a.data.patient);
+				}
+				Assessment.pupulateDOMfromAssessment(a.data.assessment);
 			},
 
 			removeHighlightedAlarmFromList: function () {
