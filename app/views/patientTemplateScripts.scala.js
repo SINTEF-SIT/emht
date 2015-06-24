@@ -71,9 +71,6 @@ var Patient = (function ($) {
 						contentType: 'application/json',
 						success: function (data) {
 							alert('@Messages.get("patientpane.incident.checkaddress.success")');
-							Alarms.getActiveAlarm().update(function (data) {
-								Alarms.gui.populateAlarmDetails(data.id);
-							})
 						},
 						error: function (xhr, statusText, thrownError) {
 							alert('Failed to save resolved address coordinates to alarm!!!');
@@ -179,7 +176,7 @@ var Patient = (function ($) {
 		$('#patientPersonalNumber').text(formattedPersonalNumber);
 		$('#patientPhoneNumber').text(pat.phoneNumber);
 		$('#patientAge').text(pat.age);
-		$('#patientId').text(pat.id);
+		$('#patientId').val(pat.id);
 		// Set the obs field in the Assessment page
 		if (pat.obs != null) $('#obsBody').text(pat.obs);
 
