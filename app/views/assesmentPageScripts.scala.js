@@ -85,8 +85,8 @@ var Assessment = (function ($) {
 	};
 
 	var updateAssessmentInfo = function (radio) {
-		console.log("updateAssessmentInfo called");
 		var radioId = $(radio).attr('id');
+		console.log("updateAssessmentInfo called on radio: " + radioId);
 		var field = radioId.substring(0, radioId.length - 1);
 		var state = radioId.charAt(radioId.length - 1) === 'Y';
 		switch (field) {
@@ -111,6 +111,9 @@ var Assessment = (function ($) {
 	// Helper method that sets the state of radio buttons to match that of the currentAssessment
 	var updateDOM = function () {
 		if (DEBUG) console.log("updateDOM called with current assessment: " + currentAssessment);
+
+		generateAssessmentRadioButtons();
+
 		if (currentAssessment.nmi.conscious !== null) {
 			if (currentAssessment.nmi.conscious) {
 				$('#NMIcheckBox1Y').attr('checked', true);
@@ -166,6 +169,85 @@ var Assessment = (function ($) {
 		if (DEBUG) console.log("updateDOM complete");
 	};
 
+	// Due to some strange behaviour of radio buttons not altering checked state while hidden,
+	// we need a generator function. This will also serve as an easy point of entry to alter
+	// when custom question set is implemented.
+	var generateAssessmentRadioButtons = function() {
+		var radioTable =
+			'<table class="table"><tbody>' +
+			'<tr><td>@Messages.get("assessment.tab.question.conscious")</td><td>' +
+			'<label class="radio-inline">' +
+			'<input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">@Messages.get("button.yes")</label>' +
+			'</td><td>' +
+			'<label class="radio-inline">' +
+			'<input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious">@Messages.get("button.no")</label>' +
+			'</td></tr>' +
+			'<tr><td>@Messages.get("assessment.tab.question.breathing")</td><td>' +
+			'<label class="radio-inline">' +
+			'<input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normally">@Messages.get("button.yes")</label>' +
+			'</td><td>' +
+			'<label class="radio-inline">' +
+			'<input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breathe normally">@Messages.get("button.no")</label>' +
+			'</td></tr>' +
+			'<tr><td>@Messages.get("assessment.tab.question.move")</td><td>' +
+			'<label class="radio-inline">' +
+			'<input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">@Messages.get("button.yes")</label>' +
+			'</td><td>' +
+			'<label class="radio-inline">' +
+			'<input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3N" value="Patient cant move">@Messages.get("button.no")</label>' +
+			'</td></tr>' +
+			'<tr><td>@Messages.get("assessment.tab.question.standup")</td><td>' +
+			'<label class="radio-inline">' +
+			'<input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">@Messages.get("button.yes")</label>' +
+			'</td><td>' +
+			'<label class="radio-inline">' +
+			'<input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4N" value="Patient cant stand up">@Messages.get("button.no")</label>' +
+			'</td></tr>' +
+			'<tr><td>@Messages.get("assessment.tab.question.talk")</td><td>' +
+			'<label class="radio-inline">' +
+			'<input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">@Messages.get("button.yes")</label>' +
+			'</td><td>' +
+			'<label class="radio-inline">' +
+			'<input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5N" value="Patient cant talk">@Messages.get("button.no")</label>' +
+			'</td></tr></tbody></table>';
+
+		// Replace existing radio buttons with new ones
+		$('#nmiTab').html(radioTable);
+
+		// Make new bindings
+		bindRadioButtons();
+	};
+
+	var bindRadioButtons = function () {
+		// Add actions on check buttons
+		$("#nmiTab").find(':radio').each(function (i) {
+			// set the action to show the label
+			$(this).change(function () {
+				var radioId = $(this).attr('id');
+				var oppositeRadioId = radioId.substring(0, radioId.length -1);
+
+				if (radioId.charAt(radioId.length -1) == "Y") {
+					oppositeRadioId += "N";
+				} else {
+					oppositeRadioId += "Y";
+				}
+
+				var selectedLabel = $("#" + radioId + "label");
+				var unSelectedLabel = $("#" + oppositeRadioId + "label");
+
+				if (this.checked) {
+					selectedLabel.show();
+					unSelectedLabel.hide();
+				} else {
+					selectedLabel.hide();
+					unSelectedLabel.show();
+				}
+				// Pass the clicked radio button to the state update parser
+				updateAssessmentInfo(this);
+			});
+		});
+	}
+
 	var removeImageFromSensorTab = function () {
 		$(".assesment-graph").remove();
 		$("#ampliphied-graph").attr("src", "");
@@ -176,33 +258,8 @@ var Assessment = (function ($) {
 		init: function () {
 			Assessment.reset();
 
-			// add actions on check buttons
-			$("#nmiTab").find(':radio').each(function (i) {
-				// set the action to show the label
-				$(this).change(function () {
-					var radioId = $(this).attr('id');
-					var opositeRadioId = radioId.substring(0, radioId.length -1);
-
-					if (radioId.charAt(radioId.length -1) == "Y") {
-						opositeRadioId += "N";
-					} else {
-						opositeRadioId += "Y";
-					}
-
-					var selectedLabel = $("#" + radioId + "label");
-					var unSelectedLabel = $("#" + opositeRadioId + "label");
-
-					if (this.checked) {
-						selectedLabel.show();
-						unSelectedLabel.hide();
-					} else {
-						selectedLabel.hide();
-						unSelectedLabel.show();
-					}
-					// Pass the clicked radio button to the state update parser
-					updateAssessmentInfo(this);
-				});
-			});
+			// Add click listeners to the radio bussons
+			bindRadioButtons();
 
 			// Add log actions to tabs
 			$("#infoTablink").click(function () {
@@ -218,12 +275,10 @@ var Assessment = (function ($) {
 
 		reset: function () {
 			console.log("reset assessment called");
-			$("#nmiTab").find(':radio').each(
-				function (i) {
-					// clear all checkbockes
-					$(this).removeAttr('checked');
-				}
-			);
+
+			$('#nmiTab').find(':radio').each(function (i) {
+				$(this).removeAttr('checked');
+			});
 
 			// hide all log labels
 			$("#assesmentLogPanel").children().each(
