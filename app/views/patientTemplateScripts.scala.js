@@ -98,7 +98,7 @@ var Patient = (function ($) {
 				e.preventDefault();
 				populatePatientInformation(patientList[i]);
 			});
-			dropDown.attr('id', 'Patient' + patientList[i].id);
+			listItem.attr('id', 'Patient' + patientList[i].id);
 			if (activePatient !== null && activePatient.id === patientList[i].id) {
 				dropDown.prepend(listItem);
 				patInProspects = true;
@@ -108,7 +108,9 @@ var Patient = (function ($) {
 		}
 		// If the registered patient was not returned from prospect patients, prepend it into dropdown
 		if (!patInProspects && activePatient !== null) {
+			if (DEBUG) console.log("Registered patient was not in prospect patient list: " + activePatient.name);
 			var listItem = $('<li></li>').html('<a href="#">' + activePatient.name + '</a>');
+			listItem.attr('id', 'Patient' + activePatient.id);
 			listItem.on('click', function (e) {
 				e.preventDefault();
 				populatePatientInformation(activePatient);
@@ -284,7 +286,7 @@ var Patient = (function ($) {
 		retrievePatientsByAddress: function (alarmIndex) {
 			if ($('#dynamicPatientInfo').length === 1) {
 				$.getJSON("/prospectPatient/" + alarmIndex,
-					function (data) { generateProspectPatients(data) }
+					function (data) { generateProspectPatients(data.patientArray) }
 				);
 			}
 		},
@@ -304,7 +306,7 @@ var Patient = (function ($) {
 			var inputPatient = {
 				'name' : name,
 				'address' : address,
-				'personnalNumber' : number,
+				'personalNumber' : number,
 				'phoneNumber' : phoneNumber,
 				'age' : age
 			};
@@ -313,12 +315,12 @@ var Patient = (function ($) {
 				contentType : 'application/json',
 				success : function (outputPatient) {
 					// add it to list
-					var patientListItem = '<li><a href="#" id="Patient"'+outputPatient.id+'">' + outputPatient.name +'</a></li>';
+					var patientListItem = '<li id="Patient' + outputPatient.id + '"><a href="#">' + outputPatient.name +'</a></li>';
 					$('#patientDropDownList').prepend(patientListItem);
-					populatePatientInformation(outputPatient);
-					$('#Patient'+outpuPatient.id).on('click', function (e) {
+					Patient.populatePatient(outputPatient);
+					$('#Patient'+outputPatient.id).on('click', function (e) {
 						e.preventDefault();
-						populatePatientInformation(outputPatient);
+						Patient.populatePatient(outputPatient);
 					});
 
 				}// end of success
