@@ -90,11 +90,9 @@ var Actions = (function ($) {
                 data : JSON.stringify(updatedAlarm),
                 contentType : 'application/json',
                 success : function (data) {
-                    Alarms.gui.removeHighlightedAlarmFromList();
-                    Alarms.gui.clearUpData();
-                    //highlightBackListTab ();
-                }// end of success
-            });// end of ajax call
+                    Alarms.removeAlarm(Alarms.getActiveAlarm());
+                }
+            });
         },
 
         saveAndFollowupAtClosing: function (followUp) {

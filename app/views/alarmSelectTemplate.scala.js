@@ -58,11 +58,20 @@ var Alarms = (function ($) {
 			this.DOM = newAlarmItem;
 			this.DOM.off('click');
 			this.DOM.unbind('click');
+
 			if (this.state === 'finished') {
-				this.DOM.prepend('<img src="/assets/images/finished.png" class="img-thumbnail pull-left finished-icon">')
+				this.DOM.children('.clock-icon').remove()
+				this.DOM.children(':first')
+					.after('<img src="/assets/images/finished.png" class="img-thumbnail pull-left finished-icon">');
 			}
 			else this.state = 'assigned';
+
+			// Now that we have updated all references and state, we select 'this' again to update
+			// the DOM with .active class etc.
 			this.select();
+
+			// Add a new click-listener, since we are now in an assigned state and require the selectMyAlarm
+			// functionality
 			this.DOM.on('click', function (e) {
 				e.preventDefault();
 				Alarms.gui.selectMyAlarm(self.id);
@@ -82,18 +91,24 @@ var Alarms = (function ($) {
 			// If we already are in followup, just ignore the call
 			if (this.state === 'followup') return;
 			this.DOM.removeAttr('onclick');
+			// We select ourselves to invalidate other potentially selected/active Alarm objects
 			this.select();
+			// Keep a reference of self, since callback functions override 'this'
 			var self = this;
+
+			// Now it's time to clone the DOM object, and remove it from current list
 			var newAlarmItem = this.DOM.clone();
 			this.DOM.remove();
 			this.DOM = newAlarmItem;
 			this.DOM.off('click');
 			this.DOM.unbind('click');
 			this.state = 'followup';
+			// Check if we have an assignment to care taker, if so we must set the value in the list item
 			if (this.data.mobileCareTaker !== null) {
 				this.DOM.children('.assignedTo')
 					.html('Assigned to: <strong>' + this.data.mobileCareTaker.username + '</strong>');
 			}
+			// Add a click listener pointing to the followUp click handler
 			this.DOM.on('click', function (e) {
 				e.preventDefault();
 				Alarms.gui.selectFollowUpAlarm(self.id);
@@ -421,6 +436,7 @@ var Alarms = (function ($) {
 			alarm.DOM.remove();
 			alarms.splice(alarms.indexOf(alarm), 1);
 			alarms.sort(sortByTime);
+			Alarms.gui.clearUpData();
 			Alarms.gui.resetAlarmCount();
 		}
 	}

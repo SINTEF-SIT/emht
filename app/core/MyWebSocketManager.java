@@ -147,5 +147,16 @@ public class MyWebSocketManager {
     	
     	MyWebSocketManager.notifyAll(jsonNotification);
     }
+
+	public static void notifyFinishedAlarm(Alarm a) {
+		ObjectNode wrapper = Json.newObject();
+		ObjectNode alarmJson = Alarm.toJson(a);
+		ObjectNode action = Json.newObject();
+		wrapper.put("action", action);
+		action.put("action", "finishedAlarm");
+		wrapper.put("alarm", alarmJson);
+
+		MyWebSocketManager.notifyAll(wrapper);
+	}
     
 }

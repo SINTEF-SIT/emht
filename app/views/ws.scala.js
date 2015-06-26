@@ -11,6 +11,9 @@ var WebSocketManager = (function ($, WS) {
         var data = JSON.parse(event.data);
         var action = data.action.action;
 
+        console.log("[WS] Event received: " + action);
+        console.log("[WS] Event data: " + data);
+
         if (null != action) {
             switch (action) {
                 case "addAlarm":
@@ -34,6 +37,16 @@ var WebSocketManager = (function ($, WS) {
 
                     var clockImage = '<img src="/assets/images/clock.png" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>';
                     var alarm = $("#Alarm" + data.alarmId).children(":first").after(clockImage); // find list item and add the timer after its type symbol
+
+                    break;
+                case "finishedAlarm":
+                    console.log("finishedAlarm received on alarm id: " + data.alarm.id);
+
+                    var id = data.alarm.id;
+                    var a = Alarms.getAlarm(id);
+                    var finishedImage = '<img src="/assets/images/finished.png" class="img-thumbnail pull-left finished-icon" width="48" heigh="48"/>'
+                    a.DOM.children('.clock-icon').remove();
+                    a.DOM.children(':first').after(finishedImage);
 
                     break;
             }

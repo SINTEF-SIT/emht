@@ -345,6 +345,27 @@ public class Application extends Controller {
 		return ok();
 	}
 
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result finishCase(Long id) {
+		String careTaker = session().get("username");
+		Alarm a = Alarm.get(id);
+		if (a != null) {
+			Logger.debug("finishAlarm called on: " + id.toString());
+
+			/* TODO: ENABLE BELOW CODE DURING REGULAR TESTING (It's disabled for development purposes)
+			if (!a.mobileCareTaker.username.equals(careTaker)) {
+				Logger.debug("Attempt to finish a case not designated for that user");
+				return unauthorized("Attempt to finish a case not designated for that user");
+			}
+			*/
+
+			MyWebSocketManager.notifyFinishedAlarm(a);
+			return ok(Alarm.toJson(a));
+		} else {
+			Logger.debug("Attempt to finish a non-existant case: " + id);
+			return notFound();
+		}
+	}
 
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result saveAndFollowupCase() {
@@ -458,6 +479,7 @@ public class Application extends Controller {
 				controllers.routes.javascript.Application.getCalleeFromAlarm(),
 				controllers.routes.javascript.Application.getProspectPatients(),
 				controllers.routes.javascript.Application.notifyFollowup(),
+				controllers.routes.javascript.Application.finishCase(),
 				controllers.routes.javascript.Application.getAlarm(),
 				controllers.routes.javascript.Application.setLocationOfAlarm()
 			)
