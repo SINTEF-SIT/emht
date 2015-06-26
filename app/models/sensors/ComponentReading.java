@@ -2,6 +2,10 @@ package models.sensors;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,6 +14,7 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.Global;
+import models.Patient;
 import play.db.ebean.Model;
 import play.libs.Json;
 
@@ -50,5 +55,64 @@ public class ComponentReading extends Model {
 		ObjectNode component = AALComponent.toJson(c.component);
 		wrapper.put("component", component);
 		return wrapper;
+	}
+
+	/**
+	 * The Generator class simulates component readings in frequent intervals
+	 */
+	public static class Generator {
+		// Set up a single thread exec service we can inject tasks into
+		public static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+
+		// We keep a hash mapping between sensor and battery status, since ideally this should drain
+		// progressively and not randomly fluctuate.
+		public static ConcurrentHashMap<Sensor, Double> batteryStatus = new ConcurrentHashMap<Sensor, Double>();
+
+		/**
+		 * Start simulation of sensor readings for a given sensor (whic is related to a Patient).
+		 * The interval for generation of new component readings are in milliseconds.
+		 * @param s A Sensor instance
+		 * @param intervalInMilliseconds Reading interval in milliseconds
+		 */
+		public static void start(Sensor s, String readingType, Long intervalInMilliseconds) {
+			// Create a new battery status at 100%
+			batteryStatus.put(s, 100.0d);
+
+			// Instantiate a new recurring job
+			Runnable job = new Runnable() {
+				@Override
+				public void run() {
+
+					ComponentReading cr = new ComponentReading();
+					cr.component = s;
+					cr.date = new Date();
+					cr.readingType = readingType.toLowerCase();
+
+					// Set value based on the readingType we are simulating
+					switch (cr.readingType) {
+						case "heartRate":
+							cr.value = 60.0d + (Math.random() * 40.0d);
+							break;
+						case "systolicPressure":
+							cr.value = 100.0d + (Math.random() * 40.0d);
+							break;
+						case "diastolicPressure":
+							cr.value = 50.0d + (Math.random() * 20.0d);
+							break;
+						case "battery":
+							// Slowly drain the battery and update the hash map
+							cr.value = batteryStatus.get(s) - Math.random();
+							batteryStatus.put(s, cr.value);
+							break;
+					}
+
+					// Save it to the database
+					cr.save();
+				}
+			};
+			
+			// Schedule the job
+			executorService.schedule(job, intervalInMilliseconds, TimeUnit.MILLISECONDS);
+		}
 	}
 }
