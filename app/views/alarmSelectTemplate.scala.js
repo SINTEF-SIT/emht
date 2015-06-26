@@ -15,15 +15,15 @@ var Alarms = (function ($) {
 	// The Alarm object is the main component used. It uses different state fields as well as prototype methods
 	// for selecting, deselecting, moving the alarm between different states etc.
 	var Alarm = function (data) {
-		if (DEBUG) console.log("Alarm constructor called with data: " + data);
+		if (DEBUG) console.log("Alarm constructor called with data: " + JSON.stringify(data, null, 4));
 		this.id = data.id;
 		this.selected = false;
 		this.data = data;
 		this.state = 'open';
 		this.DOM = null;
-		if (data.attendant !== null) {
+		if (data.attendant !== null && data.attendant !== undefined) {
 			this.state = 'assigned';
-			if (data.dispatchingTime !== null) {
+			if (data.dispatchingTime !== null && data.dispatchingTime !== undefined) {
 				this.state = 'followup';
 			}
 		}
@@ -224,7 +224,7 @@ var Alarms = (function ($) {
 	var buildDOMAlarm = function (a, updateFunction) {
 		var alarm = a.data;
 		// Build DOM representation of alarm
-		var time = new Date(alarm.openingDate);
+		var time = new Date(alarm.openingTime);
 		var formatedTime = $.format.date(time, "dd/MM HH:mm");
 		var listItem =
 			'<a href="#" idnum="' + alarm.id + '" id="Alarm' + alarm.id +
@@ -299,14 +299,11 @@ var Alarms = (function ($) {
 				Patient.generatePatientContainer();
 				Patient.populateCalleeFromAlarm(alarmIndex);
 				Patient.retrievePatientsByAddress(alarmIndex);
-				if (a.data.patient !== null) {
+				if (a.data.patient !== null && a.data.patient !== undefined) {
+					console.log("populateAlarmDetails: " + JSON.stringify(a.data, null, 4));
 					Patient.populatePatient(a.data.patient);
 				}
 				Assessment.pupulateDOMfromAssessment(a.data.assessment);
-			},
-
-			removeHighlightedAlarmFromList: function () {
-				Alarms.removeAlarm(ACTIVE_ALARM);
 			},
 
 			moveAlarmToFollowUpList: function () {
@@ -359,6 +356,7 @@ var Alarms = (function ($) {
 				Assessment.reset();
 				Actions.reset();
 				$("#globalNotesBox").val("");
+				Alarms.gui.resetAlarmCount();
 			},
 
 			getCurrentSelectedAlarmIndex: function () {
@@ -432,12 +430,14 @@ var Alarms = (function ($) {
 		},
 
 		removeAlarm: function (alarm) {
-			alarm.deselect();
-			alarm.DOM.remove();
-			alarms.splice(alarms.indexOf(alarm), 1);
-			alarms.sort(sortByTime);
-			Alarms.gui.clearUpData();
-			Alarms.gui.resetAlarmCount();
+			if (alarm !== null && alarm !== undefined) {
+				alarm.deselect();
+				alarm.DOM.remove();
+				alarms.splice(alarms.indexOf(alarm), 1);
+				alarms.sort(sortByTime);
+				Alarms.gui.clearUpData();
+				Alarms.gui.resetAlarmCount();
+			}
 		}
 	}
 })(jQuery);

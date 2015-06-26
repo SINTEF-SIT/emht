@@ -12,7 +12,7 @@ var WebSocketManager = (function ($, WS) {
         var action = data.action.action;
 
         console.log("[WS] Event received: " + action);
-        console.log("[WS] Event data: " + data);
+        console.log("[WS] Event data: " + JSON.stringify(data, null, 4));
 
         if (null != action) {
             switch (action) {

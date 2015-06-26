@@ -144,24 +144,12 @@ public class Application extends Controller {
 		} else {
 			Alarm formAlarm = filledForm.get();
 
-			ObjectNode jsonAlarm = Json.newObject();
-
 			if (null != formAlarm.callee) {
 				formAlarm.callee = Callee.getOrCreate(formAlarm.callee);
 				//formAlarm.patient = Patient.getOrCreate(formAlarm.patient);
-				Alarm a = Alarm.create(formAlarm);//
-				jsonAlarm.put("type", a.type);
-				jsonAlarm.put("alarmId", a.id);
-				if (null != a.callee){
-					ObjectNode calle = Json.newObject();
-					calle.put("id", a.callee.id);
-					calle.put("name", a.callee.name);
-					calle.put("phoneNumber", a.callee.phoneNumber);
-					calle.put("address", a.callee.address);
-					jsonAlarm.put("calle", calle);
-				}
+				Alarm a = Alarm.create(formAlarm);
 
-				return ok(jsonAlarm);
+				return ok(Alarm.toJson(a));
 			} else {
 				System.out.println("calle was not found in the form");
 				return badRequest();
@@ -336,8 +324,7 @@ public class Application extends Controller {
 		a.notes = notes;
 
 		if (0 != patientId) {
-			a.patient = new Patient();
-			a.patient.id = patientId;
+			a.patient = Patient.getFromId(patientId);
 		}
 
 		Alarm.closeAlarm(a);

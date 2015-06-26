@@ -85,7 +85,7 @@ var Patient = (function ($) {
 
 	// Generate the dropdown list of possible patients based on a patient list
 	var generateProspectPatients = function (patientList) {
-		if (DEBUG) console.log("generateProspectPatients called: " + patientList);
+		if (DEBUG) console.log("generateProspectPatients called: " + JSON.stringify(patientList, null, 4));
 		var activePatient = Alarms.getActiveAlarm().data.patient;
 		var patInProspects = false;
 		var dropDown = $('#patientDropDownList');

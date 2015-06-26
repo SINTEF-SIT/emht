@@ -96,26 +96,14 @@ public class MyWebSocketManager {
         }
     }
     
-    public static void notifyNewAlarm(Alarm al){
-    	// TODO: look into automatic jsonfication
-    	ObjectNode jsonNotification = Json.newObject();
-    	ObjectNode  action = Json.newObject();
-    	jsonNotification.put("action", action);
-    	action.put("action", "addAlarm");
-    	ObjectNode  alarm = Json.newObject();
-    	jsonNotification.put("alarm", alarm);
-		alarm.put("id", al.id);
-		alarm.put("type", al.type);
-		alarm.put("openingDate", al.openingTime.getTime());
-		ObjectNode  callee = Json.newObject();
-		alarm.put("callee", callee);
-		callee.put("id", al.callee.id);
-		callee.put("phoneNumber", al.callee.phoneNumber);
-		callee.put("name", al.callee.name);
-
-		
-		MyWebSocketManager.notifyAll(jsonNotification);
-    	
+    public static void notifyNewAlarm(Alarm al) {
+		ObjectNode wrapper = Json.newObject();
+		ObjectNode action = Json.newObject();
+		ObjectNode alarm = Alarm.toJson(al);
+		action.put("action", "addAlarm");
+		wrapper.put("action", action);
+		wrapper.put("alarm", alarm);
+		MyWebSocketManager.notifyAll(wrapper);
     }
     
     public static void addTimeIconToAlarm(long id){
