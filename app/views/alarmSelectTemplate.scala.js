@@ -88,7 +88,13 @@ var Alarms = (function ($) {
 		},
 
 		moveToFollowup: function () {
-			// If we already are in followup, just ignore the call
+			// Check if we have an assignment to care taker, if so we must set the value in the list item
+			if (this.data.mobileCareTaker !== null) {
+				this.DOM.children('.assignedTo')
+					.html('Assigned to: <strong>' + this.data.mobileCareTaker.username + '</strong>');
+			}
+
+			// If we already are in followup, just ignore the rest of the call
 			if (this.state === 'followup') return;
 			this.DOM.removeAttr('onclick');
 			// We select ourselves to invalidate other potentially selected/active Alarm objects
@@ -103,11 +109,7 @@ var Alarms = (function ($) {
 			this.DOM.off('click');
 			this.DOM.unbind('click');
 			this.state = 'followup';
-			// Check if we have an assignment to care taker, if so we must set the value in the list item
-			if (this.data.mobileCareTaker !== null) {
-				this.DOM.children('.assignedTo')
-					.html('Assigned to: <strong>' + this.data.mobileCareTaker.username + '</strong>');
-			}
+
 			// Add a click listener pointing to the followUp click handler
 			this.DOM.on('click', function (e) {
 				e.preventDefault();

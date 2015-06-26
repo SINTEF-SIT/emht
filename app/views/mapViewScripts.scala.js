@@ -132,9 +132,11 @@ var MapView = (function ($) {
         google.maps.event.addListener(marker, 'click', function (e) {
             if (highlightedOperator !== null) {
                 highlightedOperator.removeClass('active');
+                highlightedOperator.children('.assignmentQueue').hide()
             }
             highlightedOperator = $('#field-operator' + marker.fieldOperator.id);
             highlightedOperator.addClass('active');
+            highlightedOperator.children('.assignmentQueue').show()
 
             // If we have no active alarm assignment state, activate the fieldoperator to incident indicators
             if (Alarms.getActiveAlarm() === null) {
@@ -223,6 +225,17 @@ var MapView = (function ($) {
                 html += '<span style="color: blue;"><strong>' + fieldOperatorLocations[i].assignedAlarms.length;
             }
             html += '</strong></span><br>';
+            html += '<div class="assignmentQueue" style="display: none;">';
+            fieldOperatorLocations[i].assignedAlarms.sort(function (a, b) {
+                if (a.dispatchingTime < b.dispatchingTime) return -1;
+                else if (a.dispatchingTime > b.dispatchingTime) return 1;
+                return 0;
+            });
+            for (var a in fieldOperatorLocations[i].assignedAlarms) {
+                var alarm = fieldOperatorLocations[i].assignedAlarms[a];
+                html += '<span>' + (Number(a)+1) + ': ' + alarm.patient.name + ' (' + alarm.occuranceAddress + ')<br />';
+            }
+            html += '</div>';
 
             // Add the assign button if we have an active alarm to dispatch
             if (Alarms.getActiveAlarm() !== null) {
