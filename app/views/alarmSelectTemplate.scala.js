@@ -288,7 +288,8 @@ var Alarms = (function ($) {
 			},
 
 			moveAlarmToFollowUpList: function () {
-				ACTIVE_ALARM.moveToFollowup();
+				Alarms.getActiveAlarm().moveToFollowup();
+				Alarms.getActiveAlarm().deselect();
 			},
 
 			selectFollowUpAlarm: function (alarmIndex) {

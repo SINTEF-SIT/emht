@@ -100,7 +100,6 @@ var MapView = (function ($) {
                 id: Number($(this).parent().attr('id').replace('field-operator', ''))
             });
             $('#close-map-button').click();
-            Alarms.getActiveAlarm().deselect();
         });
     }
 

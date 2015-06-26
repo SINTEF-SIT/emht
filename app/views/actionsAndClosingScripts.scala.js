@@ -1,5 +1,7 @@
 @import play.i18n._
 
+var DEBUG = true;
+
 var Actions = (function ($) {
     /* Private methods here */
 
@@ -95,12 +97,12 @@ var Actions = (function ($) {
             });// end of ajax call
         },
 
-        saveAndFollowupAtClosing: function (followUp, e) {
+        saveAndFollowupAtClosing: function (followUp) {
             if (Alarms.getActiveAlarm() === null) alert('No active alarm');
             var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 
             // If we have a special followUp payload, add it to the alarm
-            if (followUp !== null && followUp !== undefined && e !== undefined) {
+            if (followUp !== null && followUp !== undefined) {
                 console.log("saveAndFollowUpAtClosing received payload: ", followUp);
                 if (followUp.type === 'mobileCareTaker') {
                     updatedAlarm.mobileCareTaker = followUp.id;
@@ -113,7 +115,6 @@ var Actions = (function ($) {
                 contentType : 'application/json',
                 success : function (data) {
                     Alarms.gui.moveAlarmToFollowUpList();
-                    Alarms.getActiveAlarm().deselect();
                 }// end of success
             });// end of ajax call
         },
