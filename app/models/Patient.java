@@ -6,7 +6,9 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.db.ebean.Model;
+import play.libs.Json;
 
 
 @Entity
@@ -82,5 +84,22 @@ public class Patient extends Model {
 		}
 
 		return list;
+	}
+
+	/**
+	 * Convert a Patient instance to JSON
+	 * @param p The Patient instance in question
+	 * @return A Json ObjectNode
+	 */
+	public static ObjectNode toJson(Patient p) {
+		ObjectNode wrapper = Json.newObject();
+		wrapper.put("id", p.id);
+		wrapper.put("name", p.name);
+		wrapper.put("address", p.address);
+		wrapper.put("age", p.age);
+		wrapper.put("phoneNumber", p.phoneNumber);
+		wrapper.put("personalNumber", p.personalNumber);
+		wrapper.put("obs", p.obs);
+		return wrapper;
 	}
 }

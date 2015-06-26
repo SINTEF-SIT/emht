@@ -237,67 +237,67 @@
 
 # Sensors
 
- - &sensor1 !!models.Sensor
+ - &sensor1 !!models.sensors.Sensor
     sensorType:      Fall Sensor
     patient:         *patient1
     
 # Component readings
 
- - &sensorReading1 !!models.ComponentReading
+ - &sensorReading1 !!models.sensors.ComponentReading
     readingType:      Battery Level
     date:             2010-04-16
     value:            100 
     component:        *sensor1
     
- - &sensorReading2 !!models.ComponentReading
+ - &sensorReading2 !!models.sensors.ComponentReading
     readingType:      Battery Level
     date:             2010-04-17
     value:            90 
     component:        *sensor1
     
- - &sensorReading3 !!models.ComponentReading
+ - &sensorReading3 !!models.sensors.ComponentReading
     readingType:      Battery Level
     date:             2010-04-18
     value:            80 
     component:        *sensor1    
     
- - &sensorReading4 !!models.ComponentReading
+ - &sensorReading4 !!models.sensors.ComponentReading
     readingType:      Battery Level
     date:             2010-04-19
     value:            70
     component:        *sensor1
     
- - &sensorReading5 !!models.ComponentReading
+ - &sensorReading5 !!models.sensors.ComponentReading
     readingType:      Battery Level
     date:             2010-04-20
     value:            90 
     component:        *sensor1
     
- - &sensorReading6 !!models.ComponentReading
+ - &sensorReading6 !!models.sensors.ComponentReading
     readingType:      Battery Level
     date:             2010-04-21
     value:            50 
     component:        *sensor1    
     
- - &sensorReading7 !!models.ComponentReading
+ - &sensorReading7 !!models.sensors.ComponentReading
     readingType:      Battery Level
     date:             2010-04-21
     value:            30 
     component:        *sensor1
     
- - &sensorReading8 !!models.ComponentReading
+ - &sensorReading8 !!models.sensors.ComponentReading
     readingType:      Battery Level
     date:             2010-04-22
     value:            30 
     component:        *sensor1
     
- - &sensorReading9 !!models.ComponentReading
+ - &sensorReading9 !!models.sensors.ComponentReading
     readingType:      Battery Level
     date:             2010-04-23
     value:            10 
     component:        *sensor1
     
- - &sensorReading10 !!models.ComponentReading
+ - &sensorReading10 !!models.sensors.ComponentReading
     readingType:      Battery Level
     date:             2010-04-24
     value:            00 
