@@ -27,6 +27,7 @@ var Alarms = (function ($) {
 				this.state = 'followup';
 			}
 		}
+		if (data.finished !== null && data.finished === true) this.state = 'finished'
 		if (data.closingTime !== null && data.closingTime !== undefined) {
 			this.state = 'closed';
 		}
@@ -57,7 +58,10 @@ var Alarms = (function ($) {
 			this.DOM = newAlarmItem;
 			this.DOM.off('click');
 			this.DOM.unbind('click');
-			this.state = 'assigned';
+			if (this.state === 'finished') {
+				this.DOM.prepend('<img src="/assets/images/finished.png" class="img-thumbnail pull-left finished-icon">')
+			}
+			else this.state = 'assigned';
 			this.select();
 			this.DOM.on('click', function (e) {
 				e.preventDefault();
@@ -65,8 +69,7 @@ var Alarms = (function ($) {
 			});
 
 			// Remove the clock icon if it was set
-			var clock = this.DOM.children('.clock-icon');
-			if (clock != null) clock.remove();
+			this.DOM.children('.clock-icon').remove();
 
 			// Prepend the new DOM object to the assigned alarm list.
 			$('#assignedAlarmList').prepend(newAlarmItem);
@@ -87,6 +90,10 @@ var Alarms = (function ($) {
 			this.DOM.off('click');
 			this.DOM.unbind('click');
 			this.state = 'followup';
+			if (this.data.mobileCareTaker !== null) {
+				this.DOM.children('.assignedTo')
+					.html('Assigned to: <strong>' + this.data.mobileCareTaker.username + '</strong>');
+			}
 			this.DOM.on('click', function (e) {
 				e.preventDefault();
 				Alarms.gui.selectFollowUpAlarm(self.id);
@@ -211,7 +218,7 @@ var Alarms = (function ($) {
 			alarm.type + '" width="48" height="48"/>' +
 			'<h4 class="list-group-item-heading"> @Messages.get("listitem.arrived") ' +
 			formatedTime  +' </h4><p class="list-group-item-text">@Messages.get("listitem.callee") ' +
-			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '</p>';
+			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '<div class="assignedTo"></div></p>';
 
 		if (updateFunction === null || updateFunction === undefined) {
 			return listItem;

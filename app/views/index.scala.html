@@ -40,6 +40,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 									}
 									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
 									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
+									<div class="assignedTo"></div>
 									</a>
 								}
 							}
@@ -58,6 +59,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 										}
 										<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
 										<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
+										<div class="assignedTo"></div>
 									</a>
 								}
 							}
@@ -76,9 +78,12 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 									}
 									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm")</h4>
 									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber};
+									<div class="assignedTo">
 									@if(alarm.mobileCareTaker != null){
-										<br/>Assigned to: <strong>@{alarm.mobileCareTaker.username}</strong>
-									}</p>
+										Assigned to: <strong>@{alarm.mobileCareTaker.username}</strong>
+									}
+									</div>
+									</p>
 								</a>
 							}
 						}
@@ -141,6 +146,10 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 									<div class="logLabel" id="informationSensorlabel"> @Messages.get("assessment.log.obs")</div>
 								</div>
 							</div>
+						</div>
+						<div>
+							<u>@Messages.get("assessment.log.fieldassessment") :</u>
+							<div id="fieldAssessment"></div>
 						</div>
 					</div>
 				</section>

@@ -67,6 +67,7 @@ assessment.tab.question.talk=Kan pasienten snakke?
 assessment.tab.sensor=Sensorer
 assessment.tab.obs=OBS!
 assessment.log=Log
+assessment.log.fieldassessment=Field Assessment
 assessment.log.affirmation.conscious=Pasienten er ved bevisthet
 assessment.log.affirmation.breathing=Pasienten puster normalt
 assessment.log.affirmation.move=Pasienten kan bevege seg

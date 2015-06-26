@@ -354,12 +354,14 @@ public class Application extends Controller {
 		String alarmOccurance = json.findPath("occuranceAddress").asText();
 		long alarmId = json.findPath("alarmId").asLong();
 		Long mobileCareTaker = json.findPath("mobileCareTaker").asLong();
+		boolean finished = json.findPath("finished").asBoolean();
 
 		Alarm a = Alarm.get(alarmId);
 		a.occuranceAddress = alarmOccurance;
 		a.notes = notes;
+		a.finished = finished;
 
-
+		// Do we have a provided assessment from attendant?
 		if (json.hasNonNull("assessment")) {
 			a.assessment.sensorsChecked = json.findPath("sensorsChecked").asBoolean();
 			a.assessment.patientInformationChecked = json.findPath("patientInformationChecked").asBoolean();
@@ -378,6 +380,25 @@ public class Application extends Controller {
 			}
 		}
 
+		// Do we have a provided assessment from field operator?
+		if (json.hasNonNull("fieldAssessment")) {
+			a.fieldAssessment.sensorsChecked = json.findPath("sensorsChecked").asBoolean();
+			a.fieldAssessment.patientInformationChecked = json.findPath("patientInformationChecked").asBoolean();
+			if (json.findPath("assessment").hasNonNull("nmi")) {
+				JsonNode nmi = json.findPath("nmi");
+				if (!nmi.get("conscious").isNull()) a.fieldAssessment.nmi.conscious = nmi.get("conscious").asBoolean();
+				else a.fieldAssessment.nmi.conscious = null;
+				if (!nmi.get("breathing").isNull()) a.fieldAssessment.nmi.breathing = nmi.get("breathing").asBoolean();
+				else a.fieldAssessment.nmi.breathing = null;
+				if (!nmi.get("movement").isNull()) a.fieldAssessment.nmi.movement = nmi.get("movement").asBoolean();
+				else a.fieldAssessment.nmi.movement = null;
+				if (!nmi.get("standing").isNull()) a.fieldAssessment.nmi.standing = nmi.get("standing").asBoolean();
+				else a.fieldAssessment.nmi.standing = null;
+				if (!nmi.get("talking").isNull()) a.fieldAssessment.nmi.talking = nmi.get("talking").asBoolean();
+				else a.fieldAssessment.nmi.talking = null;
+			}
+		}
+
 		if (0 != patientId) {
 			a.patient = new Patient();
 			a.patient.id = patientId;
@@ -390,7 +411,7 @@ public class Application extends Controller {
 
 		Alarm.saveAndFollowupAlarm(a);
 
-		return ok();
+		return ok(Alarm.toJson(a));
 	}
 
 

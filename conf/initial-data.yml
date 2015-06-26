@@ -131,6 +131,13 @@
     standing:         null
     talking:          null
 
+ - &nmi004 !!models.NMI
+    conscious:        true
+    breathing:        true
+    movement:         false
+    standing:         false
+    talking:          true
+
 # Assessments
 
  - &assessment001 !!models.Assessment
@@ -141,6 +148,11 @@
 
  - &assessment003 !!models.Assessment
     nmi:             *nmi003
+
+ - &assessment004 !!models.Assessment
+    nmi:             *nmi004
+    sensorsChecked:  true
+    patientInformationChecked: true
 
 # Alarms
 
@@ -161,6 +173,7 @@
     attendant:        *myth
     mobileCareTaker:  *iver
     assessment:       *assessment002
+    fieldAssessment:  *assessment004
     patient:          *patient6
     openingTime:      2014-09-15 21:02:57
     dispatchingTime:  2015-06-18 10:30:30

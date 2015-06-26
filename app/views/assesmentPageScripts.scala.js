@@ -112,6 +112,9 @@ var Assessment = (function ($) {
 	var updateDOM = function () {
 		if (DEBUG) console.log("updateDOM called with current assessment: " + currentAssessment);
 
+		var fieldAssessment = $('#fieldAssessment');
+		fieldAssessment.empty();
+
 		generateAssessmentRadioButtons();
 
 		if (currentAssessment.nmi.conscious !== null) {
@@ -164,6 +167,31 @@ var Assessment = (function ($) {
 		}
 		if (currentAssessment.patientInformationChecked) {
 			$("#assedmentSensorlabel").show();
+		}
+
+		// If a fieldAttendant has performed an assessment, display it as well.
+		if (Alarms.getActiveAlarm() !== null) {
+			if (Alarms.getActiveAlarm().data.fieldAssessment) {
+				var fa = Alarms.getActiveAlarm().data.fieldAssessment;
+				fa = new AssessmentInfo(
+					fa.id,
+					new NMI(
+						fa.nmi.id,
+						fa.nmi.conscious,
+						fa.nmi.breathing,
+						fa.nmi.movement,
+						fa.nmi.standing,
+						fa.nmi.talking
+					),
+					fa.sensorsChecked,
+					fa.patientInformationChecked
+				);
+				var html = '<span>';
+				html += serializeAssessment(fa);
+				html += '</span>';
+				html = html.split('\n').join('<br />');
+				fieldAssessment.html(html);
+			}
 		}
 
 		if (DEBUG) console.log("updateDOM complete");

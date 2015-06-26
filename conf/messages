@@ -68,6 +68,7 @@ assessment.tab.question.talk=Can the patient talk?
 assessment.tab.sensor=Sensors
 assessment.tab.obs=OBS!
 assessment.log=Log
+assessment.log.fieldassessment=Field Assessment
 assessment.log.affirmation.conscious=The patient is conscious
 assessment.log.affirmation.breathing=The patient breaths normally
 assessment.log.affirmation.move=The patient can move

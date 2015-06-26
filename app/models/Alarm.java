@@ -27,6 +27,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 	public Date dispatchingTime; // TODO: implement dispatching
 	public Date closingTime; // at the moment we are dispatching and closing all alarms
 
+	public boolean finished;
+
 	public String occuranceAddress; // address of where the incident took place
 	public Double latitude;
 	public Double longitude;
@@ -41,6 +43,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	public Assessment assessment;
+	@ManyToOne(cascade = CascadeType.ALL)
+	public Assessment fieldAssessment;
 
 	@Lob
 	public String notes;
@@ -63,7 +67,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 	public static Alarm create(Alarm alarm) {
 		alarm.openingTime = new Date();
 		if (alarm.assessment == null) alarm.assessment = new Assessment();
+		if (alarm.fieldAssessment == null) alarm.fieldAssessment = new Assessment();
 		alarm.assessment.nmi = new NMI();
+		alarm.fieldAssessment.nmi = new NMI();
 		alarm.save();
 		Global.alarmList.list.put(alarm.id, alarm);
 		Global.localMonitor.registerNewAlert(alarm.id);
@@ -164,6 +170,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 		if (null != dummy.assessment && a.assessment != dummy.assessment) {
 			a.assessment = dummy.assessment;
 		}
+		if (null != dummy.fieldAssessment && a.fieldAssessment != dummy.fieldAssessment) {
+			a.fieldAssessment = dummy.fieldAssessment;
+		}
 
 		if (null != dummy.occuranceAddress) // Im assuming Ill always update the address
 			a.occuranceAddress = dummy.occuranceAddress;
@@ -192,6 +201,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 		if (dummy.longitude != null && a.longitude != dummy.longitude) {
 			a.longitude = dummy.longitude;
 		}
+		a.finished = dummy.finished;
 
 		return a;
 	}
@@ -249,6 +259,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 		alarm.put("openingTime", a.openingTime != null ? Global.formatDateAsISO(a.openingTime) : null);
 		alarm.put("dispatchingTime", a.dispatchingTime != null ? Global.formatDateAsISO(a.dispatchingTime) : null);
 		alarm.put("closingTime", a.closingTime != null ? Global.formatDateAsISO(a.closingTime) : null);
+		alarm.put("finished", a.finished);
 
 		// Add the callee object if present, otherwise write a null
 		if (a.callee != null) {
@@ -295,6 +306,13 @@ public class Alarm extends Model { // the model extension serves for having acce
 			alarm.put("assessment", Assessment.toJson(a.assessment));
 		} else {
 			alarm.putNull("assessment");
+		}
+
+		// Add the fieldAssessment object if set
+		if (a.fieldAssessment != null) {
+			alarm.put("fieldAssessment", Assessment.toJson(a.fieldAssessment));
+		} else {
+			alarm.putNull("fieldAssessment");
 		}
 
 		return alarm;

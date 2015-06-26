@@ -114,6 +114,7 @@ var Actions = (function ($) {
                 data : JSON.stringify(updatedAlarm),
                 contentType : 'application/json',
                 success : function (data) {
+                    Alarms.getActiveAlarm().data = data;
                     Alarms.gui.moveAlarmToFollowUpList();
                 }// end of success
             });// end of ajax call

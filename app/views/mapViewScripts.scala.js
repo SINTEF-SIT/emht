@@ -95,10 +95,11 @@ var MapView = (function ($) {
         // Assign active alarm button in sidebar
         $('.assign-map-button').on('click', function (e) {
             e.preventDefault();
-            Actions.saveAndFollowupAtClosing({
+            var payload = {
                 type: 'mobileCareTaker',
                 id: Number($(this).parent().attr('id').replace('field-operator', ''))
-            });
+            }
+            Actions.saveAndFollowupAtClosing(payload);
             $('#close-map-button').click();
         });
     }
