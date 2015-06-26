@@ -463,15 +463,20 @@ public class Application extends Controller {
 	 * @param id The ID of the Alarm in question
 	 * @return 200 OK or Bad request if state of the Alarm is non-existand, not dispatched or closed.
 	 */
-	public static Result notifyFollowup(Long id){
+	public static Result notifyFollowup(Long id) {
+		JsonNode alarmNotes = request().body().asJson();
+		String notes = alarmNotes.findPath("notes").asText();
 		Alarm a = Alarm.get(id);
-		// test if alarm exists and is on following up list
+		// Test if alarm exists and is on following up list
 		if (null == a || a.dispatchingTime == null || a.closingTime != null) {
 			return badRequest();
 		}
 		else {
+			if (a.notes == null) a.notes = notes;
+			else a.notes += notes;
+			a.save();
 			MyWebSocketManager.notifyFollowUpAlarm(id);
-			return ok();
+			return ok(Alarm.toJson(a));
 		}
 	}
 

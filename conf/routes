@@ -31,7 +31,7 @@ POST        /alarm/assign                                         controllers.Ap
 POST        /alarm/close                                          controllers.Application.closeCase()
 #POST    /alarm/save           controllers.Application.saveCase()
 POST        /alarm/saveAndFollowup                                controllers.Application.saveAndFollowupCase()
-POST        /alarm/notifyFollowup/:id                             controllers.Application.notifyFollowup(id: Long)
+POST        /alarm/:id/notifyFollowup                             controllers.Application.notifyFollowup(id: Long)
 
 GET         /callee/:id                                           controllers.Application.getCalleeFromAlarm(id: Long)
 GET         /prospectPatient/:id                                  controllers.Application.getProspectPatients(id: Long)
