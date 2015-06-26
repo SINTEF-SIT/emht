@@ -80,6 +80,10 @@ public class Application extends Controller {
 
 	/* BEGIN ENDPOINTS */
 
+	/**
+	 * Retrieve the main dashboard view
+	 * @return HTTP response with the main Dashboard
+	 */
 	@Security.Authenticated(Authorization.Authorized.class)
 	public static Result openAlarms(){
 		List<Alarm> object = Global.alarmList.getAlarmList();
@@ -136,7 +140,10 @@ public class Application extends Controller {
 		return ok(wrapper);
 	}
 
-
+	/**
+	 * Create a new alarm from POST request body
+	 * @return 200 OK or Bad request if callee was not provided
+	 */
 	public static Result newAlarm() {
 		Form<Alarm> filledForm = alarmForm.bindFromRequest(); // create a new form with the request data
 		if (filledForm.hasErrors()) {
@@ -157,23 +164,12 @@ public class Application extends Controller {
 
 		}
 	}
-    
-/*    public static Result  deleteAlarm(Long id){
-    	  Alarm.delete(id);
-    	  return redirect(routes.Application.openAlarms());
-    }
-    
-    public static Result  getOpenAlarm(Long id){
-   	 	return ok(
-			    views.html.requestInfoFrame.render(Global.alarmList.list.get(id))
-			  );
-    }*/
 
-
-	// returns a json alarm such as
-	// { "type": string, "notes": string, "alarmId": long,
-	//  "callee" : { "phoneNumber": string, "name": string, "address": string, "id": long },
-	//  "patient" : { "persoNumber": string, "name": string, "address": string,  "age": int, "id": long }}
+	/**
+	 * Retrieve an Alarm object based on its ID
+	 * @param id The ID of the Alarm requested
+	 * @return An Alarm instance as JSON
+	 */
 	public static Result getAlarm(Long id) {
 		Alarm a = Alarm.get(id);
 		ObjectNode jsonAlarm = Alarm.toJson(a);
@@ -181,30 +177,46 @@ public class Application extends Controller {
 		return ok(jsonAlarm);
 	}
 
+	/**
+	 * Update an Alarm object with latitude and longitude coordinates
+	 * @param id The ID of the Alarm to update
+	 * @return An Alarm instance as JSON
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result setLocationOfAlarm(Long id) {
 		JsonNode latLng = request().body().asJson();
 		Double latitude = latLng.findPath("latitude").asDouble();
 		Double longitude = latLng.findPath("longitude").asDouble();
 		String location = latLng.findPath("location").asText();
-		Alarm.setLocationFromResolvedAddress(id, location, latitude, longitude);
-		return ok();
+		Alarm a = Alarm.setLocationFromResolvedAddress(id, location, latitude, longitude);
+		return ok(Alarm.toJson(a));
 	}
 
-
-	// Return the type and date of each one of the past alarms of the callee
-	public static Result  getPastAlarmsFromCallee(Long calleeId) {
+	/**
+	 * Return the type and date of each one of the past alarms of the callee
+	 * @param calleeId The ID of the Callee requested
+	 * @return A pre-formatted alarm log as JSON
+	 */
+	public static Result getPastAlarmsFromCallee(Long calleeId) {
 		List<Alarm> alarmList = Alarm.pastAlarmsFromCallee(calleeId);
 		return alarmListToJsonAlarmLog(alarmList);
 	}
-	// Return the type and date of each one of the past alarms of the patient
-	public static Result  getPastAlarmsFromPatient(Long patientId) {
+
+	/**
+	 * Return the type and date of each one of the past alarms of the patient
+	 * @param patientId The ID of the Patient requested
+	 * @return A pre-formatted alarm log as JSON
+	 */
+	public static Result getPastAlarmsFromPatient(Long patientId) {
 		List<Alarm> alarmList = Alarm.pastAlarmsFromPatient(patientId);
 		return alarmListToJsonAlarmLog(alarmList);
 	}
 
-	// convert a list of alarms into json alarm logs containing date and
-	// type of alarms
+	/**
+	 * Convert a list of alarms into json alarm logs containing date and type of alarms
+	 * @param alarmList A list of Alarm objects
+	 * @return A formatted array of alarm log instances as JSON
+	 */
 	private static Result alarmListToJsonAlarmLog(List<Alarm> alarmList) {
 
 		SimpleDateFormat ddMMyy = new SimpleDateFormat ("dd/MM yyyy");
@@ -226,8 +238,11 @@ public class Application extends Controller {
 
 	}
 
-
-
+	/**
+	 * Retrieve a list of potential patients based on an Alarm instance
+	 * @param id The ID of the alarm to use as query
+	 * @return An arrey of Patients as JSON
+	 */
 	public static Result getProspectPatients(Long id) {
 		List<Patient> patientList = Patient.prospectPatientsFromAlarm(id);
 
@@ -251,10 +266,15 @@ public class Application extends Controller {
 			}
 		}
 		result.put("patientArray",patientArray);
-		return ok(result);
 
+		return ok(result);
 	}
 
+	/**
+	 * Retrieve a Callee based on an Alarm ID
+	 * @param id The ID of the Alarm to use as query
+	 * @return A Callee object as JSON
+	 */
 	public static Result getCalleeFromAlarm(Long id) {
 		Alarm a = Alarm.get(id);
 
@@ -267,7 +287,10 @@ public class Application extends Controller {
 		return ok(calle);
 	}
 
-
+	/**
+	 * Create and insert a Patient into the database from the POST request body
+	 * @return A Patient object as JSON
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result insertPatientFromJson() {
 		JsonNode json = request().body().asJson();
@@ -290,26 +313,11 @@ public class Application extends Controller {
 
 		return ok(patient);
 	}
-    
-/*    @BodyParser.Of(BodyParser.Json.class)
-    public static Result saveCase(){
-  	  	JsonNode json = request().body().asJson();
-        long patientId = json.findPath("patientId").asLong();
-        String notes = json.findPath("notes").asText();
-        long alarmId = json.findPath("alarmId").asLong();
-        
-        Alarm a = new Alarm();
-        a.id = alarmId;
-        a.notes = notes;
-        if(0 != patientId){
-        	a.patient = new Patient();
-        	a.patient.id = patientId;
-        }
-        Alarm.saveAlarm(a);
 
-    	return ok();
-    }*/
-
+	/**
+	 * Close a case based on provided alarm data from POST request body
+	 * @return 200 OK
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result closeCase() {
 		JsonNode json = request().body().asJson();
@@ -332,6 +340,12 @@ public class Application extends Controller {
 		return ok();
 	}
 
+	/**
+	 * Flag an Alarm object as being finished by the mobile care taker
+	 * @param id The ID of the Alarm in question
+	 * @return The Alarm object as JSON if ok, unauthorized if mismatch between reporting caretaker and
+	 * registered caretaker. Not found if alarm id does not exist.
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result finishCase(Long id) {
 		String careTaker = session().get("username");
@@ -354,6 +368,10 @@ public class Application extends Controller {
 		}
 	}
 
+	/**
+	 * Update the data of an alarm based on the POST request body
+	 * @return An updated Alarm object as JSON
+	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result saveAndFollowupCase() {
 		JsonNode json = request().body().asJson();
@@ -423,6 +441,10 @@ public class Application extends Controller {
 	}
 
 
+	/**
+	 * Assign an attendant to an Alarm based on the POST request body and active user
+	 * @return 200 OK, or Unauthorized if lacking privileges
+	 */
 	@Security.Authenticated(Authorization.Authorized.class)
 	@Authorization.PrivilegeLevel(Authorization.ATTENDANT)
 	@BodyParser.Of(BodyParser.Json.class)
@@ -435,10 +457,12 @@ public class Application extends Controller {
 		return ok();
 	}
 
-
-
-	// to be called when a followup alarm is triggered back again
-	// in other words, when the callee responsible for it call it back
+	/**
+	 * Update an Alarm with external data in notes, and notify all web socket connections of
+	 * the updated alarm from external source. Retrieves updated notes from POST request body.
+	 * @param id The ID of the Alarm in question
+	 * @return 200 OK or Bad request if state of the Alarm is non-existand, not dispatched or closed.
+	 */
 	public static Result notifyFollowup(Long id){
 		Alarm a = Alarm.get(id);
 		// test if alarm exists and is on following up list
@@ -451,6 +475,10 @@ public class Application extends Controller {
 		}
 	}
 
+	/**
+	 * Dynamic rendered JavaScript routes exposure
+	 * @return A JavaScript router
+	 */
 	public static Result javascriptRoutes() {
 		response().setContentType("text/javascript");
 		return ok(
@@ -473,26 +501,56 @@ public class Application extends Controller {
 		);
 	}
 
-	// get the ws.js script
+	/**
+	 * Generic WebSocket JavaScript renderer
+	 * @return A rendered JavaScript file
+	 */
 	public static Result wsJs() {
 		return ok(views.js.ws.render());
 	}
 
-	// get the other scripts
+	/**
+	 * Generic Alarm selection JavaScript renderer
+	 * @return A rendered JavaScript file
+	 */
 	public static Result getalarmSelectTemplateJs() {
 		return ok(views.js.alarmSelectTemplate.render());
 	}
+
+	/**
+	 * Generic Patient scripts JavaScript renderer
+	 * @return A rendered JavaScript file
+	 */
 	public static Result getpatientTemplateScriptsJs() {
 		return ok(views.js.patientTemplateScripts.render());
 	}
+
+	/**
+	 * Generic Actions scripts JavaScript renderer
+	 * @return A rendered JavaScript file
+	 */
 	public static Result getactionsAndClosingScriptsJs() {
 		return ok(views.js.actionsAndClosingScripts.render());
 	}
+
+	/**
+	 * Generic Assessment scripts JavaScript renderer
+	 * @return A rendered JavaScript file
+	 */
 	public static Result getassesmentPageScriptsJs() {
 		return ok(views.js.assesmentPageScripts.render());
 	}
+
+	/**
+	 * Generic MapView JavaScript renderer
+	 * @return A rendered JavaScript file
+	 */
 	public static Result getmapViewScriptsJs() { return ok(views.js.mapViewScripts.render()); }
 
+	/**
+	 * WebSocket interface renderer
+	 * @return A WebSocket endpoint for handshaking and connection handling
+	 */
 	@Security.Authenticated(Authorization.Authorized.class)
 	public static WebSocket<JsonNode> wsInterface() {
 		// Prefetch the username as it is not available in the returned WebSocket object's scope.
