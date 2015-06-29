@@ -3,12 +3,12 @@
 
 # --- !Ups
 
-create table AALCOMPONENT (
-  COMPONENT_TYPE            varchar(31) not null,
+create table AALComponent (
+  type                      varchar(31) not null,
   id                        bigint not null,
   patient_id                bigint,
   sensor_type               varchar(255),
-  constraint pk_AALCOMPONENT primary key (id))
+  constraint pk_AALComponent primary key (id))
 ;
 
 create table alarm (
@@ -96,7 +96,7 @@ create table patient (
   constraint pk_patient primary key (id))
 ;
 
-create sequence AALCOMPONENT_seq;
+create sequence AALComponent_seq;
 
 create sequence alarm_seq;
 
@@ -114,8 +114,8 @@ create sequence nmi_seq;
 
 create sequence patient_seq;
 
-alter table AALCOMPONENT add constraint fk_AALCOMPONENT_patient_1 foreign key (patient_id) references patient (id) on delete restrict on update restrict;
-create index ix_AALCOMPONENT_patient_1 on AALCOMPONENT (patient_id);
+alter table AALComponent add constraint fk_AALComponent_patient_1 foreign key (patient_id) references patient (id) on delete restrict on update restrict;
+create index ix_AALComponent_patient_1 on AALComponent (patient_id);
 alter table alarm add constraint fk_alarm_callee_2 foreign key (callee_id) references callee (id) on delete restrict on update restrict;
 create index ix_alarm_callee_2 on alarm (callee_id);
 alter table alarm add constraint fk_alarm_attendant_3 foreign key (attendant_id) references alarm_attendant (id) on delete restrict on update restrict;
@@ -130,7 +130,7 @@ alter table alarm add constraint fk_alarm_patient_7 foreign key (patient_id) ref
 create index ix_alarm_patient_7 on alarm (patient_id);
 alter table assessment add constraint fk_assessment_nmi_8 foreign key (nmi_id) references nmi (id) on delete restrict on update restrict;
 create index ix_assessment_nmi_8 on assessment (nmi_id);
-alter table component_reading add constraint fk_component_reading_component_9 foreign key (component_id) references AALCOMPONENT (id) on delete restrict on update restrict;
+alter table component_reading add constraint fk_component_reading_component_9 foreign key (component_id) references AALComponent (id) on delete restrict on update restrict;
 create index ix_component_reading_component_9 on component_reading (component_id);
 alter table field_operator_location add constraint fk_field_operator_location_fi_10 foreign key (field_operator_id) references alarm_attendant (id) on delete restrict on update restrict;
 create index ix_field_operator_location_fi_10 on field_operator_location (field_operator_id);
@@ -141,7 +141,7 @@ create index ix_field_operator_location_fi_10 on field_operator_location (field_
 
 SET REFERENTIAL_INTEGRITY FALSE;
 
-drop table if exists AALCOMPONENT;
+drop table if exists AALComponent;
 
 drop table if exists alarm;
 
@@ -161,7 +161,7 @@ drop table if exists patient;
 
 SET REFERENTIAL_INTEGRITY TRUE;
 
-drop sequence if exists AALCOMPONENT_seq;
+drop sequence if exists AALComponent_seq;
 
 drop sequence if exists alarm_seq;
 

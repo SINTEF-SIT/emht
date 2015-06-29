@@ -54,7 +54,8 @@ POST        /attendants                                           controllers.At
 POST        /attendants/:id/delete                                controllers.AttendantController.deleteAttendant(id: Long)
 
 # ComponentReading          
-GET         /component/:readingType/                              controllers.ComponentReadingController.getReadingsPerType(readingType: String)
+GET         /component/startSimulator                             controllers.ComponentReadingController.startSimulator()
+GET         /component/:patientId                                 controllers.ComponentReadingController.getReadingsForPatient(patientId: Long)
 
 # Websockets
 GET         /wsInterface                                          controllers.Application.wsInterface()

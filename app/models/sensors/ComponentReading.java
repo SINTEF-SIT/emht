@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.Global;
 import models.Patient;
+import play.Logger;
 import play.db.ebean.Model;
 import play.libs.Json;
 
@@ -86,33 +87,36 @@ public class ComponentReading extends Model {
 					ComponentReading cr = new ComponentReading();
 					cr.component = s;
 					cr.date = new Date();
-					cr.readingType = readingType.toLowerCase();
+					cr.readingType = readingType;
 
 					// Set value based on the readingType we are simulating
 					switch (cr.readingType) {
 						case "heartRate":
-							cr.value = 60.0d + (Math.random() * 40.0d);
+							cr.value = 70.0d + (Math.random() * 30.0d);
 							break;
 						case "systolicPressure":
-							cr.value = 100.0d + (Math.random() * 40.0d);
+							cr.value = 110.0d + (Math.random() * 20.0d);
 							break;
 						case "diastolicPressure":
-							cr.value = 50.0d + (Math.random() * 20.0d);
+							cr.value = 70.0d + (Math.random() * 20.0d);
 							break;
 						case "battery":
 							// Slowly drain the battery and update the hash map
-							cr.value = batteryStatus.get(s) - Math.random();
+							cr.value = batteryStatus.get(s) - (Math.random() / 5.0d);
+							if (cr.value < 0.0) cr.value = 0.0d;
 							batteryStatus.put(s, cr.value);
 							break;
 					}
 
 					// Save it to the database
 					cr.save();
+					Logger.debug("Sensor reading for " + cr.readingType + " simulated with value: " + cr.value +
+					" on patient " + cr.component.patient.name);
 				}
 			};
 			
 			// Schedule the job
-			executorService.schedule(job, intervalInMilliseconds, TimeUnit.MILLISECONDS);
+			executorService.scheduleAtFixedRate(job, 0L, intervalInMilliseconds, TimeUnit.MILLISECONDS);
 		}
 	}
 }

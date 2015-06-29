@@ -1,22 +1,17 @@
 package models.sensors;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.Patient;
+import play.Logger;
 import play.db.ebean.Model;
 import play.libs.Json;
 
 @Entity
-@Inheritance
-@DiscriminatorColumn(name="COMPONENT_TYPE")
-@Table(name="AALCOMPONENT")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@Table(name = "AALComponent")
 public abstract class AALComponent extends Model {
 
 	@Id
@@ -45,8 +40,8 @@ public abstract class AALComponent extends Model {
 	public static ObjectNode toJson(AALComponent c) {
 		ObjectNode wrapper = Json.newObject();
 		wrapper.put("id", c.id);
-		ObjectNode patient = Patient.toJson(c.patient);
-		wrapper.put("patient", patient);
+		//ObjectNode patient = Patient.toJson(c.patient);
+		//wrapper.put("patient", patient);
 		return wrapper;
 	}
 }
