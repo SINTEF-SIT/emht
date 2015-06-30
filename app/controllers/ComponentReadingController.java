@@ -1,14 +1,17 @@
 package controllers;
 
-import java.util.HashSet;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.Patient;
 import models.sensors.ComponentReading;
 import models.sensors.Sensor;
 import play.libs.Json;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -46,6 +49,24 @@ public class ComponentReadingController extends Controller {
 		}
 
 		return ok(wrapper);
+	}
+
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result newSensorReading() {
+		JsonNode jsonReading = request().body().asJson();
+		Long sensorId = jsonReading.get("component").get("id").asLong();
+		String readingType = jsonReading.get("readingType").asText();
+		Double readingValue = jsonReading.get("value").asDouble();
+		Date readingDate = Date.from(Instant.parse(jsonReading.get("date").asText()));
+		Sensor s = Sensor.find.byId(sensorId);
+		if (s == null || s.id == 0) return notFound("Sensor ID does not exist");
+		ComponentReading cr = new ComponentReading();
+		cr.component = s;
+		cr.date = readingDate;
+		cr.value = readingValue;
+		cr.readingType = readingType;
+		cr.save();
+		return ok(ComponentReading.toJson(cr));
 	}
 
 	/**

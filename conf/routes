@@ -57,6 +57,7 @@ POST        /attendants/:id/delete                                controllers.At
 GET         /component/startSimulator                             controllers.ComponentReadingController.startSimulator()
 GET         /component/stopSimulator                              controllers.ComponentReadingController.stopSimulator()
 GET         /component/:patientId                                 controllers.ComponentReadingController.getReadingsForPatient(patientId: Long)
+POST        /component                                            controllers.ComponentReadingController.newSensorReading()
 
 # Websockets
 GET         /wsInterface                                          controllers.Application.wsInterface()
