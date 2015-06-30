@@ -165,9 +165,6 @@ var Patient = (function ($) {
 		// Cache the active alarm DOM object
 		var currentSelected = Alarms.getActiveAlarm();
 
-		// Reset the assessment, (prevents sensor charts from updating aswell as clearing fields)
-		Assessment.reset();
-
 		// for the personalNumber, if it is more than 6 digits, we add a space after the first 6 digits
 		var formattedPersonalNumber;
 		if (pat.personalNumber.length > 6) {
@@ -256,6 +253,8 @@ var Patient = (function ($) {
 
 		clearUpPatientData: function () {
 			$("#dynamicPatientInfo").empty();
+			// Stop autoUpdate of Sensor data
+			Sensor.stopAutoUpdate();
 		},
 
 		openAddPatientModal: function () {
@@ -294,6 +293,7 @@ var Patient = (function ($) {
 		},
 
 		populatePatient: function (pat) {
+			Assessment.loadPatientSensor(pat.id);
 			populatePatientInformation(pat);
 			$('#patientDropDown').find('.selection').text(pat.name);
 		},

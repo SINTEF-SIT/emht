@@ -70,15 +70,11 @@ var Actions = (function ($) {
 
             var occuranceAddress = $('#incidentAddress').val();
 
-            var updatedAlarm = {
-                'alarmId' : alarmId,
-                'notes' : notes,
-                'assessment' : Assessment.getAssessmentLog(),
-                'occuranceAddress' : occuranceAddress,
-                'patient' : {
-                    'patientId' : patientId
-                }
-            };
+            var updatedAlarm = Alarms.getActiveAlarm().data;
+            updatedAlarm.notes = notes;
+            updatedAlarm.assessment = Assessment.getAssessmentLog();
+            updatedAlarm.occuranceAddress = occuranceAddress;
+
             return updatedAlarm;
         },
 

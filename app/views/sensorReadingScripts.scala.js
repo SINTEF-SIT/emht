@@ -106,6 +106,8 @@ var Sensor = (function ($) {
         },
 
         startAutoUpdate: function (patientId) {
+            if (updateTimer !== null && updateTimer !== undefined) clearInterval(updateTimer);
+
             getDataForPatient(patientId);
             updateTimer = setInterval(function () {
                 getDataForPatient(patientId);

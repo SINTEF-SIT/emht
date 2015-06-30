@@ -375,10 +375,10 @@ public class Application extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result saveAndFollowupCase() {
 		JsonNode json = request().body().asJson();
-		long patientId = json.findPath("patientId").asLong();
+		long patientId = json.get("patient").get("id").asLong();
 		String notes = json.findPath("notes").asText();
 		String alarmOccurance = json.findPath("occuranceAddress").asText();
-		long alarmId = json.findPath("alarmId").asLong();
+		long alarmId = json.findPath("id").asLong();
 		Long mobileCareTaker = json.findPath("mobileCareTaker").asLong();
 		boolean finished = json.findPath("finished").asBoolean();
 

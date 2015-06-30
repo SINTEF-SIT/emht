@@ -444,36 +444,7 @@ var Alarms = (function ($) {
 	}
 })(jQuery);
 
-// Fire up the module on DOM ready
 $(document).ready(function () {
+	// Fire up the module on DOM ready
 	Alarms.init();
-});
-
-
-
-
-
-
-// takes as input the id of the header to be highlighted and both highlight it and un-highlight the others
-/*function highlightArrowHeader(headerId){
- var currentSelected = $('.selected_arrow_box');
-
- currentSelected.switchClass("selected_arrow_box", "nonselected_arrow_box" );
- $('#'+ headerId).switchClass("nonselected_arrow_box", "selected_arrow_box" );
- }*/
-
-
-/* function highlightBackListTab (){
- //highlightArrowHeader("receptionArrowHeader");
-
- $("#patientBox").hide();
- $("#calleeBox").hide();
- $('#notesDiv').hide();
- $('#assesment').hide();
- $('#extraActionButtonsDiv').hide();
- $("#closingNotesAndButtons").hide();
-
- resetAssesmentPage();
- resetActionsAndClosingPage();
-
- }*/
+})

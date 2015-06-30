@@ -327,9 +327,6 @@ var Assessment = (function ($) {
 			// Reset the current assessment object
 			currentAssessment = new AssessmentInfo(null, new NMI(null, null, null, null, null, null), false, false);
 
-			// Stop autoUpdate of Sensor data
-			Sensor.stopAutoUpdate();
-
 			console.log("reset assessment complete");
 		},
 

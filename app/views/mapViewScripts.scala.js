@@ -336,7 +336,11 @@ var MapView = (function ($) {
     }
 })(jQuery);
 
-// On page load complete
-$(document).ready(function () {
-    MapView.init();
-})
+var asyncMapViewLoader = function () {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = 'https://maps.googleapis.com/maps/api/js?v=3&callback=MapView.init'
+    document.body.appendChild(script);
+}
+
+window.onload = asyncMapViewLoader;
