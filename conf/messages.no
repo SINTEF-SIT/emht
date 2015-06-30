@@ -131,3 +131,11 @@ button.no=Nei
 button.ring=Ring
 button.send=Send
 button.done=OK
+
+#sensors
+sensors.graph.x=Tidspunkt
+sensors.graph.y=Verdi
+sensors.graph.heartrate=Hjertefrekvens
+sensors.graph.systolic=Systolisk
+sensors.graph.diastolic=Diastolisk
+sensors.graph.battery=Batteri

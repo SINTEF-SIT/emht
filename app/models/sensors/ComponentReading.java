@@ -1,11 +1,9 @@
 package models.sensors;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -14,7 +12,6 @@ import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.Global;
-import models.Patient;
 import play.Logger;
 import play.db.ebean.Model;
 import play.libs.Json;
@@ -64,6 +61,7 @@ public class ComponentReading extends Model {
 	public static class Generator {
 		// Set up a single thread exec service we can inject tasks into
 		public static ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+		public static HashSet<ScheduledFuture> activeJobs = new HashSet<>();
 
 		// We keep a hash mapping between sensor and battery status, since ideally this should drain
 		// progressively and not randomly fluctuate.
@@ -115,8 +113,20 @@ public class ComponentReading extends Model {
 				}
 			};
 			
-			// Schedule the job
-			executorService.scheduleAtFixedRate(job, 0L, intervalInMilliseconds, TimeUnit.MILLISECONDS);
+			// Schedule the job and store the Future in activeJobs
+			activeJobs.add(
+				executorService.scheduleAtFixedRate(job, 0L, intervalInMilliseconds, TimeUnit.MILLISECONDS)
+			);
+		}
+
+		/**
+		 * Halts execution of all scheduled jobs
+		 */
+		public static void stopAll() {
+			for (ScheduledFuture activeJob : activeJobs) {
+				// The false argument indicates whether we want to interrupt a potentially running job
+				activeJob.cancel(false);
+			}
 		}
 	}
 }

@@ -14,6 +14,8 @@ import play.mvc.Result;
 
 public class ComponentReadingController extends Controller {
 
+	public static final Integer MAX_READINGS = 50;
+
 	/**
 	 * Retrieves a list of ComponentReadings connected to a specific Patient
 	 * @param patientId The ID of the Patient in question
@@ -25,32 +27,22 @@ public class ComponentReadingController extends Controller {
 		if (p == null || p.id <= 0) return notFound("Patient does not exist.");
 
 		List<Sensor> sensors = Sensor.find.where().eq("patient", p).findList();
-		List<ComponentReading> data = ComponentReading.find.where().in("component", sensors).orderBy("date desc").findList();
+		List<ComponentReading> data = ComponentReading.find.where()
+			.in("component", sensors)
+			.orderBy("date desc").setMaxRows(MAX_READINGS)
+			.findList();
 		ObjectNode wrapper = Json.newObject();
 		wrapper.put("total", data.size());
 
+		// TODO: This should be dynamic
+		wrapper.put("type", "vitals");
+
 		// Create the arrays for the different reading types
-		ArrayNode heartRate = wrapper.putArray("heartRate");
-		ArrayNode systolicPressure = wrapper.putArray("systolicPressure");
-		ArrayNode diastolicPressure = wrapper.putArray("diastolicPressure");
-		ArrayNode battery = wrapper.putArray("battery");
+		ArrayNode readings = wrapper.putArray("readings");
 
 		// Time to iterate over all components
 		for (ComponentReading cr : data) {
-			switch (cr.readingType) {
-				case "heartRate":
-					heartRate.add(ComponentReading.toJson(cr));
-					break;
-				case "systolicPressure":
-					systolicPressure.add(ComponentReading.toJson(cr));
-					break;
-				case "diastolicPressure":
-					diastolicPressure.add(ComponentReading.toJson(cr));
-					break;
-				case "battery":
-					battery.add(ComponentReading.toJson(cr));
-					break;
-			}
+			readings.add(ComponentReading.toJson(cr));
 		}
 
 		return ok(wrapper);
@@ -62,10 +54,19 @@ public class ComponentReadingController extends Controller {
 	 */
 	public static Result startSimulator() {
 		Sensor s = Sensor.find.byId(2L);
-		ComponentReading.Generator.start(s, "battery", 60000L);
-		ComponentReading.Generator.start(s, "heartRate", 30000L);
-		ComponentReading.Generator.start(s, "systolicPressure", 20000L);
-		ComponentReading.Generator.start(s, "diastolicPressure", 20000L);
+		ComponentReading.Generator.start(s, "battery", 10000L);
+		ComponentReading.Generator.start(s, "heartRate", 10000L);
+		ComponentReading.Generator.start(s, "systolicPressure", 10000L);
+		ComponentReading.Generator.start(s, "diastolicPressure", 10000L);
 		return ok("Sensor Simulator started on Sensor ID 2 (Patient " + s.patient.name + ")");
+	}
+
+	/**
+	 * Halts execution of all simulation jobs
+	 * @return 200 OK
+	 */
+	public static Result stopSimulator() {
+		ComponentReading.Generator.stopAll();
+		return ok("Simulator stopped. All generators cancelled.");
 	}
 }

@@ -96,6 +96,8 @@ var Patient = (function ($) {
 				populatePatientInformation(patientList[i]);
 			});
 			listItem.attr('id', 'Patient' + patientList[i].id);
+
+			// If we have an active patient on the alarm that is in the prospect list, prepend it
 			if (activePatient !== null && activePatient.id === patientList[i].id) {
 				dropDown.prepend(listItem);
 				patInProspects = true;
@@ -162,6 +164,9 @@ var Patient = (function ($) {
 		if (DEBUG) console.log("id:" + pat.id, "name:" + pat.name, "personalNumber:" + pat.personalNumber, "address:"+pat.address);
 		// Cache the active alarm DOM object
 		var currentSelected = Alarms.getActiveAlarm();
+
+		// Reset the assessment, (prevents sensor charts from updating aswell as clearing fields)
+		Assessment.reset();
 
 		// for the personalNumber, if it is more than 6 digits, we add a space after the first 6 digits
 		var formattedPersonalNumber;

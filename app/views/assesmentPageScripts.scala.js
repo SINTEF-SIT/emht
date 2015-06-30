@@ -326,6 +326,10 @@ var Assessment = (function ($) {
 
 			// Reset the current assessment object
 			currentAssessment = new AssessmentInfo(null, new NMI(null, null, null, null, null, null), false, false);
+
+			// Stop autoUpdate of Sensor data
+			Sensor.stopAutoUpdate();
+
 			console.log("reset assessment complete");
 		},
 
@@ -334,19 +338,8 @@ var Assessment = (function ($) {
 		},
 
 		loadPatientSensor: function (patientId) {
-			// TODO retrieve NMI (but in another function)
-			removeImageFromSensorTab();
-			if (0 != patientId){
-				var image = new Image();
-				image.src = "/assets/images/patient/" + patientId + ".png" ;
-				image.className = "img-responsive assesment-graph";
-				image.onerror = removeImageFromSensorTab;
-				image.onclick = Assessment.showGraphModal;
-
-				$("#sensorTab").append(image);
-				$("#ampliphied-graph").attr("src", image.src);
-
-			}
+			if (patientId === null || patientId === undefined) patientId = 0;
+			Sensor.startAutoUpdate(patientId)
 		},
 
 		getAssessmentLog: function () {

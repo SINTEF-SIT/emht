@@ -553,6 +553,12 @@ public class Application extends Controller {
 	public static Result getmapViewScriptsJs() { return ok(views.js.mapViewScripts.render()); }
 
 	/**
+	 * Generic SensorReading JavaScript renderer
+	 * @return
+	 */
+	public static Result getsensorReadingScriptsJs() { return ok(views.js.sensorReadingScripts.render()); }
+
+	/**
 	 * WebSocket interface renderer
 	 * @return A WebSocket endpoint for handshaking and connection handling
 	 */

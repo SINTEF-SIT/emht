@@ -134,4 +134,10 @@ button.ring=Ring
 button.send=Send
 button.done=Done
 
-
+#sensors
+sensors.graph.x=Timestamp
+sensors.graph.y=Value
+sensors.graph.heartrate=Heart rate
+sensors.graph.systolic=Systolic
+sensors.graph.diastolic=Diastolic
+sensors.graph.battery=Battery
