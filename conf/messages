@@ -133,6 +133,8 @@ button.no=No
 button.ring=Ring
 button.send=Send
 button.done=Done
+button.alarms.mine=Mine
+button.alarms.all=All
 
 #sensors
 sensors.graph.x=Timestamp

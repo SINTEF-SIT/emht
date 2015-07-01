@@ -84,13 +84,24 @@ public class Application extends Controller {
 	/* BEGIN ENDPOINTS */
 
 	/**
+	 * Returns a JSON object of the currently logged in user
+	 * @return
+	 */
+	@Security.Authenticated(Authorization.Authorized.class)
+	public static Result me() {
+		AlarmAttendant aa = AlarmAttendant.find.byId(Long.parseLong(session().get("id")));
+		if (aa == null || aa.id == 0) return notFound(); // Should never happen
+		return ok(AlarmAttendant.toJson(aa));
+	}
+
+	/**
 	 * Retrieve the main dashboard view
 	 * @return HTTP response with the main Dashboard
 	 */
 	@Security.Authenticated(Authorization.Authorized.class)
-	public static Result openAlarms(){
-		List<Alarm> object = Global.alarmList.getAlarmList();
-		Content html = views.html.index.render(object, alarmForm, session().get("username"));
+	public static Result openAlarms() {
+		List<Alarm> alarms = Alarm.allOpenAlarms();
+		Content html = views.html.index.render(alarms, alarmForm, session().get("username"));
 
 		return ok(html);
 	}
@@ -318,10 +329,10 @@ public class Application extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result closeCase() {
 		JsonNode json = request().body().asJson();
-		long patientId = json.findPath("patientId").asLong();
+		long patientId = json.get("patient").get("id").asLong();
 		String notes = json.findPath("notes").asText();
 		String alarmOccurance = json.findPath("occuranceAddress").asText();
-		long alarmId = json.findPath("alarmId").asLong();
+		long alarmId = json.findPath("id").asLong();
 
 		Alarm a = new Alarm();
 		a.occuranceAddress = alarmOccurance;

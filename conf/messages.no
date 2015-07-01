@@ -131,6 +131,8 @@ button.no=Nei
 button.ring=Ring
 button.send=Send
 button.done=OK
+button.alarms.mine=Mine
+button.alarms.all=Alle
 
 #sensors
 sensors.graph.x=Tidspunkt

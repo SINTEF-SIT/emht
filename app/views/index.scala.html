@@ -56,7 +56,12 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 						</div>
 					</div>
 					<div id="assignedAlarmDiv">
-						<h3><span id="nbOfAssignedAlarm"></span> @Messages.get("assignedlist.title")</h3>
+						<h3><span id="nbOfAssignedAlarm"></span> @Messages.get("assignedlist.title")
+						<span class="pull-right">
+							<button class="btn btn-primary showMyAlarmsOnly">@Messages.get("button.alarms.mine")</button>
+							<button class="btn btn-default showAllAlarms">@Messages.get("button.alarms.all")</button>
+						</span>
+						</h3>
 						<div class="list-group" id="assignedAlarmList" style="overflow-y: scroll; height: 185px;"> <!--index would reference to the iteration index, but we are not using it-->
 							@for((alarm,index) <- alarms.zipWithIndex){
 								@if((null != alarm.attendant) && (alarm.attendant.username.equals(username)) && (null == alarm.dispatchingTime)){
@@ -75,7 +80,12 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 						</div>
 					</div>
 					<div id="followupAlarmDiv">
-						<h3><span id="nbOfFollowUpAlarm"></span> @Messages.get("followuplist.title")</h3>
+						<h3><span id="nbOfFollowUpAlarm"></span> @Messages.get("followuplist.title")
+						<span class="pull-right">
+							<button class="btn btn-primary showMyAlarmsOnly">@Messages.get("button.alarms.mine")</button>
+							<button class="btn btn-default showAllAlarms">@Messages.get("button.alarms.all")</button>
+						</span>
+						</h3>
 						<div class="list-group" id="followupAlarmList" style="overflow-y: scroll; height: 185px;">
 						@for((alarm,index) <- alarms.zipWithIndex){
 							@if((null != alarm.attendant) && (alarm.attendant.username.equals(username)) && (null != alarm.dispatchingTime)){

@@ -6,6 +6,7 @@ var Alarms = (function ($) {
 
 	/* Private fields here */
 	var ACTIVE_ALARM = null;
+	var ME = null;
 
 	// We keep track of overall state of all alarms in a single array
 	var alarms = [];
@@ -43,6 +44,11 @@ var Alarms = (function ($) {
 
 		isClosed: function () { return this.state === 'closed'; },
 
+		// We treat open alarms as basically belonging to 'everyone' until assigned to an operator
+		isMine: function () {
+			return this.isOpen() || (this.data.attendant !== null && this.data.attendant.id === ME.id);
+		},
+
 		isLocationVerified: function () { return this.data.latitude !== null && this.data.longitude !== null; },
 
 		moveToAssigned: function () {
@@ -60,7 +66,7 @@ var Alarms = (function ($) {
 			this.DOM.unbind('click');
 
 			if (this.state === 'finished') {
-				this.DOM.children('.clock-icon').remove()
+				this.DOM.children('.clock-icon').remove();
 				this.DOM.children(':first')
 					.after('<img src="/assets/images/finished.png" class="img-thumbnail pull-left finished-icon">');
 			}
@@ -193,6 +199,34 @@ var Alarms = (function ($) {
 		$("#nbOfFollowUpAlarm").text(followUpAlarmCount);
 	};
 
+	// Mode switching is when an operator switches between Mine/All alarms in the left panel
+	var handleModeSwitch = function () {
+		var myAlarmsOnly = $('.showMyAlarmsOnly');
+		var allAlarms = $('.showAllAlarms');
+		myAlarmsOnly.on('click', function (e) {
+
+			if (DEBUG) console.log('Switching to "My Alarms Only" mode.');
+			e.preventDefault();
+
+			// Switch the btn class to change state
+			allAlarms.removeClass('btn-primary').addClass('btn-default');
+			myAlarmsOnly.removeClass('btn-default').addClass('btn-primary');
+
+			Alarms.gui.setMyAlarmsOnly(true);
+		});
+		allAlarms.on('click', function (e) {
+
+			if (DEBUG) console.log('Switching to "All Alarms" mode.');
+			e.preventDefault();
+
+			// Switch the btn class to change state
+			myAlarmsOnly.removeClass('btn-primary').addClass('btn-default');
+			allAlarms.removeClass('btn-default').addClass('btn-primary');
+
+			Alarms.gui.setMyAlarmsOnly(false);
+		});
+	};
+
 	// Fetches all non-closed alarms from the database and populates the client-side alarm cache
 	var fetchAllOpenAlarms = function (callback) {
 		$.getJSON('/alarm/allOpen', function (data) {
@@ -227,15 +261,22 @@ var Alarms = (function ($) {
 		var alarm = a.data;
 		// Build DOM representation of alarm
 		var time = new Date(alarm.openingTime);
-		var formatedTime = $.format.date(time, "dd/MM HH:mm");
+		var formattedTime = $.format.date(time, "dd/MM HH:mm");
 		var listItem =
 			'<a href="#" idnum="' + alarm.id + '" id="Alarm' + alarm.id +
 			'" class="list-group-item alarmItem"><img src="/assets/images/' +
 			alarm.type + '.png" class="img-thumbnail pull-left type-icon" data-type="'+
 			alarm.type + '" width="48" height="48"/>' +
 			'<h4 class="list-group-item-heading"> @Messages.get("listitem.arrived") ' +
-			formatedTime  +' </h4><p class="list-group-item-text">@Messages.get("listitem.callee") ' +
-			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '<div class="assignedTo"></div></p>';
+			formattedTime  +' </h4><p class="list-group-item-text">@Messages.get("listitem.callee") ' +
+			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '<div class="assignedTo">';
+
+		// Pre-fill the Assigned to field if we have a mobile caretaker registered
+		if (alarm.mobileCareTaker !== null) {
+			listItem += 'Assigned to: <strong>' + alarm.mobileCareTaker.username + '</strong>';
+		}
+
+		listItem += '</div></p>';
 
 		if (updateFunction === null || updateFunction === undefined) {
 			return listItem;
@@ -272,23 +313,36 @@ var Alarms = (function ($) {
 	/* Public methods inside return object */
 	return {
 		init: function () {
+
+			// Display all fragments
 			$("#assesment").show();
 			$("#patientBox").show();
 			$("#calleeBox").show();
 			$("#extraActionButtonsDiv").show();
 			$("#closingNotesAndButtons").show();
 
-			fetchAllOpenAlarms(function () {
-				WebSocketManager.init();
-				Patient.init();
-				Assessment.init();
-				Actions.init();
+			// Start by fetching the AlarmAttendant object representing ourselves
+			$.getJSON('/me', function (data) {
 
-				Alarms.gui.resetAlarmCount();
+				if (DEBUG) console.log("Fetched active user object: " + data.username + " (" + data.id + ")");
+				ME = data;
+
+				// When we know who we are, fetch all alarms and trigger other module initializations
+				fetchAllOpenAlarms(function () {
+					WebSocketManager.init();
+					Patient.init();
+					Assessment.init();
+					Actions.init();
+
+					Alarms.gui.resetAlarmCount();
+				});
 			});
 
 			// if the modal is canceled, we clear the active item
 			handleModalCancel();
+
+			// Bind button listener to mode switching between only my alarms or other alarms as well
+			handleModeSwitch();
 		},
 
 		gui: {
@@ -364,6 +418,53 @@ var Alarms = (function ($) {
 			getCurrentSelectedAlarmIndex: function () {
 				if (ACTIVE_ALARM === null) return null;
 				return ACTIVE_ALARM.id;
+			},
+
+			setMyAlarmsOnly: function (yes) {
+				var a = Alarms.getAlarmsAssignedToOthers();
+				for (var i in a) {
+					if (a.hasOwnProperty(i)) {
+						// If the DOM field is an empty array (does not exist)
+						// We need to build the DOM object and bind the regular click listener.
+						if (a[i].DOM.length === 0) {
+							buildDOMAlarm(a[i], function (domAlarm) {
+								// Build the DOM object using jQuery wrapper
+								domAlarm = $(domAlarm);
+
+								// Distinguish this item from our own assigned items
+								domAlarm.css({'background-color': '#eee'});
+
+								// Since the DOM ref was void, we need to update it on the Alarm object
+								a[i].DOM = domAlarm;
+
+								// Check where to put the alarm and append it
+								if (a[i].state === 'assigned') {
+									$('#assignedAlarmList').append(domAlarm);
+
+								} else if (a[i].state === 'followup') {
+									$('#followupAlarmList').append(domAlarm);
+								}
+
+								// Add click listener
+								domAlarm.on('click', function (e) {
+									e.preventDefault();
+									a[i].selectProtected();
+								});
+							});
+						}
+						// Check whether we are revealing or hiding the DOM object of the other alarms
+						if (!yes) {
+							a[i].DOM.show();
+						} else {
+							a[i].DOM.hide();
+						}
+					}
+				}
+
+				// Finally we clear the view if the selected alarm was not one assigned to us
+				if (!yes && ACTIVE_ALARM !== null && !ACTIVE_ALARM.isMine()) {
+					Alarms.gui.clearUpData();
+				}
 			}
 		},
 
@@ -407,10 +508,37 @@ var Alarms = (function ($) {
 			return ACTIVE_ALARM;
 		},
 
+		getMyAlarmsIncludingOpen: function () {
+			var collector = [];
+			for (var i in alarms) {
+				if (alarms.hasOwnProperty(i) &&
+				   (alarms[i].data.attendant.id === ME.id || alarms[i].state === 'open')) {
+					collector.push(alarms[i]);
+				}
+			}
+			return collector;
+		},
+
+		getAllAlarms: function () {
+			return alarms.slice(); // Shallow copy since we don't want accidental tampering with the orig. array
+		},
+
+		getAlarmsAssignedToOthers: function () {
+			var collector = [];
+			for (var i in alarms) {
+				if (alarms.hasOwnProperty(i) &&
+				   (alarms[i].data.attendant.id !== ME.id && alarms[i].data.attendant !== undefined)) {
+					collector.push(alarms[i]);
+				}
+			}
+			return collector;
+		},
+
 		getNumberOfOpenAlarms: function () {
 			var tot = 0;
 			for (var i in alarms) {
-				if (alarms.hasOwnProperty(i) && alarms[i].state === 'open') tot++;
+				if (alarms.hasOwnProperty(i) &&
+					alarms[i].state === 'open') tot++;
 			}
 			return tot;
 		},
@@ -418,7 +546,9 @@ var Alarms = (function ($) {
 		getNumberOfAssignedAlarms: function () {
 			var tot = 0;
 			for (var i in alarms) {
-				if (alarms.hasOwnProperty(i) && alarms[i].state === 'assigned') tot++;
+				if (alarms.hasOwnProperty(i) &&
+					alarms[i].state === 'assigned' &&
+					alarms[i].data.attendant.id === ME.id) tot++;
 			}
 			return tot;
 		},
@@ -426,7 +556,9 @@ var Alarms = (function ($) {
 		getNumberOfFollowupAlarms: function () {
 			var tot = 0;
 			for (var i in alarms) {
-				if (alarms.hasOwnProperty(i) && alarms[i].state === 'followup') tot++;
+				if (alarms.hasOwnProperty(i) &&
+					alarms[i].state === 'followup' &&
+					alarms[i].data.attendant.id === ME.id) tot++;
 			}
 			return tot;
 		},
