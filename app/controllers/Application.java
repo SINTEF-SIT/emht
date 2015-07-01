@@ -306,13 +306,7 @@ public class Application extends Controller {
 
 		// inserts on the db and return the db instance (which will include the id of the patient)
 		Patient retObj = Patient.getOrCreate(p);
-		ObjectNode  patient = Json.newObject();
-		patient.put("id", retObj.id);
-		patient.put("name", retObj.name);
-		patient.put("phoneNumber", retObj.phoneNumber);
-		patient.put("personalNumber", retObj.personalNumber);
-		patient.put("address", retObj.address);
-		patient.put("age", retObj.age);
+		ObjectNode patient = Patient.toJson(retObj);
 
 		return ok(patient);
 	}
@@ -356,7 +350,7 @@ public class Application extends Controller {
 		if (a != null) {
 			Logger.debug("finishAlarm called on: " + id.toString());
 
-			/* TODO: ENABLE BELOW CODE DURING REGULAR TESTING (It's disabled for development purposes)
+			/* TODO: ENABLE BELOW CODE DURING REGULAR OPERATION (It's disabled for development purposes)
 			if (!a.mobileCareTaker.username.equals(careTaker)) {
 				Logger.debug("Attempt to finish a case not designated for that user");
 				return unauthorized("Attempt to finish a case not designated for that user");

@@ -110,7 +110,10 @@ var Sensor = (function ($) {
 
             getDataForPatient(patientId);
             updateTimer = setInterval(function () {
-                getDataForPatient(patientId);
+                // We check every interval if the sensor panel is active, so we don't cause unnecessary load.
+                if ($('#sensorNav').hasClass('active')) {
+                    getDataForPatient(patientId);
+                }
             }, 10000);
         },
 

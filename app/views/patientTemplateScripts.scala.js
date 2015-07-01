@@ -71,6 +71,7 @@ var Patient = (function ($) {
 						contentType: 'application/json',
 						success: function (data) {
 							alert('@Messages.get("patientpane.incident.checkaddress.success")');
+                            Alarms.getActiveAlarm().data.occuranceAddress = data.occuranceAddress;
 						},
 						error: function (xhr, statusText, thrownError) {
 							alert('Failed to save resolved address coordinates to alarm!!!');
@@ -165,6 +166,10 @@ var Patient = (function ($) {
 		// Cache the active alarm DOM object
 		var currentSelected = Alarms.getActiveAlarm();
 
+        // Update the active alarm patient field
+        currentSelected.data.patient = pat;
+        if (DEBUG) console.log("Set patient on active alarm to: " + pat.name);
+
 		// for the personalNumber, if it is more than 6 digits, we add a space after the first 6 digits
 		var formattedPersonalNumber;
 		if (pat.personalNumber.length > 6) {
@@ -186,14 +191,21 @@ var Patient = (function ($) {
 
 		// Update notes and set occurrance address if set
 		var notes = currentSelected.data.notes;
-		var occurranceAddress = currentSelected.data.occuranceAddress;
+		var occurrenceAddress = currentSelected.data.occuranceAddress;
 		$("#globalNotesBox").val(notes);
-		if (occurranceAddress !== null) {
-			$("#incidentAddress").val(occurranceAddress);
-			if ($('#patientAddress').val() == occurranceAddress) {
-				$('#sameAddressCheckbox').attr('checked', true);
-			}
-		}
+
+        // Check existance and potential equality between occurrence address and patient address
+        if (occurrenceAddress !== null) {
+			$("#incidentAddress").val(occurrenceAddress);
+            // Just click the checkbox if it is the same
+            if (pat.address.toLowerCase() === occurrenceAddress.toLowerCase()) $('#sameAddressCheckbox').click();
+            else ($('#sameAddressCheckbox').removeAttr('checked'));
+		} else {
+            if (DEBUG) console.log("No occurrence address was found from selected alarm data.");
+        }
+
+        // Update the dropdown selector
+        $('#patientDropDown').find('.selection').html(pat.name);
 
 		populatePastAlarmsFromPatient(pat);
 	};
@@ -202,7 +214,7 @@ var Patient = (function ($) {
 	var populatePastAlarmsFromPatient = function (pat) {
 		// Empty the tbody of the log table
 		var tbody = $("#patientLogTable > tbody");
-		tbody.html = "";
+		tbody.html("");;
 
 		if (0 != pat.id) {
 			$.getJSON("/pastAlarmsFromPatient/" + pat.id, function(data) {
@@ -293,9 +305,7 @@ var Patient = (function ($) {
 		},
 
 		populatePatient: function (pat) {
-			Assessment.loadPatientSensor(pat.id);
 			populatePatientInformation(pat);
-			$('#patientDropDown').find('.selection').text(pat.name);
 		},
 
 		addNewPatientFromModal: function () {
@@ -320,6 +330,7 @@ var Patient = (function ($) {
 					var patientListItem = '<li id="Patient' + outputPatient.id + '"><a href="#">' + outputPatient.name +'</a></li>';
 					$('#patientDropDownList').prepend(patientListItem);
 					Patient.populatePatient(outputPatient);
+
 					$('#Patient'+outputPatient.id).on('click', function (e) {
 						e.preventDefault();
 						Patient.populatePatient(outputPatient);
