@@ -43,6 +43,10 @@ html, body {
     width: 48px;
 }
 
+/* Overrides for protected alarm mode */
+p.list-group-item-text {
+    color: #000 !important;
+}
 
 
 

@@ -59,6 +59,10 @@ var Patient = (function ($) {
 		// Bind the verify button that checks the location and updates with Lat / Long coordinates if successful
 		$('#verifyPatientLocation').on('click', function (e) {
 			e.preventDefault();
+
+			var activeAlarm = Alarms.getActiveAlarm();
+			if (activeAlarm !== null && activeAlarm.protected) return alert('Alarm is protected, cannot modify.');
+
 			var address = $('#incidentAddress').val();
 			MapView.convertAddressToLatLng(address, function (locationData) {
 				if (DEBUG) console.log(locationData);
@@ -87,14 +91,20 @@ var Patient = (function ($) {
 	// Generate the dropdown list of possible patients based on a patient list
 	var generateProspectPatients = function (patientList) {
 		if (DEBUG) console.log("generateProspectPatients called: " + JSON.stringify(patientList, null, 4));
-		var activePatient = Alarms.getActiveAlarm().data.patient;
+		var activeAlarm = Alarms.getActiveAlarm();
+		var activePatient = activeAlarm.data.patient;
 		var patInProspects = false;
 		var dropDown = $('#patientDropDownList');
 		for (var i in patientList) {
 			var listItem = $('<li></li>').html('<a href="#">' + patientList[i].name + '</a>');
 			listItem.on('click', function (e) {
 				e.preventDefault();
+				if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+
 				populatePatientInformation(patientList[i]);
+
+				// Persist the selection in the database.
+				setPatientOnAlarm(activeAlarm.id, patientList[i]);
 			});
 			listItem.attr('id', 'Patient' + patientList[i].id);
 
@@ -239,10 +249,25 @@ var Patient = (function ($) {
 		}
 	}
 
+	var setPatientOnAlarm = function (alarmId, patient) {
+		myJsRoutes.controllers.Application.setPatientOfAlarm(alarmId).ajax({
+			data : JSON.stringify(patient),
+			contentType : 'application/json',
+			success : function (outputPatient) {
+				if (DEBUG) console.log('Patient ' + outputPatient.name + ' updated on active alarm serverside.');
+			},
+			error: function (xhr, thrownError, statusMsg) {
+				alert('Could not set patient: ' + thrownError);
+			}
+		})
+	}
+
 	/* Public methods inside return object */
 	return {
 		init: function () {
 			$('#addPatientModalButton').click(function() {
+				var activeAlarm = Alarms.getActiveAlarm();
+				if (activeAlarm !== null && activeAlarm.protected) return alert('Alarm is protected, cannot modify.');
 				Patient.addNewPatientFromModal();
 			});
 			$("#closeCaseFromPatientRegButton").click(Patient.closeCaseAtRegistration);
@@ -331,9 +356,14 @@ var Patient = (function ($) {
 					$('#patientDropDownList').prepend(patientListItem);
 					Patient.populatePatient(outputPatient);
 
+					// Persist the selection in the database.
+					setPatientOnAlarm(Alarms.getActiveAlarm().id, outputPatient);
+
 					$('#Patient'+outputPatient.id).on('click', function (e) {
 						e.preventDefault();
 						Patient.populatePatient(outputPatient);
+						// Persist the selection in the database.
+						setPatientOnAlarm(Alarms.getActiveAlarm().id, outputPatient);
 					});
 
 				}// end of success

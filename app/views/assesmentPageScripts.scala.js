@@ -251,6 +251,12 @@ var Assessment = (function ($) {
 		$("#nmiTab").find(':radio').each(function (i) {
 			// set the action to show the label
 			$(this).change(function () {
+				// We need this to indicate state to operator if protected mode alarm is selected
+				var activeAlarm = Alarms.getActiveAlarm();
+				if (activeAlarm !== null) {
+					if (Alarms.getActiveAlarm().protected) return alert('Alarm is protected, no changes will be saved.');
+				}
+
 				var radioId = $(this).attr('id');
 				var oppositeRadioId = radioId.substring(0, radioId.length -1);
 

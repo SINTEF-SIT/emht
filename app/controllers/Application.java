@@ -10,6 +10,7 @@ import models.sensors.ComponentReading;
 import models.sensors.Sensor;
 import play.Logger;
 import play.Routes;
+import play.api.libs.json.JsPath;
 import play.cache.Cache;
 import play.data.*;
 import play.libs.Json;
@@ -204,6 +205,41 @@ public class Application extends Controller {
 		String location = latLng.findPath("location").asText();
 		Alarm a = Alarm.setLocationFromResolvedAddress(id, location, latitude, longitude);
 		return ok(Alarm.toJson(a));
+	}
+
+	/**
+	 * Update an Alarm object with a new patient
+	 * @param id The ID of the Alarm to update
+	 * @return An Alarm instance as JSON
+	 */
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result setPatientOfAlarm(Long id) {
+		Alarm a = Alarm.find.byId(id);
+		if (a == null || a.id == 0) return notFound("Alarm does not exist");
+
+		JsonNode patient = request().body().asJson();
+		Long patientId = patient.get("id").asLong();
+
+		Patient p;
+		if (patientId != 0) {
+			p = Patient.find.byId(patientId);
+			if (p == null || p.id == 0) return notFound("Patient does not exist");
+		} else {
+			p = new Patient();
+			p.name = patient.findPath("name").textValue();
+			p.personalNumber = patient.findPath("personalNumber").textValue();
+			p.phoneNumber = patient.findPath("phoneNumber").textValue();
+			p.address = patient.findPath("address").textValue();
+			p.age = patient.findPath("age").asInt();
+
+			// inserts on the db and return the db instance (which will include the id of the patient)
+			p = Patient.getOrCreate(p);
+		}
+
+		a.patient = p;
+		a.save();
+
+		return ok(Patient.toJson(p));
 	}
 
 	/**
@@ -503,6 +539,7 @@ public class Application extends Controller {
 				controllers.routes.javascript.Application.closeCase(),
 				//controllers.routes.javascript.Application.saveCase(),
 				controllers.routes.javascript.Application.insertPatientFromJson(),
+				controllers.routes.javascript.Application.setPatientOfAlarm(),
 				controllers.routes.javascript.Application.assignAlarmFromJson(),
 				controllers.routes.javascript.Application.getCalleeFromAlarm(),
 				controllers.routes.javascript.Application.getProspectPatients(),

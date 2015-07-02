@@ -21,6 +21,7 @@ var Alarms = (function ($) {
 		this.selected = false;
 		this.data = data;
 		this.state = 'open';
+		this.protected = false;
 		this.DOM = null;
 		if (data.attendant !== null && data.attendant !== undefined) {
 			this.state = 'assigned';
@@ -28,7 +29,7 @@ var Alarms = (function ($) {
 				this.state = 'followup';
 			}
 		}
-		if (data.finished !== null && data.finished === true) this.state = 'finished'
+		if (data.finished !== null && data.finished === true) this.state = 'finished';
 		if (data.closingTime !== null && data.closingTime !== undefined) {
 			this.state = 'closed';
 		}
@@ -52,6 +53,8 @@ var Alarms = (function ($) {
 		isLocationVerified: function () { return this.data.latitude !== null && this.data.longitude !== null; },
 
 		moveToAssigned: function () {
+			if (this.protected) return alert('Alarm is protected, cannot modify.');
+
 			// If we already are in assigned, just ignore the call
 			if (this.state === 'assigned') return;
 			this.DOM.removeAttr('onclick');
@@ -94,6 +97,8 @@ var Alarms = (function ($) {
 		},
 
 		moveToFollowup: function () {
+			if (this.protected) return alert('Alarm is protected, cannot modify.');
+
 			// Check if we have an assignment to care taker, if so we must set the value in the list item
 			if (this.data.mobileCareTaker !== null) {
 				this.DOM.children('.assignedTo')
@@ -136,6 +141,12 @@ var Alarms = (function ($) {
 			this.selected = true;
 			this.DOM.addClass('active');
 			return this;
+		},
+
+		selectProtected: function () {
+			this.select();
+			this.protected = true;
+			Alarms.gui.selectFollowUpAlarm(this.id);
 		},
 
 		deselect: function () {
@@ -423,46 +434,51 @@ var Alarms = (function ($) {
 			setMyAlarmsOnly: function (yes) {
 				var a = Alarms.getAlarmsAssignedToOthers();
 				for (var i in a) {
-					if (a.hasOwnProperty(i)) {
-						// If the DOM field is an empty array (does not exist)
-						// We need to build the DOM object and bind the regular click listener.
-						if (a[i].DOM.length === 0) {
-							buildDOMAlarm(a[i], function (domAlarm) {
-								// Build the DOM object using jQuery wrapper
-								domAlarm = $(domAlarm);
+					// Wrap inner logic in a closure to prevent the mutable iterator variable from being accessible
+					// inside the inner callbacks.
+					(function () {
+						if (a.hasOwnProperty(i)) {
+							var otherAlarm = a[i];
+							// If the DOM field is an empty array (does not exist)
+							// We need to build the DOM object and bind the regular click listener.
+							if (otherAlarm.DOM.length === 0) {
+								buildDOMAlarm(otherAlarm, function (domAlarm) {
+									// Build the DOM object using jQuery wrapper
+									domAlarm = $(domAlarm);
 
-								// Distinguish this item from our own assigned items
-								domAlarm.css({'background-color': '#eee'});
+									// Since the DOM ref was void, we need to update it on the Alarm object
+									otherAlarm.DOM = domAlarm;
 
-								// Since the DOM ref was void, we need to update it on the Alarm object
-								a[i].DOM = domAlarm;
+									// Check where to put the alarm and append it
+									if (otherAlarm.state === 'assigned') {
+										$('#assignedAlarmList').append(domAlarm);
 
-								// Check where to put the alarm and append it
-								if (a[i].state === 'assigned') {
-									$('#assignedAlarmList').append(domAlarm);
+									} else if (otherAlarm.state === 'followup') {
+										$('#followupAlarmList').append(domAlarm);
+									}
 
-								} else if (a[i].state === 'followup') {
-									$('#followupAlarmList').append(domAlarm);
-								}
+									// Distinguish this item from our own assigned items
+									domAlarm.css({'background': '#eee', 'color': '#000'});
 
-								// Add click listener
-								domAlarm.on('click', function (e) {
-									e.preventDefault();
-									a[i].selectProtected();
+									// Add click listener
+									domAlarm.on('click', function (e) {
+										e.preventDefault();
+										otherAlarm.selectProtected();
+									});
 								});
-							});
+							}
+							// Check whether we are revealing or hiding the DOM object of the other alarms
+							if (!yes) {
+								a[i].DOM.show();
+							} else {
+								a[i].DOM.hide();
+							}
 						}
-						// Check whether we are revealing or hiding the DOM object of the other alarms
-						if (!yes) {
-							a[i].DOM.show();
-						} else {
-							a[i].DOM.hide();
-						}
-					}
+					})()
 				}
 
 				// Finally we clear the view if the selected alarm was not one assigned to us
-				if (!yes && ACTIVE_ALARM !== null && !ACTIVE_ALARM.isMine()) {
+				if (yes && ACTIVE_ALARM !== null && !ACTIVE_ALARM.isMine()) {
 					Alarms.gui.clearUpData();
 				}
 			}
@@ -470,6 +486,8 @@ var Alarms = (function ($) {
 
 		assign: function (alarmIndex) {
 			if (DEBUG) console.log("assign called on index: " + alarmIndex);
+
+			if (this.protected) return alert('Alarm is protected, cannot modify.');
 
 			var assignAlarmReq = {
 				'alarmId' : alarmIndex
@@ -527,7 +545,7 @@ var Alarms = (function ($) {
 			var collector = [];
 			for (var i in alarms) {
 				if (alarms.hasOwnProperty(i) &&
-				   (alarms[i].data.attendant.id !== ME.id && alarms[i].data.attendant !== undefined)) {
+				   (alarms[i].data.attendant !== null && alarms[i].data.attendant.id !== ME.id)) {
 					collector.push(alarms[i]);
 				}
 			}

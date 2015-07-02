@@ -80,6 +80,7 @@ var Actions = (function ($) {
 
         closeCaseAtClosing: function () {
             if (Alarms.getActiveAlarm() === null) alert('No active alarm');
+            if (Alarms.getActiveAlarm().protected) return alert('Alarm is protected, cannot modify.');
             var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 
             myJsRoutes.controllers.Application.closeCase().ajax({
@@ -93,6 +94,7 @@ var Actions = (function ($) {
 
         saveAndFollowupAtClosing: function (followUp) {
             if (Alarms.getActiveAlarm() === null) alert('No active alarm');
+            if (Alarms.getActiveAlarm().protected) return alert('Alarm is protected, cannot modify.');
             var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 
             // If we have a special followUp payload, add it to the alarm
