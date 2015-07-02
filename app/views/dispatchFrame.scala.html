@@ -50,31 +50,6 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#TPpanel">
-                    @Messages.get("actions.list.tp")
-                    </a>
-                </h4>
-            </div>
-            <div id="TPpanel" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <table class="table table-bordered" id="tpTable">
-                        <thead><tr>
-                            <td>@Messages.get("legvaktapill.car")</td><td>@Messages.get("legvaktapill.driver")</td><td>@Messages.get("legvaktapill.phisician")</td><td>@Messages.get("patientpane.phonenumber")</td>
-                        </tr></thead>
-                        <tbody>
-                            <tr><td>@Messages.get("legvaktapill.car") 1</td><td>A. Anderson</td><td>Å. Jakob</td><td>9622 5442</td></tr>
-                            <tr><td>@Messages.get("legvaktapill.car") 2</td><td>F. Henriksen</td><td>R. Sande</td><td>9634 7456</td></tr>
-                        </tbody>
-                    </table>
-                    <button type="button" id="dispatch-map-button" class="btn btn-default">@Messages.get("actions.button.map.dispatch")</button>
-                    <button type="button" class="btn btn-default dispatch-ring-btn">@Messages.get("button.ring")</button>
-                    <button type="button" class="btn btn-default dispatch-send-btn">@Messages.get("button.send")</button>
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
                     <a data-toggle="collapse" data-parent="#dynamicDispatchButtons" href="#legevaktPanel">
                     @Messages.get("actions.list.alarmcentral")
                     </a>
@@ -148,10 +123,10 @@
 
 <div id="closingNotesAndButtons" class="row">
     <button type="button" class="btn btn-default" id="open-map-button">@Messages.get("actions.button.map.open")</button>
-    <br />
+    <br /><br />
     <button type="button" class="btn btn-default schedule-btn">@Messages.get("actions.button.appointment.leg")</button>
     <button type="button" class="btn btn-default schedule-btn">@Messages.get("actions.button.appointment.doctor")</button>
-    <br />
+    <br /><br />
     <button id="closeCaseActionsButton" type="button" class="btn btn-danger">@Messages.get("actions.button.close")</button>
     <button id="saveAndFollowUpButton" type="button" class="btn btn-warning">@Messages.get("actions.button.followup")</button>
 </div>

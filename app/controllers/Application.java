@@ -365,7 +365,9 @@ public class Application extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result closeCase() {
 		JsonNode json = request().body().asJson();
-		long patientId = json.get("patient").get("id").asLong();
+		JsonNode patient = json.get("patient");
+		Long patientId = 0L;
+		if (!patient.isNull()) patientId = json.get("patient").get("id").asLong();
 		String notes = json.findPath("notes").asText();
 		String alarmOccurance = json.findPath("occuranceAddress").asText();
 		long alarmId = json.findPath("id").asLong();
@@ -496,9 +498,8 @@ public class Application extends Controller {
 		JsonNode json = request().body().asJson();
 		Long alarmId =  json.findPath("alarmId").asLong();
 		AlarmAttendant a = AlarmAttendant.getAttendantFromUsername(session().get("username"));
-		Alarm.assignAttendantToAlarm(alarmId, a);
 
-		return ok();
+		return ok(Alarm.toJson(Alarm.assignAttendantToAlarm(alarmId, a)));
 	}
 
 	/**

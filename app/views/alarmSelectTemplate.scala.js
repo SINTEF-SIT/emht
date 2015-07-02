@@ -259,7 +259,7 @@ var Alarms = (function ($) {
 	// Fetch alarm by ID
 	var getAlarm = function (id) {
 		for (var i in alarms) {
-			if (alarms[i].id === id) return alarms[i];
+			if (alarms.hasOwnProperty(i) && alarms[i].id === id) return alarms[i];
 		}
 		return null;
 	};
@@ -497,6 +497,7 @@ var Alarms = (function ($) {
 				data : JSON.stringify(assignAlarmReq),
 				contentType : 'application/json',
 				success : function (data) {
+					getAlarm(alarmIndex).data = data;
 					getAlarm(alarmIndex).moveToAssigned();
 				}
 			});

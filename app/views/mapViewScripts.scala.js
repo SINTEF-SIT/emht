@@ -22,6 +22,7 @@ var MapView = (function ($) {
 
     // Used when selecting subsets of all open alarms for display in map view
     var alarmCache = null;
+    var fieldOperatorLocationCache = null;
 
     var fieldOperatorLocationPeriodicUpdateTimer = null;
 
@@ -71,8 +72,6 @@ var MapView = (function ($) {
     var bindButtons = function () {
         $('#open-map-button').on('click', function (e) {
             e.preventDefault();
-            // Since the regular open map button was pressed, we deselect any active alarm
-            if (Alarms.getActiveAlarm() !== null) Alarms.getActiveAlarm().deselect();
             showMap();
         });
         // Regular close map button in Map View
@@ -81,13 +80,11 @@ var MapView = (function ($) {
             $('#map-dashboard').hide();
             $('#main-dashboard').show();
             clearInterval(fieldOperatorLocationPeriodicUpdateTimer);
-        });
-        // Select Mobile caretaker button in openAlarms dashboard
-        $('#dispatch-map-button').on('click', function (e) {
-            e.preventDefault();
-            showMap();
+            fieldOperatorLocationPeriodicUpdateTimer = null;
+            if (Alarms.getActiveAlarm() !== null) Alarms.getActiveAlarm().deselect();
         });
         bindAssignButtons();
+        bindCallButtons();
     };
 
     // Helper method that only binds assign alarm buttons in the sidebar
@@ -98,11 +95,24 @@ var MapView = (function ($) {
             var payload = {
                 type: 'mobileCareTaker',
                 id: Number($(this).parent().attr('id').replace('field-operator', ''))
-            }
+            };
             Actions.saveAndFollowupAtClosing(payload);
-            $('#close-map-button').click();
+
+            // Close and clear
+            $('#map-dashboard').hide();
+            $('#main-dashboard').show();
+            clearInterval(fieldOperatorLocationPeriodicUpdateTimer);
+            fieldOperatorLocationPeriodicUpdateTimer = null;
         });
-    }
+    };
+
+    // Helper method that only binds call buttons in the sidebar
+    var bindCallButtons = function () {
+        $('.map-field-operator').find('.dispatch-ring-btn').on('click', function (e) {
+            e.preventDefault();
+            alert('Calling Field Operator...');
+        })
+    };
 
     // Helper method that generates custom Image icons for map markers
     var createMarkerIcon = function (imageUrl) {
@@ -136,15 +146,12 @@ var MapView = (function ($) {
             }
             highlightedOperator = $('#field-operator' + marker.fieldOperator.id);
             highlightedOperator.addClass('active');
-            highlightedOperator.children('.assignmentQueue').show()
+            highlightedOperator.children('.assignmentQueue').show();
 
-            // If we have no active alarm assignment state, activate the fieldoperator to incident indicators
-            if (Alarms.getActiveAlarm() === null) {
-                // Swap out alarms on display with alarms assigned to this field operator
-                MapView.displayCurrentAssignmentsForFieldOperator(marker.fieldOperator);
-            }
+            // Swap out alarms on display with alarms assigned to this field operator
+            MapView.displayCurrentAssignmentsForFieldOperator(marker.fieldOperator);
         });
-    }
+    };
 
     // Helper method that draws field operator markers on the map
     var updateFieldOperatorMarkers = function () {
@@ -186,7 +193,9 @@ var MapView = (function ($) {
         // Add all alarm markers
         for (var i = 0; i < alarms.length; i ++) {
             var pos = new google.maps.LatLng(alarms[i].latitude, alarms[i].longitude);
-            var icon = createMarkerIcon('/assets/images/map/incident.png');
+            var icon;
+            if (alarms[i].mobileCareTaker !== null) icon = createMarkerIcon('/assets/images/map/incident.png');
+            else icon = createMarkerIcon('/assets/images/map/incident_unassigned.png');
             var marker = new google.maps.Marker({
                 position: pos,
                 map: map,
@@ -202,9 +211,10 @@ var MapView = (function ($) {
 
     // Helper method that updates the sidebar with data about field operators, their types and assignments
     var updateSidebar = function () {
+        var activeAlarm = Alarms.getActiveAlarm();
 
         // Sort the fieldOperatorLocations by number of assignments
-        fieldOperatorLocations.sort(function (a, b) {
+        fieldOperatorLocationCache.sort(function (a, b) {
             if (a.assignedAlarms.length < b.assignedAlarms.length) return -1;
             else if (a.assignedAlarms.length > b.assignedAlarms.length) return 1;
             return 0;
@@ -212,42 +222,58 @@ var MapView = (function ($) {
 
         // Time to draw the list items
         var html = '<ul class="map-field-operator">';
-        for (var i = 0; i < fieldOperatorLocations.length; i++) {
-            html += '<li id="field-operator' + fieldOperatorLocations[i].id + '"><strong>' +
-                fieldOperatorLocations[i].username + '</strong><br><small>' +
-                new Date(fieldOperatorLocations[i].timestamp) + '</small><br>' +
-                '<i>@Messages.get("map.sidebar.type.mobilecaretaker")</i><br>@Messages.get("map.sidebar.assignments"): ';
+        for (var i = 0; i < fieldOperatorLocationCache.length; i++) {
+            html += '<li id="field-operator' + fieldOperatorLocationCache[i].id + '"><strong>' +
+                fieldOperatorLocationCache[i].username + '</strong> ' +
+                '(<i>@Messages.get("map.sidebar.type.mobilecaretaker")</i>)<br><small>' +
+                new Date(fieldOperatorLocationCache[i].timestamp) + '</small><br>' +
+                '@Messages.get("map.sidebar.assignments"): ';
 
             // Display amount of assigned alarms
-            if (fieldOperatorLocations[i].assignedAlarms.length === 0) {
+            if (fieldOperatorLocationCache[i].assignedAlarms.length === 0) {
                 html += '<span style="color: green;"><strong>@Messages.get("map.sidebar.assignments.available")';
             } else {
-                html += '<span style="color: blue;"><strong>' + fieldOperatorLocations[i].assignedAlarms.length;
+                html += '<span style="color: blue;"><strong>' + fieldOperatorLocationCache[i].assignedAlarms.length;
             }
             html += '</strong></span><br>';
             html += '<div class="assignmentQueue" style="display: none;">';
-            fieldOperatorLocations[i].assignedAlarms.sort(function (a, b) {
+            fieldOperatorLocationCache[i].assignedAlarms.sort(function (a, b) {
                 if (a.dispatchingTime < b.dispatchingTime) return -1;
                 else if (a.dispatchingTime > b.dispatchingTime) return 1;
                 return 0;
             });
-            for (var a in fieldOperatorLocations[i].assignedAlarms) {
-                var alarm = fieldOperatorLocations[i].assignedAlarms[a];
+            for (var a in fieldOperatorLocationCache[i].assignedAlarms) {
+                var alarm = fieldOperatorLocationCache[i].assignedAlarms[a];
                 html += '<span>' + (Number(a)+1) + ': ' + alarm.patient.name + ' (' + alarm.occuranceAddress + ')<br />';
             }
             html += '</div>';
 
-            // Add the assign button if we have an active alarm to dispatch
-            if (Alarms.getActiveAlarm() !== null) {
-                html += '<button class="btn btn-default assign-map-button">@Messages.get("actions.button.map.assign")</button>';
-            }
+            // Add the assign buttons
+            html += '<button class="btn btn-default assign-map-button';
+            if (activeAlarm === null) html += ' disabled';
+            html += '">@Messages.get("actions.button.map.assign")</button>';
+            html += '<button class="btn btn-success pull-right dispatch-ring-btn">@Messages.get("button.ring")</button>';
 
             html += '</li>';
         }
         html += '</ul>';
 
         $('#map-sidebar-fieldoperators').html(html);
-        if (Alarms.getActiveAlarm() !== null) bindAssignButtons();
+
+        // We bind the assign buttons if there is an active alarm, as well as render alarm details
+        if (activeAlarm !== null) {
+            bindAssignButtons();
+
+            html = '<h4>Active alarm</h4>';
+            html += '@Messages.get("patientpane.name"): <strong>' + activeAlarm.data.patient.name + '</strong><br />';
+            html += '@Messages.get("patientpane.incident.location"): <strong>' + activeAlarm.data.occuranceAddress + '</strong><br />';
+            html += '@Messages.get("patientpane.phonenumber"): <strong>' + activeAlarm.data.patient.phoneNumber + '</strong>';
+
+            $('#map-sidebar-active-alarm').html(html).show();
+        } else {
+            $('#map-sidebar-active-alarm').hide();
+        }
+        bindCallButtons();
     };
 
     /* Public methods inside return object */
@@ -264,33 +290,30 @@ var MapView = (function ($) {
             $.getJSON('/location/current', function (data) {
                 if (DEBUG) console.log("Fetched current locations.", data);
                 fieldOperatorLocations = data.users;
+                // Shallow clone the array into cache
+                fieldOperatorLocationCache = fieldOperatorLocations.slice(0);
                 updateFieldOperatorMarkers();
                 updateSidebar();
             });
         },
 
         getAlarmLocations: function (alarm) {
-            if (alarm === null || alarm === undefined) {
-                $.getJSON('/alarm/allOpen', function (data) {
-                    if (DEBUG) console.log("Fetched all open alarms", data);
-                    alarms = [];
-                    for (var i = 0; i < data.total; i++) {
-                        alarms.push(data.alarms[i]);
-                    }
-                    // Shallow clone the array into cache
-                    alarmCache = alarms.slice(0);
-                    updateAlarmMarkers();
-                });
-            } else {
-                $.getJSON('/alarm/' + alarm.id, function (data) {
-                    if (DEBUG) console.log("Fetched active alarm.", data);
-                    alarms = [];
-                    alarms.push(data);
-                    // Shallow clone the array into cache
-                    alarmCache = alarms.slice(0);
-                    updateAlarmMarkers();
-                });
-            }
+            $.getJSON('/alarm/allOpen', function (data) {
+                if (DEBUG) console.log("Fetched all open alarms", data);
+                alarms = [];
+                for (var i = 0; i < data.total; i++) {
+                    alarms.push(data.alarms[i]);
+                }
+                // Shallow clone the array into cache
+                alarmCache = alarms.slice(0);
+
+                // If we have an active alarm to select, replace alarms array with single item subset
+                if (alarm !== null && alarm !== undefined) {
+                    if (DEBUG) console.log("Set map view to active alarm mode: " + alarm.data.id);
+                    alarms = [alarm.data];
+                }
+                updateAlarmMarkers();
+            });
         },
 
         // When a specific field operator is clicked in the map view we only show alarms assigned to that operator.
@@ -302,18 +325,51 @@ var MapView = (function ($) {
                     alarms.push(alarm);
                 }
             }
+            fieldOperatorLocations = [];
+            for (var i = 0; i < fieldOperatorLocationCache.length; i++) {
+                var loc = fieldOperatorLocationCache[i];
+                if (loc.id === fieldOperator.id) fieldOperatorLocations.push(loc);
+            }
             if (DEBUG) console.log("FieldOp marker clicked, selected subset:", alarms);
             updateAlarmMarkers();
+            updateFieldOperatorMarkers();
+
+            // Pause the auto-refresh
+            clearInterval(fieldOperatorLocationPeriodicUpdateTimer);
+            fieldOperatorLocationPeriodicUpdateTimer = null;
         },
 
         // Resetting the view from subset to complete set of alarm markers
         resetSelectedAlarmsOnDisplay: function () {
+            if (DEBUG) console.log('Resetting alarm display.');
             // If currently displayed alarms differ from that of the cache, we update current display set
             // and redraw the markers
             if (alarmCache.length !== alarms.length) {
-                // Shallow clone the contents of the cache back into the display array
-                alarms = alarmCache.slice(0);
+                if (Alarms.getActiveAlarm() !== null) {
+                    alarms = [Alarms.getActiveAlarm().data];
+                } else {
+                    // Shallow clone the contents of the cache back into the display array
+                    alarms = alarmCache.slice(0);
+                }
+
                 updateAlarmMarkers();
+            }
+            // If currently displayed fieldoperatorlocations differ from that of the cache, we update current
+            // display set and redraw the markers
+            if (fieldOperatorLocationCache.length !== fieldOperatorLocations.length) {
+                fieldOperatorLocations = fieldOperatorLocationCache.slice(0);
+                updateFieldOperatorMarkers();
+            }
+
+            // Reset sidebar if needed
+            if (highlightedOperator !== null) {
+                highlightedOperator.removeClass('active');
+                highlightedOperator.find('.assignmentQueue').hide();
+            }
+
+            // Re-enable periodic updates
+            if (fieldOperatorLocationPeriodicUpdateTimer === null) {
+                fieldOperatorLocationPeriodicUpdateTimer = setInterval(MapView.getAllCurrentPositions, UPDATE_INTERVAL);
             }
         },
 
