@@ -75,7 +75,9 @@ var Patient = (function ($) {
 						contentType: 'application/json',
 						success: function (data) {
 							alert('@Messages.get("patientpane.incident.checkaddress.success")');
-                            Alarms.getActiveAlarm().data.occuranceAddress = data.occuranceAddress;
+                            activeAlarm.data.occuranceAddress = data.occuranceAddress;
+							activeAlarm.data.latitude = data.latitude;
+							activeAlarm.data.longitude = data.longitude;
 						},
 						error: function (xhr, statusText, thrownError) {
 							alert('Failed to save resolved address coordinates to alarm!!!');

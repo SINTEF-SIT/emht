@@ -207,7 +207,7 @@ var MapView = (function ($) {
 
             alarmMarkers.push(marker);
         }
-    }
+    };
 
     // Helper method that updates the sidebar with data about field operators, their types and assignments
     var updateSidebar = function () {
@@ -309,7 +309,8 @@ var MapView = (function ($) {
 
                 // If we have an active alarm to select, replace alarms array with single item subset
                 if (alarm !== null && alarm !== undefined) {
-                    if (DEBUG) console.log("Set map view to active alarm mode: " + alarm.data.id);
+                    if (DEBUG) console.log("Set map view to active alarm mode: " + alarm.data.id + ' on Lat:' +
+                        alarm.data.latitude + ' Lng:' + alarm.data.longitude);
                     alarms = [alarm.data];
                 }
                 updateAlarmMarkers();
