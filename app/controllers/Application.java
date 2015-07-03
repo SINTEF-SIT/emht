@@ -321,6 +321,24 @@ public class Application extends Controller {
 	}
 
 	/**
+	 * Endpoint for handling patient searching
+	 * @return A JSON array of Patient objects
+	 */
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result patientSearch() {
+		JsonNode searchData = request().body().asJson();
+		String searchString = searchData.findPath("query").asText();
+		List<Patient> results = Patient.search(searchString);
+		ObjectNode jsonResult = Json.newObject();
+		jsonResult.put("total", results.size());
+		ArrayNode patients = jsonResult.putArray("results");
+		for (Patient p : results) {
+			patients.add(Patient.toJson(p));
+		}
+		return ok(jsonResult);
+	}
+
+	/**
 	 * Retrieve a Callee based on an Alarm ID
 	 * @param id The ID of the Alarm to use as query
 	 * @return A Callee object as JSON

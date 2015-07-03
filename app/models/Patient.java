@@ -1,11 +1,11 @@
 package models;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.db.ebean.Model;
 import play.libs.Json;
@@ -57,9 +57,8 @@ public class Patient extends Model {
 	public static List<Patient> patientFromAddress(String address){
 		if (null == address || address.isEmpty())
 			return null;
-		else{
-			List<Patient> list = find.where().ieq("address", address).findList();
-			return list;
+		else {
+			return find.where().ieq("address", address).findList();
 		}
 	}
 
@@ -78,12 +77,33 @@ public class Patient extends Model {
 		if (null != a.patient){ // if the alarm has an assigned patient
 			list.add(a.patient);
 		} else { // otherwise I get the list of residents
-			if (null != calleeAdr && (calleeAdr.isEmpty() == false)){ // if we have the callee address
+			if (null != calleeAdr && (!calleeAdr.isEmpty())){ // if we have the callee address
 				list.addAll(find.where().ieq("address", calleeAdr).findList());// add all people in that address
 			}
 		}
 
 		return list;
+	}
+
+	/**
+	 * Very simplistic search function that tests a string against name, phone and address fields of a patient
+	 * @param searchString The search string
+	 * @return A List of Patient objects matching the query. If none match, an empty list is returned.
+	 */
+	public static List<Patient> search(String searchString) {
+		HashMap<Long, Patient> results = new HashMap<>();
+		//
+		for (Patient p: find.where().ilike("name", "%"+searchString+"%").findList()) {
+			results.put(p.id, p);
+		}
+		for (Patient p: find.where().ilike("phoneNumber", "%"+searchString+"%").findList()) {
+			results.put(p.id, p);
+		}
+		for (Patient p: find.where().ilike("address", "%"+searchString+"%").findList()) {
+			results.put(p.id, p);
+		}
+
+		return new ArrayList<>(results.values());
 	}
 
 	/**

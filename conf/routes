@@ -38,6 +38,7 @@ GET         /callee/:id                                           controllers.Ap
 GET         /prospectPatient/:id                                  controllers.Application.getProspectPatients(id: Long)
 #GET     /patientsByAddress/:address     controllers.Application.getPatientsByAddress(address: String)
 POST        /patient/new                                          controllers.Application.insertPatientFromJson()
+POST        /patient/search                                       controllers.Application.patientSearch()
 
 #POST   /addPatientAndNoteAndClose       controllers.Application.addPatientAndNoteAndClose()
 #POST   /addPatientAndNoteAndGoForward   controllers.Application.addPatientAndGoForward()
