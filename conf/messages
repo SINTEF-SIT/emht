@@ -58,6 +58,10 @@ patientpane.log.type=Type
 patientmodal.title=Add Patient
 patientmodal.savebutton=Save Patient Data
 
+#patient search modal
+patientsearchmodal.title=Search for patient
+patientsearchmodal.select=Select
+
 #assessment pane
 assessment.tab.nmi=NMI
 assessment.tab.question.conscious=Is the patient conscious?
@@ -130,7 +134,8 @@ actions.popup.appointment.date=Date
 button.cancel=Cancel
 button.yes=Yes
 button.no=No
-button.ring=Ring
+button.ring=Call
+button.search=Search
 button.send=Send
 button.done=Done
 button.alarms.mine=Mine

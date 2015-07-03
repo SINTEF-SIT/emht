@@ -57,6 +57,10 @@ patientpane.log.type=Type
 patientmodal.title=Legge til pasient
 patientmodal.savebutton=Lagre pasientinformasjon
 
+#patient search modal
+patientsearchmodal.title=Søk etter pasient
+patientsearchmodal.select=Velg
+
 #assessment pane
 assessment.tab.nmi=NMI
 assessment.tab.question.conscious=Er pasienten ved bevisthet?
@@ -129,6 +133,7 @@ button.cancel=Avbryt
 button.yes=Ja
 button.no=Nei
 button.ring=Ring
+button.search=Søk
 button.send=Send
 button.done=OK
 button.alarms.mine=Mine

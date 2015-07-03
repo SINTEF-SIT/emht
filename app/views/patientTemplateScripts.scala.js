@@ -4,6 +4,8 @@ var DEBUG = true;
 
 var Patient = (function ($) {
 	/* Private fields */
+	var SEARCH_AUTOCOMPLETE_TIMER = null;
+	var SEARCH_AUTOCOMPLETE_DELAY = 500;
 
 	/* Private methods */
 
@@ -13,6 +15,8 @@ var Patient = (function ($) {
 		// Start by clearing the wrapper
 		var wrapper = $('#dynamicPatientInfo');
 		wrapper.empty();
+
+		var searchButton = '<button id="patientSearch" class="btn btn-default pull-right">@Messages.get("button.search")</button>';
 
 		// building Patient Drop Down Block
 		var patientDropDownBox =
@@ -44,7 +48,7 @@ var Patient = (function ($) {
 			'@Messages.get("patientpane.log.date")</th><th>@Messages.get("patientpane.log.hour")</th>' +
 			'<th>@Messages.get("patientpane.log.type")</th></tr></thead><tbody></tbody></table>';
 
-		$('#dynamicPatientInfo').html(patientDropDownBox + patientDetails);
+		$('#dynamicPatientInfo').html(searchButton + patientDropDownBox + patientDetails);
 
 		// Bind the checkbox to copy patient address to incident location
 		$("#sameAddressCheckbox").click(function () {
@@ -55,6 +59,12 @@ var Patient = (function ($) {
 				$('#incidentAddress').val('@Messages.get("patientpane.incident.other")');
 			}
 		});
+
+		// Bind the search button
+		$('#patientSearch').on('click', function (e) {
+			e.preventDefault();
+			Patient.openPatientSearchModal();
+		})
 
 		// Bind the verify button that checks the location and updates with Lat / Long coordinates if successful
 		$('#verifyPatientLocation').on('click', function (e) {
@@ -126,6 +136,9 @@ var Patient = (function ($) {
 			listItem.on('click', function (e) {
 				e.preventDefault();
 				populatePatientInformation(activePatient);
+
+				// Persist the selection in the database.
+				setPatientOnAlarm(activeAlarm.id, patientList[i]);
 			});
 			dropDown.prepend(listItem);
 		}
@@ -262,6 +275,42 @@ var Patient = (function ($) {
 				alert('Could not set patient: ' + thrownError);
 			}
 		})
+	};
+
+	// Helper that generates a result table of patients in the patient search modal
+	var drawPatientSearchResults = function (results) {
+		var resultContainer = $('#patient-search-modal-results');
+		var tbl = '<table class="table table-striped table-condensed"><thead><tr>' +
+			'<th>@Messages.get("patientpane.name")</th>' +
+			'<th>@Messages.get("patientpane.address")</th>' +
+			'<th>@Messages.get("patientpane.phonenumber")</th>' +
+			'<th>@Messages.get("patientsearchmodal.select")</th>' +
+			'</tr></thead><tbody>';
+
+		for (var i in results) {
+			if (results.hasOwnProperty(i)) {
+				tbl += 	'<tr>' +
+						'<td>' + results[i].name + '</td>' +
+						'<td>' + results[i].address + '</td>' +
+						'<td>' + results[i].phoneNumber + '</td>' +
+						'<td><button class="btn btn-primary patientSelection" id="PatientSearch' + i + '">' +
+						'@Messages.get("patientsearchmodal.select")</button></td>' +
+						'<tr>';
+			}
+		}
+
+		tbl += '</tbody></table>';
+
+		resultContainer.html(tbl);
+
+		$('.patientSelection').on('click', function (e) {
+			e.preventDefault();
+			var patient = results[Number($(this).attr('id').replace('PatientSearch', ''))];
+			populatePatientInformation(patient);
+			// Persist the selection in the database.
+			setPatientOnAlarm(Alarms.getActiveAlarm().id, patient);
+			$('#patient-search-modal').modal('hide');
+		})
 	}
 
 	/* Public methods inside return object */
@@ -274,6 +323,29 @@ var Patient = (function ($) {
 			});
 			$("#closeCaseFromPatientRegButton").click(Patient.closeCaseAtRegistration);
 			$("#goToAssesmentButton").click(Patient.fromRegistrationToAssesment);
+
+			$('#patient-search-modal-search-button').on('click', function (e) {
+				e.preventDefault();
+				var searchString = $('#patient-search-modal-query').val();
+				myJsRoutes.controllers.Application.patientSearch().ajax({
+					data : JSON.stringify({"query": searchString}),
+					contentType : 'application/json',
+					success: function (data) {
+						drawPatientSearchResults(data.results);
+					},
+					error: function (xhr, err, statusTxt) {
+						alert('Patient Search Error: ' + err);
+					}
+				});
+			});
+
+			$('#patient-search-modal-query').on('keyup', function (e) {
+				e.preventDefault();
+				clearTimeout(SEARCH_AUTOCOMPLETE_TIMER);
+				SEARCH_AUTOCOMPLETE_TIMER = setTimeout(function () {
+					$('#patient-search-modal-search-button').click();
+				}, SEARCH_AUTOCOMPLETE_DELAY);
+			})
 		},
 
 		generatePatientContainer: function () {
@@ -305,6 +377,12 @@ var Patient = (function ($) {
 			);
 
 			$('#add_patient_modal').modal("show");
+		},
+
+		openPatientSearchModal: function () {
+			// Clear modal
+			$('#patient-search-modal-query').val('');
+			$('#patient-search-modal').modal('show');
 		},
 
 		populateCalleeFromAlarm: function (alarmId) {

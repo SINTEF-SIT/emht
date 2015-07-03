@@ -228,4 +228,30 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			</div>
 		</div></div>
 	</div>
+
+	<!-- Patient search modal -->
+
+	<div class="modal fade" id="patient-search-modal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-body">
+					<h4>@Messages.get("patientsearchmodal.title")</h4>
+					<div class="row">
+						<div class="col-md-12">
+							<div class="input-group">
+								<input type="text" class="form-control" id="patient-search-modal-query" />
+								<span class="input-group-btn">
+									<button class="btn btn-default" id="patient-search-modal-search-button">@Messages.get("button.search")</button>
+								</span>
+							</div>
+						</div>
+					</div>
+					<hr />
+					<div id="patient-search-modal-results"></div>
+					<hr />
+					<a href="#" class="btn btn-primary" data-dismiss="modal">@Messages.get("button.cancel")</a>
+				</div>
+			</div>
+		</div>
+	</div>
 }

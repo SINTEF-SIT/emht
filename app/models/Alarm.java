@@ -275,13 +275,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 
 		// Add the patient object if present, otherwise write a null
 		if (a.patient != null) {
-			ObjectNode patient = Json.newObject();
-			patient.put("id", a.patient.id);
-			patient.put("name", a.patient.name);
-			patient.put("personalNumber", a.patient.personalNumber);
-			patient.put("phoneNumber", a.patient.phoneNumber);
-			patient.put("address", a.patient.address);
-			patient.put("age", a.patient.age);
+			ObjectNode patient = Patient.toJson(a.patient);
 			alarm.put("patient", patient);
 		} else {
 			alarm.putNull("patient");

@@ -563,6 +563,7 @@ public class Application extends Controller {
 				controllers.routes.javascript.Application.assignAlarmFromJson(),
 				controllers.routes.javascript.Application.getCalleeFromAlarm(),
 				controllers.routes.javascript.Application.getProspectPatients(),
+				controllers.routes.javascript.Application.patientSearch(),
 				controllers.routes.javascript.Application.notifyFollowup(),
 				controllers.routes.javascript.Application.finishCase(),
 				controllers.routes.javascript.Application.getAlarm(),
