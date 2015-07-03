@@ -1,0 +1,19 @@
+package core.event;
+
+/**
+ * Created by Aleksander Skraastad (myth) on 7/3/15.
+ */
+public enum EventType {
+    ALARM_ASSESSMENT_SET,
+    ALARM_ASSIGNED,
+    ALARM_NEW,
+    ALARM_LOCATION_VERIFIED,
+    ALARM_PATIENT_SET,
+    ALARM_FIELD_ASSESSMENT_SET,
+    ALARM_OPEN_EXPIRED,
+    ALARM_RESOLUTION_EXPIRED,
+    ALARM_CLOSED,
+    ALARM_DISPATCHED,
+    ALARM_FINISHED,
+    PATIENT_NEW,
+}
