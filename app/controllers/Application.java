@@ -423,7 +423,8 @@ public class Application extends Controller {
 				return unauthorized("Attempt to finish a case not designated for that user");
 			}
 			*/
-
+			a.finished = true;
+			a.save();
 			MyWebSocketManager.notifyFinishedAlarm(a);
 			return ok(Alarm.toJson(a));
 		} else {

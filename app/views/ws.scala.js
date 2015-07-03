@@ -48,7 +48,8 @@ var WebSocketManager = (function ($, WS) {
                         console.log("finishedAlarm alarm id was invalid for this client.");
                         return;
                     }
-                    var finishedImage = '<img src="/assets/images/finished.png" class="img-thumbnail pull-left finished-icon" width="48" heigh="48"/>'
+                    if (a.DOM.children('.finished-icon').length > 0) return;
+                    var finishedImage = '<img src="/assets/images/finished.png" class="img-thumbnail pull-left finished-icon" width="48" heigh="48"/>';
                     a.DOM.children('.clock-icon').remove();
                     a.DOM.children(':first').after(finishedImage);
 

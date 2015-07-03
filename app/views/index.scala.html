@@ -92,7 +92,10 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 								<a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}" onclick="Alarms.gui.selectFollowUpAlarm(@{alarm.id});return false;" class="list-group-item alarmItem">
 										<!-- <i class="icon-fire pull-left"></i> -->
 									<img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
-									@if(null != alarm.expired && true == alarm.expired){
+									@if(alarm.finished) {
+										<img  src="@routes.Assets.at("images/finished.png")" class="img-thumbnail pull-left finished-icon" width="48" height="48"/>
+									}
+									@if(null != alarm.expired && true == alarm.expired) {
 										<img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 									}
 									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm")</h4>
