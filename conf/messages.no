@@ -114,6 +114,7 @@ actions.button.appointment.leg=Bestill time på legevakta
 actions.button.appointment.doctor=Bestill time hos fastlege
 
 actions.button.close=Lagre og avslutt
+actions.button.close.closenonfinished=Alarmen er ikke markert som ferdig av felt-operatøren. Er du sikker?
 actions.button.followup=Lagre og følg opp
 
 actions.popup.call.title=Ringer

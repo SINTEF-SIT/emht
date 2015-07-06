@@ -116,6 +116,7 @@ actions.button.map.assign=Assign
 actions.button.appointment.leg=Schedule appointment with legvakta
 actions.button.appointment.doctor=Schedule appointment with personal doctor
 actions.button.close=Close Case
+actions.button.close.closenonfinished=Alarm is not marked as finished by the field operator, are you sure?
 actions.button.followup=Save and follow up
 
 actions.popup.call.title=Calling

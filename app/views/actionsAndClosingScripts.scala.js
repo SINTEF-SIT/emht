@@ -79,17 +79,28 @@ var Actions = (function ($) {
         },
 
         closeCaseAtClosing: function () {
-            if (Alarms.getActiveAlarm() === null) alert('No active alarm');
-            if (Alarms.getActiveAlarm().protected) return alert('Alarm is protected, cannot modify.');
-            var updatedAlarm = Actions.getUpdatedAlarmFromPage();
+            var activeAlarm = Alarms.getActiveAlarm();
+            if (activeAlarm === null) return alert('No active alarm');
+            if (activeAlarm.protected) return alert('Alarm is protected, cannot modify.');
+            var closeCase = function () {
+                var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 
-            myJsRoutes.controllers.Application.closeCase().ajax({
-                data : JSON.stringify(updatedAlarm),
-                contentType : 'application/json',
-                success : function (data) {
-                    Alarms.removeAlarm(Alarms.getActiveAlarm());
+                myJsRoutes.controllers.Application.closeCase().ajax({
+                    data : JSON.stringify(updatedAlarm),
+                    contentType : 'application/json',
+                    success : function (data) {
+                        Alarms.removeAlarm(Alarms.getActiveAlarm());
+                    }
+                });
+            };
+            // Add confirmation dialog box if there is an attempt to close a non-finished alarm assigned to caretaker
+            if (activeAlarm.mobileCareTaker !== null && activeAlarm.finished !== true) {
+                if (confirm('@Messages.get("actions.button.close.closenonfinished")')) {
+                    closeCase();
                 }
-            });
+            } else {
+                closeCase();
+            }
         },
 
         saveAndFollowupAtClosing: function (followUp) {
