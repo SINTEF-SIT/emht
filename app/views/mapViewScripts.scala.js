@@ -92,6 +92,7 @@ var MapView = (function ($) {
         // Assign active alarm button in sidebar
         $('.assign-map-button').on('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             var payload = {
                 type: 'mobileCareTaker',
                 id: Number($(this).parent().attr('id').replace('field-operator', ''))
@@ -110,6 +111,7 @@ var MapView = (function ($) {
     var bindCallButtons = function () {
         $('.map-field-operator').find('.dispatch-ring-btn').on('click', function (e) {
             e.preventDefault();
+            e.stopPropagation();
             alert('Calling Field Operator...');
         })
     };
@@ -140,14 +142,6 @@ var MapView = (function ($) {
     // Helper method that sets up an click event binding from a map marker to sidebar list items
     var bindFieldOperatorMarkerHighlight = function (marker) {
         google.maps.event.addListener(marker, 'click', function (e) {
-            if (highlightedOperator !== null) {
-                highlightedOperator.removeClass('active');
-                highlightedOperator.children('.assignmentQueue').hide()
-            }
-            highlightedOperator = $('#field-operator' + marker.fieldOperator.id);
-            highlightedOperator.addClass('active');
-            highlightedOperator.children('.assignmentQueue').show();
-
             // Swap out alarms on display with alarms assigned to this field operator
             MapView.displayCurrentAssignmentsForFieldOperator(marker.fieldOperator);
         });
@@ -223,7 +217,7 @@ var MapView = (function ($) {
         // Time to draw the list items
         var html = '<ul class="map-field-operator">';
         for (var i = 0; i < fieldOperatorLocationCache.length; i++) {
-            html += '<li id="field-operator' + fieldOperatorLocationCache[i].id + '"><strong>' +
+            html += '<li class="map-field-operator-item" id="field-operator' + fieldOperatorLocationCache[i].id + '"><strong>' +
                 fieldOperatorLocationCache[i].username + '</strong> ' +
                 '(<i>@Messages.get("map.sidebar.type.mobilecaretaker")</i>)<br><small>' +
                 new Date(fieldOperatorLocationCache[i].timestamp) + '</small><br>' +
@@ -259,6 +253,20 @@ var MapView = (function ($) {
         html += '</ul>';
 
         $('#map-sidebar-fieldoperators').html(html);
+
+        // Add list item highlighting of markers
+        $('.map-field-operator-item').on('click', function (e) {
+            e.preventDefault();
+            // This is a lazy hack, but it really just passes an anonymous function that is invoked with the operator
+            // ID as an argument, searching the cache and returning the field operator object,
+            // which is passed into the displayCurrent method...
+            MapView.displayCurrentAssignmentsForFieldOperator((function (id) {
+                for (var i = 0; i < fieldOperatorLocationCache.length; i++) {
+                    if (fieldOperatorLocationCache[i].id === id) return fieldOperatorLocationCache[i];
+                }
+                return null;
+            })(Number($(this).attr('id').replace('field-operator', ''))));
+        });
 
         // We bind the assign buttons if there is an active alarm, as well as render alarm details
         if (activeAlarm !== null) {
@@ -338,6 +346,14 @@ var MapView = (function ($) {
             // Pause the auto-refresh
             clearInterval(fieldOperatorLocationPeriodicUpdateTimer);
             fieldOperatorLocationPeriodicUpdateTimer = null;
+
+            if (highlightedOperator !== null) {
+                highlightedOperator.removeClass('active');
+                highlightedOperator.children('.assignmentQueue').hide()
+            }
+            highlightedOperator = $('#field-operator' + fieldOperator.id);
+            highlightedOperator.addClass('active');
+            highlightedOperator.children('.assignmentQueue').show();
         },
 
         // Resetting the view from subset to complete set of alarm markers
@@ -379,8 +395,8 @@ var MapView = (function ($) {
         convertAddressToLatLng: function (address, callback) {
             var adr = {'address': address};
             geocoder.geocode(adr, function (results, status) {
-                if (DEBUG) console.log(results[0].geometry.location);
                 if (status === google.maps.GeocoderStatus.OK) {
+                    if (DEBUG) console.log(results[0].geometry.location);
                     callback({
                         latitude: results[0].geometry.location.A,
                         longitude: results[0].geometry.location.F
