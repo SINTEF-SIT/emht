@@ -18,7 +18,9 @@ public abstract class Event {
     private Instant timestamp;
 
     /**
-     * Creates an Event
+     * Creates an Event with optional arguments. Not all events are directly Alarm related, thus AlarmAttendant
+     * and Patient parameters need to be available for these (rare) cases.
+     *
      * @param type EventType as specified in the EventType enum
      * @param alarm An Alarm object (can be null)
      * @param attendant An AlarmAttendant object (can be null)

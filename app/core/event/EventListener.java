@@ -14,7 +14,7 @@ public interface EventListener {
 
     /**
      * Must return a Set of all EventTypes this listener is interested in receiving events for
-     * @return
+     * @return A Set of EventTypes
      */
     Set<EventType> listenFor();
 }

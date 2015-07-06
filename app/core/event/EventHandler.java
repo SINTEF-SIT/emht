@@ -1,5 +1,7 @@
 package core.event;
 
+import play.Logger;
+
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -33,6 +35,18 @@ public class EventHandler extends Thread {
     }
 
     /**
+     * Main Event thread run loop
+     */
+    @Override
+    public void run() {
+        try {
+            fireEvent(eventQueue.take());
+        } catch (InterruptedException e) {
+            Logger.warn("Event thread got interrupted while fetching next event from queue.");
+        }
+    }
+
+    /**
      * Register an object as an event listener
      * @param e An object implementing the EventListener interface
      */
@@ -49,14 +63,14 @@ public class EventHandler extends Thread {
     }
 
     /**
-     *
-     * @param e
+     * Main method for signaling events
+     * @param e The Event object that has occurred
      */
     public static void dispatch(Event e) {
         try {
             getInstance().eventQueue.put(e);
         } catch (InterruptedException interrupt) {
-            interrupt.printStackTrace();
+            Logger.warn("Interrupted while attempting to put an event into the queue.");
         }
     }
 
