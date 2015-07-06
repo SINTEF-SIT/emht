@@ -503,7 +503,7 @@ public class Application extends Controller {
 			a.mobileCareTaker = AlarmAttendant.get(mobileCareTaker);
 			// Notify the Field Operator through GCM
 			F.Promise<WS.Response> resp = GoogleCloudMessaging.dispatchAlarm(a.mobileCareTaker);
-			Logger.debug("GCM Response: " + resp.get(5000).getBody());
+			if (resp != null) Logger.debug("GCM Response: " + resp.get(5000).getBody());
 		}
 
 		Alarm.saveAndFollowupAlarm(a);
