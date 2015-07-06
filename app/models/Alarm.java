@@ -175,9 +175,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 				a.patient = p;
 			}
 		}
-		if (null != dummy.notes) // Im assuming Ill alwasy update the notes
+		if (null != dummy.notes) { // Im assuming Ill alwasy update the notes
 			a.notes = dummy.notes;
-
+		}
 		if (null != dummy.assessment && a.assessment != dummy.assessment) {
 			a.assessment = dummy.assessment;
 		}

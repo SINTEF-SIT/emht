@@ -442,6 +442,7 @@ public class Application extends Controller {
 	 */
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result saveAndFollowupCase() {
+		AlarmAttendant at = AlarmAttendant.find.byId(Long.parseLong(session().getOrDefault("id", "0")));
 		JsonNode json = request().body().asJson();
 		long patientId = json.get("patient").get("id").asLong();
 		String notes = json.findPath("notes").asText();
@@ -452,7 +453,6 @@ public class Application extends Controller {
 
 		Alarm a = Alarm.get(alarmId);
 		a.occuranceAddress = alarmOccurance;
-		a.notes = notes;
 		a.finished = finished;
 
 		// Do we have a provided assessment from attendant?
@@ -504,6 +504,13 @@ public class Application extends Controller {
 			// Notify the Field Operator through GCM
 			F.Promise<WS.Response> resp = GoogleCloudMessaging.dispatchAlarm(a.mobileCareTaker);
 			if (resp != null) Logger.debug("GCM Response: " + resp.get(5000).getBody());
+		}
+
+		// If we have addition to the notes, append and template it
+		if ((a.notes == null && !notes.equals("")) || (a.notes != null && !notes.contentEquals(a.notes))) {
+			notes = notes.substring(a.notes.length()) + '\n';
+			a.notes += "" + Global.formatDateAsISO(new Date()) + " - (" + at.username + "):\n";
+			a.notes += notes;
 		}
 
 		Alarm.saveAndFollowupAlarm(a);
