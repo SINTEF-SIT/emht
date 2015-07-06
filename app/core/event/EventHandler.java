@@ -12,6 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class EventHandler extends Thread {
     private static boolean _invoked = false;
+    private static boolean _running = false;
     private static EventHandler _singleton = null;
     private HashSet<EventListener> listeners;
     private LinkedBlockingQueue<Event> eventQueue;
@@ -39,10 +40,13 @@ public class EventHandler extends Thread {
      */
     @Override
     public void run() {
-        try {
-            fireEvent(eventQueue.take());
-        } catch (InterruptedException e) {
-            Logger.warn("Event thread got interrupted while fetching next event from queue.");
+        _running = true;
+        while (_running) {
+            try {
+                fireEvent(eventQueue.take());
+            } catch (InterruptedException e) {
+                Logger.warn("Event thread got interrupted while fetching next event from queue.");
+            }
         }
     }
 
@@ -79,7 +83,7 @@ public class EventHandler extends Thread {
      * @param e The Event to process
      */
     private void fireEvent(Event e) {
-        Logger.debug("[EVENT] Firing " + e.getType());
+        Logger.debug("[EVENT] Firing " + e);
         for (EventListener listener : listeners) {
             if (listener.listenFor().contains(e.getType())) {
                 listener.newEvent(e);

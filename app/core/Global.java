@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
+import core.event.EventHandler;
 import models.Alarm;
 import models.AlarmAttendant;
 import play.Application;
@@ -18,6 +19,7 @@ import com.avaje.ebean.Ebean;
 
 public class Global extends GlobalSettings {
 
+	public static EventHandler event;
 	public static LocalMonitor localMonitor;
 	public static OpenAlarmList alarmList;
 	// The API Key needed to use the Google Cloud Messaging Service
@@ -36,7 +38,9 @@ public class Global extends GlobalSettings {
         }
         populateMemoryAlarmList();
 
-    
+    	// Fire up the event handler
+		event = EventHandler.getInstance();
+		event.start();
     }
     
     //populates the list of open alarms which is cached in the memory
