@@ -23,6 +23,7 @@
    username:  iver
    password:  1149:5b424032386339376135:29ee59e11b1f502075abed5b39b8ca0557cac59975409335581d677efa2e6d06cd42e8bf71c124669ceeda95ed9df3142af23a0161bc95e817a8dcc6d76be211
    role: 3
+   gcmRegId:  e_5TxguhqcY:APA91bFUNsJN0K6iAPWHORmUjv96ZmrJdb4wh9iYSE98_8IQOT1MZhQv--7HG0ufX_pHl02oc9TzcHi-pa9C0dSnEf4EHR42EFEQSrFoHWrgfub0YhG_G0pnJORHRXwlv7c2xVh8-UlZ
 
  - &karin !!models.AlarmAttendant
    username:  Karin

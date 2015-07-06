@@ -53,6 +53,7 @@ POST        /location/report                                      controllers.Lo
 # Attendants          
 GET         /attendants                                           controllers.AttendantController.attendants()
 POST        /attendants                                           controllers.AttendantController.newAttendant()
+POST        /attendants/setGcmRegId                               controllers.AttendantController.setGcmRegId()
 POST        /attendants/:id/delete                                controllers.AttendantController.deleteAttendant(id: Long)
 
 # ComponentReading          

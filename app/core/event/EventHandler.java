@@ -79,6 +79,7 @@ public class EventHandler extends Thread {
      * @param e The Event to process
      */
     private void fireEvent(Event e) {
+        Logger.debug("[EVENT] Firing " + e.getType());
         for (EventListener listener : listeners) {
             if (listener.listenFor().contains(e.getType())) {
                 listener.newEvent(e);

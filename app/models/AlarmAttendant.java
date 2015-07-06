@@ -32,6 +32,9 @@ public class AlarmAttendant extends Model {
 	@Column(nullable = false)
 	public int role;
 
+	@Column(unique = true)
+	public String gcmRegId;
+
 	public static Finder<Long,AlarmAttendant> find = new Finder(Long.class, AlarmAttendant.class);
 
 	public static List<AlarmAttendant> all() {
@@ -111,6 +114,7 @@ public class AlarmAttendant extends Model {
 		alarmAttendant.put("id", a.id);
 		alarmAttendant.put("username", a.username);
 		alarmAttendant.put("role", a.role);
+		alarmAttendant.put("gcmRegId", a.gcmRegId);
 		return alarmAttendant;
 	}
 }

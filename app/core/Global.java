@@ -10,6 +10,7 @@ import models.Alarm;
 import models.AlarmAttendant;
 import play.Application;
 import play.GlobalSettings;
+import play.Play;
 import play.libs.Yaml;
 
 import com.avaje.ebean.Ebean;
@@ -19,12 +20,15 @@ public class Global extends GlobalSettings {
 
 	public static LocalMonitor localMonitor;
 	public static OpenAlarmList alarmList;
+	// The API Key needed to use the Google Cloud Messaging Service
+	public static String GCM_API_KEY;
 	
     @Override
     public void onStart(Application app) {
 
         localMonitor = new LocalMonitor();
         alarmList = new OpenAlarmList();
+		GCM_API_KEY = Play.application().configuration().getString("gcm.apikey");
 
     	// Check if the AlarmAttendant db is empty
         if (AlarmAttendant.find.findRowCount() == 0) {

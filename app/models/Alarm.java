@@ -8,10 +8,15 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.Global;
+import core.GoogleCloudMessaging;
 import core.MyWebSocketManager;
 
+import play.Logger;
 import play.db.ebean.Model;
+import play.libs.F;
 import play.libs.Json;
+import play.libs.WS;
+import static play.mvc.Controller.*;
 
 @Entity
 public class Alarm extends Model { // the model extension serves for having access to Play built-in Ebean helper, such as the Finder
@@ -132,6 +137,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 		Global.localMonitor.registerAssignment(alarmId);
 		// TODO: possibly add checks
 		// TODO: add websocket call in the case of a real multi-user
+
 		return a;
 	}
 

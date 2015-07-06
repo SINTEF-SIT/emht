@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import controllers.auth.Authorization;
+import core.GoogleCloudMessaging;
 import models.*;
 import models.sensors.ComponentReading;
 import models.sensors.Sensor;
@@ -13,7 +14,9 @@ import play.Routes;
 import play.api.libs.json.JsPath;
 import play.cache.Cache;
 import play.data.*;
+import play.libs.F;
 import play.libs.Json;
+import play.libs.WS;
 import play.mvc.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -498,6 +501,9 @@ public class Application extends Controller {
 		// If we have assigned a field operator of type mobileCareTaker (role == 3)
 		if (mobileCareTaker != null && mobileCareTaker > 0) {
 			a.mobileCareTaker = AlarmAttendant.get(mobileCareTaker);
+			// Notify the Field Operator through GCM
+			F.Promise<WS.Response> resp = GoogleCloudMessaging.dispatchAlarm(a.mobileCareTaker);
+			Logger.debug("GCM Response: " + resp.get(5000).getBody());
 		}
 
 		Alarm.saveAndFollowupAlarm(a);

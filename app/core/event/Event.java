@@ -75,4 +75,12 @@ public abstract class Event {
     public Instant getTimestamp() {
         return timestamp;
     }
+
+    /**
+     * Represent the Event object as a String
+     * @return A String representation of this Event
+     */
+    public String toString() {
+        return "Event [" + getType() + "] ";
+    }
 }

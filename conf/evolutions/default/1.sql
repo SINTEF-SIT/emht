@@ -36,7 +36,9 @@ create table alarm_attendant (
   username                  varchar(255),
   password                  varchar(255) not null,
   role                      integer not null,
+  gcm_reg_id                varchar(255),
   constraint uq_alarm_attendant_username unique (username),
+  constraint uq_alarm_attendant_gcm_reg_id unique (gcm_reg_id),
   constraint pk_alarm_attendant primary key (id))
 ;
 

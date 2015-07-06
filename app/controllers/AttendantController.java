@@ -1,8 +1,11 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import controllers.auth.Authorization;
 import models.AlarmAttendant;
+import play.Logger;
 import play.data.Form;
+import play.mvc.BodyParser;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -56,5 +59,23 @@ public class AttendantController extends Controller {
 	public static Result deleteAttendant(Long id) {
 		AlarmAttendant.delete(id);
 		return redirect(controllers.routes.AttendantController.attendants());
+	}
+
+	/**
+	 * Endpoint for the Android App allowing it to update itself with the provided Google Cloud Messaging
+	 * client key, which is needed when we are notifying the field operators of new alarms.
+	 * @return 200 OK or 404 NOT FOUND if non-existing AlarmAttendant
+	 */
+	@BodyParser.Of(BodyParser.Json.class)
+	public static Result setGcmRegId() {
+		JsonNode content = request().body().asJson();
+		AlarmAttendant fieldOperator = AlarmAttendant.find.byId(Long.parseLong(session().getOrDefault("id", "0")));
+		Logger.debug("Received gcmRegId set req from " + fieldOperator.username);
+		if (fieldOperator == null || fieldOperator.id == 0) return notFound();
+
+		fieldOperator.gcmRegId = content.get("gcmRegId").asText();
+		fieldOperator.save();
+
+		return ok(AlarmAttendant.toJson(fieldOperator));
 	}
 }
