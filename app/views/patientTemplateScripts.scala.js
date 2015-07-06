@@ -16,8 +16,6 @@ var Patient = (function ($) {
 		var wrapper = $('#dynamicPatientInfo');
 		wrapper.empty();
 
-		var searchButton = '<button id="patientSearch" class="btn btn-default pull-right">@Messages.get("button.search")</button>';
-
 		// building Patient Drop Down Block
 		var patientDropDownBox =
 			'<u>@Messages.get("patientpane.name"):</u> ' +
@@ -48,7 +46,7 @@ var Patient = (function ($) {
 			'@Messages.get("patientpane.log.date")</th><th>@Messages.get("patientpane.log.hour")</th>' +
 			'<th>@Messages.get("patientpane.log.type")</th></tr></thead><tbody></tbody></table>';
 
-		$('#dynamicPatientInfo').html(searchButton + patientDropDownBox + patientDetails);
+		$('#dynamicPatientInfo').html(patientDropDownBox + patientDetails);
 
 		// Bind the checkbox to copy patient address to incident location
 		$("#sameAddressCheckbox").click(function () {
@@ -150,7 +148,7 @@ var Patient = (function ($) {
 		var otherPatient = $('<li></li>').html('<a href="#">@Messages.get("patientpane.pill.other.patient")</a>');
 		otherPatient.on('click', function (e) {
 			e.preventDefault();
-			Patient.openAddPatientModal();
+			Patient.openPatientSearchModal();
 		});
 		var unknownPatient = $('<li></li>').html('<a href="#">@Messages.get("patientpane.pill.unknown")</a>');
 		unknownPatient.on('click', function (e) {
@@ -346,6 +344,11 @@ var Patient = (function ($) {
 					$('#patient-search-modal-search-button').click();
 				}, SEARCH_AUTOCOMPLETE_DELAY);
 			})
+
+			$('#add_patient_modal_button').on('click', function (e) {
+				e.preventDefault();
+				Patient.openAddPatientModal();
+			});
 		},
 
 		generatePatientContainer: function () {
