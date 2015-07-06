@@ -53,6 +53,8 @@ var WebSocketManager = (function ($, WS) {
                     a.DOM.children('.clock-icon').remove();
                     a.DOM.children(':first').after(finishedImage);
 
+                    a.DOM.children('.assignedTo').html('');
+
                     break;
             }
         }

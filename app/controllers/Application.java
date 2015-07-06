@@ -427,6 +427,7 @@ public class Application extends Controller {
 			}
 			*/
 			a.finished = true;
+			a.mobileCareTaker = null;
 			a.save();
 			MyWebSocketManager.notifyFinishedAlarm(a);
 			return ok(Alarm.toJson(a));
