@@ -54,7 +54,7 @@ public class EventHandler extends Thread {
      * Register an object as an event listener
      * @param e An object implementing the EventListener interface
      */
-    public synchronized void addEventListener(EventListener e, Set events) {
+    public synchronized void addEventListener(EventListener e) {
         listeners.add(e);
     }
 

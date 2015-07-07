@@ -100,7 +100,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 		alarm.save();
 		Global.alarmList.list.put(alarm.id, alarm);
 		Global.localMonitor.registerNewAlert(alarm.id);
-		MyWebSocketManager.notifyNewAlarm(alarm);
+		MyWebSocketManager.getInstance().notifyNewAlarm(alarm);
 		// Dispatch the event
 		EventHandler.dispatch(new MonitorEvent(EventType.ALARM_NEW, alarm, null, null));
 		return alarm;
@@ -268,7 +268,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 		// ill just call the websocket if the attendant id is null,
 		//though in a real multi user environment Id need to do it for everyone
 		// and handle the GUI just based on the websocket
-		MyWebSocketManager.notifyCloseAlarm(dummy);
+		MyWebSocketManager.getInstance().notifyCloseAlarm(dummy);
 		// Fire the event
 		EventHandler.dispatch(new MonitorEvent(EventType.ALARM_CLOSED, a, null, null));
 		a.save();

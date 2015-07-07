@@ -74,7 +74,7 @@ public class LocalMonitor {
 			timerTasks.remove(this.id);
 			Alarm expiredAlarm =Global.alarmList.list.get(this.id);
 			expiredAlarm.expired = true;
-			MyWebSocketManager.addTimeIconToAlarm(id);
+			MyWebSocketManager.getInstance().addTimeIconToAlarm(id);
 			
 			
 		}

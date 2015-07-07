@@ -54,6 +54,7 @@ var WebSocketManager = (function ($, WS) {
                     a.DOM.children(':first').after(finishedImage);
 
                     a.DOM.children('.assignedTo').html('');
+                    a.state = 'finished';
 
                     break;
             }

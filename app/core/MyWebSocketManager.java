@@ -2,11 +2,9 @@ package core;
 
 import java.util.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
+import static core.event.EventType.*;
 
+import core.event.EventType;
 import models.Alarm;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,54 +18,78 @@ import play.mvc.WebSocket;
 
 public class MyWebSocketManager {
 
-	/**
-	 * Helper class for creating a Tuple containing both in and out sockets of a connected user
-	 */
-	public static class ConnectionTuple {
-		public WebSocket.In<JsonNode> in;
-		public WebSocket.Out<JsonNode> out;
-
-		public ConnectionTuple(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
-			this.in = in;
-			this.out = out;
-		}
-	}
+	private static boolean _invoked;
+	private static MyWebSocketManager _singleton;
 
 	// Container for all connected users and their socket objects
-	private static HashMap<String, ConnectionTuple> connections = new HashMap<>();
+	private HashMap<String, ConnectionTuple> connections;
+	// Event to WS/JSON action map
+	private HashMap<EventType, String> actionMap;
 
 	/**
-	 *
-	 * @param username
-	 * @param in
-	 * @param out
+	 * Private constructor supporting Singleton pattern
 	 */
-    public static void start(String username, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
-        
-        connections.put(username, new ConnectionTuple(in, out));
+	private MyWebSocketManager() {
+		connections = new HashMap<>();
+		actionMap = new HashMap<>();
+
+		// Create mapping between EventType and json 'action' field
+		actionMap.put(ALARM_ASSESSMENT_SET, "alarmAssessmentSet");
+		actionMap.put(ALARM_ASSIGNED, "alarmAssigned");
+		actionMap.put(ALARM_NEW, "alarmNew");
+		actionMap.put(ALARM_LOCATION_VERIFIED, "alarmLocationVerified");
+		actionMap.put(ALARM_PATIENT_SET, "alarmPatientSet");
+		actionMap.put(ALARM_FIELD_ASSESSMENT_SET, "alarmFieldAssessmentSet");
+		actionMap.put(ALARM_OPEN_EXPIRED, "alarmOpenExpired");
+		actionMap.put(ALARM_RESOLUTION_EXPIRED, "alarmResolutionExpired");
+		actionMap.put(ALARM_CLOSED, "alarmClosed");
+		actionMap.put(ALARM_DISPATCHED, "alarmDispatched");
+		actionMap.put(ALARM_FINISHED, "alarmFinished");
+		actionMap.put(PATIENT_NEW, "patientNew");
+
+		_invoked = true;
+	}
+
+	/**
+	 * Instance factory method
+	 */
+	public static MyWebSocketManager getInstance() {
+		if (!_invoked) _singleton = new MyWebSocketManager();
+		return _singleton;
+	}
+
+	/**
+	 * Initialization method invoked after WS handshaking is complete
+	 * @param username Username of the user who initialized the connection
+	 * @param in Inbound socket object
+	 * @param out Outbound socket object
+	 */
+	public void start(String username, WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
+
+		connections.put(username, new ConnectionTuple(in, out));
 		Logger.debug("Opened WebSocket connection from: " + username);
-        
-        in.onMessage(new Callback<JsonNode>() {
+
+		in.onMessage(new Callback<JsonNode>() {
 			public void invoke(JsonNode event) {
 				Logger.debug("Received event from " + getUsernameFromWebSocket(in) + ": " + event.asText());
 			}
 		});
-        
-        in.onClose(new Callback0(){ // TODO: possibly remove from the connection list
-            public void invoke() {
+
+		in.onClose(new Callback0() {
+			public void invoke() {
 				String username = getUsernameFromWebSocket(in);
-            	Logger.debug("Closed WebSocket connection from: " + getUsernameFromWebSocket(in));
+				Logger.debug("Closed WebSocket connection from: " + getUsernameFromWebSocket(in));
 				connections.remove(username);
-            }
-        });
-    }
+			}
+		});
+	}
 
 	/**
 	 * Helper method that retrieves a related username from a WebSocket object.
 	 * @param in The socket object to retrieve the related username from.
 	 * @return Related username of the socket if found, null otherwise.
 	 */
-	public static String getUsernameFromWebSocket(WebSocket.In<JsonNode> in) {
+	public String getUsernameFromWebSocket(WebSocket.In<JsonNode> in) {
 		for (Map.Entry<String, ConnectionTuple> entry : connections.entrySet()) {
 			if (entry.getValue().in == in) return entry.getKey();
 		}
@@ -79,7 +101,7 @@ public class MyWebSocketManager {
 	 * @param out The socket object to retrieve the related username from.
 	 * @return Related username of the socket if found, null otherwise.
 	 */
-	public static String getUsernameFromWebSocket(WebSocket.Out<JsonNode> out) {
+	public String getUsernameFromWebSocket(WebSocket.Out<JsonNode> out) {
 		for (Map.Entry<String, ConnectionTuple> entry : connections.entrySet()) {
 			if (entry.getValue().out == out) return entry.getKey();
 		}
@@ -90,53 +112,76 @@ public class MyWebSocketManager {
 	 * Distribute a message to all registered websocket connections
 	 * @param message A JsonNode containing the message information
 	 */
-    public static void notifyAll(ObjectNode message){
-        for (ConnectionTuple connection : connections.values()) {
+	public void notifyAll(ObjectNode message) {
+		for (ConnectionTuple connection : connections.values()) {
 			connection.out.write(message);
-        }
-    }
-    
-    public static void notifyNewAlarm(Alarm al) {
+		}
+	}
+
+	/* Support classes */
+
+	/**
+	 * Helper class for creating a Tuple containing both in and out sockets of a connected user
+	 */
+	public class ConnectionTuple {
+		public WebSocket.In<JsonNode> in;
+		public WebSocket.Out<JsonNode> out;
+
+		public ConnectionTuple(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
+			this.in = in;
+			this.out = out;
+		}
+	}
+
+	/* Deprecated methods */
+
+	@Deprecated
+	public void notifyNewAlarm(Alarm al) {
 		ObjectNode wrapper = Json.newObject();
 		ObjectNode action = Json.newObject();
 		ObjectNode alarm = Alarm.toJson(al);
 		action.put("action", "addAlarm");
 		wrapper.put("action", action);
 		wrapper.put("alarm", alarm);
-		MyWebSocketManager.notifyAll(wrapper);
-    }
-    
-    public static void addTimeIconToAlarm(long id){
-    	ObjectNode jsonNotification = Json.newObject();
-    	ObjectNode  action = Json.newObject();
-    	jsonNotification.put("action", action);
-    	action.put("action", "addTimeNotification");
-    	jsonNotification.put("alarmId", id);
-    	
-    	MyWebSocketManager.notifyAll(jsonNotification);
-    }
-    
-    public static void notifyCloseAlarm(Alarm al){
-    	ObjectNode jsonNotification = Json.newObject();
-    	ObjectNode  action = Json.newObject();
-    	jsonNotification.put("action", action);
-    	action.put("action", "removeAlarm");
-    	jsonNotification.put("alarmId", al.id);
-    	
-    	MyWebSocketManager.notifyAll(jsonNotification);
-    }
-    
-    public static void notifyFollowUpAlarm(long alarmId){
-    	ObjectNode jsonNotification = Json.newObject();
-    	ObjectNode  action = Json.newObject();
-    	jsonNotification.put("action", action);
-    	action.put("action", "notifyFollowup");
-    	jsonNotification.put("alarmId", alarmId);
-    	
-    	MyWebSocketManager.notifyAll(jsonNotification);
-    }
 
-	public static void notifyFinishedAlarm(Alarm a) {
+		notifyAll(wrapper);
+	}
+
+	@Deprecated
+	public void addTimeIconToAlarm(long id){
+		ObjectNode jsonNotification = Json.newObject();
+		ObjectNode  action = Json.newObject();
+		jsonNotification.put("action", action);
+		action.put("action", "addTimeNotification");
+		jsonNotification.put("alarmId", id);
+
+		notifyAll(jsonNotification);
+	}
+
+	@Deprecated
+	public void notifyCloseAlarm(Alarm al){
+		ObjectNode jsonNotification = Json.newObject();
+		ObjectNode  action = Json.newObject();
+		jsonNotification.put("action", action);
+		action.put("action", "removeAlarm");
+		jsonNotification.put("alarmId", al.id);
+
+		notifyAll(jsonNotification);
+	}
+
+	@Deprecated
+	public void notifyFollowUpAlarm(long alarmId){
+		ObjectNode jsonNotification = Json.newObject();
+		ObjectNode  action = Json.newObject();
+		jsonNotification.put("action", action);
+		action.put("action", "notifyFollowup");
+		jsonNotification.put("alarmId", alarmId);
+
+		notifyAll(jsonNotification);
+	}
+
+	@Deprecated
+	public void notifyFinishedAlarm(Alarm a) {
 		ObjectNode wrapper = Json.newObject();
 		ObjectNode alarmJson = Alarm.toJson(a);
 		ObjectNode action = Json.newObject();
@@ -144,7 +189,6 @@ public class MyWebSocketManager {
 		action.put("action", "finishedAlarm");
 		wrapper.put("alarm", alarmJson);
 
-		MyWebSocketManager.notifyAll(wrapper);
+		notifyAll(wrapper);
 	}
-    
 }

@@ -106,8 +106,9 @@ var Actions = (function ($) {
                     }
                 });
             };
+            console.log('Close Case called on alarm: ' + activeAlarm);
             // Add confirmation dialog box if there is an attempt to close a non-finished alarm assigned to caretaker
-            if (activeAlarm.mobileCareTaker !== null && activeAlarm.finished !== true) {
+            if (activeAlarm.mobileCareTaker !== null && !activeAlarm.isFinished()) {
                 if (confirm('@Messages.get("actions.button.close.closenonfinished")')) {
                     closeCase();
                 }

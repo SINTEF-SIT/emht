@@ -30,6 +30,9 @@ import controllers.auth.Authentication;
 
 public class Application extends Controller {
 
+	// We keep the Web Socket Manager singleton as a field for easier reference
+	private static MyWebSocketManager WS = MyWebSocketManager.getInstance();
+
 	static Form<Alarm> alarmForm = Form.form(Alarm.class);
 
 	public static Result index() {
@@ -433,7 +436,7 @@ public class Application extends Controller {
 			a.finished = true;
 			a.mobileCareTaker = null;
 			a.save();
-			MyWebSocketManager.notifyFinishedAlarm(a);
+			WS.notifyFinishedAlarm(a);
 			return ok(Alarm.toJson(a));
 		} else {
 			Logger.debug("Attempt to finish a non-existant case: " + id);
@@ -556,7 +559,7 @@ public class Application extends Controller {
 				a.setNotes(session().getOrDefault("username", "unknown"), notes);
 				a.save();
 			}
-			MyWebSocketManager.notifyFollowUpAlarm(id);
+			WS.notifyFollowUpAlarm(id);
 			return ok(Alarm.toJson(a));
 		}
 	}
@@ -653,7 +656,7 @@ public class Application extends Controller {
 		return new WebSocket<JsonNode>() {
 			// Called when WebSocket handshake is done
 			public void onReady(WebSocket.In<JsonNode> in, WebSocket.Out<JsonNode> out) {
-				MyWebSocketManager.start(username, in, out);
+				WS.start(username, in, out);
 			}
 		};
 	}
