@@ -1,5 +1,9 @@
 package models;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,6 +63,21 @@ public class Alarm extends Model { // the model extension serves for having acce
 
 	@ManyToOne(cascade = CascadeType.ALL)
 	public Patient patient;
+
+	/**
+	 * Helper setter method that appends notes with timestamp and committer
+	 * @param notes
+	 */
+	public void setNotes(String user, String notes) {
+		// Set the metadata
+		String committer = Global.formatDateAsISO(new Date()) + " ["+user+"]:\n";
+		// Initialize notes field if null
+		if (this.notes == null) {
+			this.notes = "";
+		}
+		// Append the data
+		this.notes += committer + notes + '\n';
+	}
 
 	public static Finder<Long, Alarm> find = new Finder(Long.class, Alarm.class);
 

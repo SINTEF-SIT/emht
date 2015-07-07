@@ -49,6 +49,16 @@ p.list-group-item-text {
 }
 
 
+/* Notes Log */
+pre#notesLog {
+    display: block;
+    width: 100%;
+    padding: 5px;
+    height: 65px;
+    font-size: 12px;
+    overflow-y: scroll;
+    background-color: #fcfcfc;
+}
 
 
 /* Arrow css code generated at http://cssarrowplease.com/ */

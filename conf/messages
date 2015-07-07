@@ -137,6 +137,7 @@ button.yes=Yes
 button.no=No
 button.ring=Call
 button.search=Search
+button.logout=Log out
 button.send=Send
 button.done=Done
 button.alarms.mine=Mine

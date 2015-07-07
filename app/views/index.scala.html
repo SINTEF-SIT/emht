@@ -30,7 +30,11 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 				<div class="col-md-3"><h2 id="receptionArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.reception")</h2></div>
 				<div class="col-md-3"><h2 id="registrationArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.registration")</h2></div>
 				<div class="col-md-3"><h2 id="assesmentArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.assessment")</h2></div>
-				<div class="col-md-3"><h2 id="closingArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.actions")</h2></div>
+				<div class="col-md-3">
+					<h2 id="closingArrowHeader" class="nonselected_arrow_box">&nbsp @Messages.get("arrow.actions")
+						<a href="/logout" class="btn btn-default pull-right">@Messages.get("button.logout")</a>
+					</h2>
+				</div>
 			</div>
 			<div class="row">
 				<section id="allListsSection" class="col-md-3 alarmListSection">
@@ -192,7 +196,8 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 				</div>
 				<div class="col-md-9" id="globalNotesDiv">
 					<u>@Messages.get("actions.popup.send.notes"):</u>
-					<textarea id="globalNotesBox" class="form-control" rows="5"></textarea>
+					<pre id="notesLog"></pre>
+					<textarea id="globalNotesBox" class="form-control" rows="2"></textarea>
 				</div>
 			</div>
 		</div>

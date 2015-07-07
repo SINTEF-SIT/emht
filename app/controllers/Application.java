@@ -396,7 +396,11 @@ public class Application extends Controller {
 		Alarm a = new Alarm();
 		a.occuranceAddress = alarmOccurance;
 		a.id = alarmId;
-		a.notes = notes;
+
+		// If we have addition to the notes, append and template it
+		if (notes != null && notes.length() > 0) {
+			a.setNotes(session().getOrDefault("username", "unknown"), notes);
+		}
 
 		if (0 != patientId) {
 			a.patient = Patient.getFromId(patientId);
@@ -508,10 +512,8 @@ public class Application extends Controller {
 		}
 
 		// If we have addition to the notes, append and template it
-		if ((a.notes == null && !notes.equals("")) || (a.notes != null && !notes.contentEquals(a.notes))) {
-			notes = notes.substring(a.notes.length()) + '\n';
-			a.notes += "" + Global.formatDateAsISO(new Date()) + " - (" + at.username + "):\n";
-			a.notes += notes;
+		if (notes != null && notes.length() > 0) {
+			a.setNotes(session().getOrDefault("username", "unknown"), notes);
 		}
 
 		Alarm.saveAndFollowupAlarm(a);
@@ -539,7 +541,7 @@ public class Application extends Controller {
 	 * Update an Alarm with external data in notes, and notify all web socket connections of
 	 * the updated alarm from external source. Retrieves updated notes from POST request body.
 	 * @param id The ID of the Alarm in question
-	 * @return 200 OK or Bad request if state of the Alarm is non-existand, not dispatched or closed.
+	 * @return 200 OK or Bad request if state of the Alarm is non-existent, not dispatched or closed.
 	 */
 	public static Result notifyFollowup(Long id) {
 		JsonNode alarmNotes = request().body().asJson();
@@ -550,9 +552,10 @@ public class Application extends Controller {
 			return badRequest();
 		}
 		else {
-			if (a.notes == null) a.notes = notes;
-			else a.notes += notes;
-			a.save();
+			if (notes != null && notes.length() > 0) {
+				a.setNotes(session().getOrDefault("username", "unknown"), notes);
+				a.save();
+			}
 			MyWebSocketManager.notifyFollowUpAlarm(id);
 			return ok(Alarm.toJson(a));
 		}

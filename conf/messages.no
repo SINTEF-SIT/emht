@@ -135,6 +135,7 @@ button.yes=Ja
 button.no=Nei
 button.ring=Ring
 button.search=Søk
+button.logout=Logg ut
 button.send=Send
 button.done=OK
 button.alarms.mine=Mine

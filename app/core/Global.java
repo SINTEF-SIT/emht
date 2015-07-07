@@ -83,10 +83,9 @@ public class Global extends GlobalSettings {
 	 * @return The Date instance represented as ISO8601
 	 */
 	public static String formatDateAsISO (Date date) {
-		TimeZone tz = TimeZone.getTimeZone("UTC");
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		TimeZone tz = TimeZone.getDefault();
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 		df.setTimeZone(tz);
-		String ISOtime = df.format(date);
-		return ISOtime;
+		return df.format(date);
 	}
 }

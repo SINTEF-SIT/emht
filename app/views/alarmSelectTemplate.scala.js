@@ -423,6 +423,7 @@ var Alarms = (function ($) {
 				Assessment.reset();
 				Actions.reset();
 				$("#globalNotesBox").val("");
+				$('#notesLog').text('');
 				Alarms.gui.resetAlarmCount();
 			},
 

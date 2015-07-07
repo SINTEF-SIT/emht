@@ -215,7 +215,8 @@ var Patient = (function ($) {
 		// Update notes and set occurrance address if set
 		var notes = currentSelected.data.notes;
 		var occurrenceAddress = currentSelected.data.occuranceAddress;
-		$("#globalNotesBox").val(notes);
+		$("#notesLog").text(notes === null ? "" : notes);;
+		$("#globalNotesBox").val('')
 
         // Check existance and potential equality between occurrence address and patient address
         if (occurrenceAddress !== null) {
