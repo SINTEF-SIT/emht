@@ -69,7 +69,8 @@ var Patient = (function ($) {
 			e.preventDefault();
 
 			var activeAlarm = Alarms.getActiveAlarm();
-			if (activeAlarm !== null && activeAlarm.protected) return alert('Alarm is protected, cannot modify.');
+			if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+			if (activeAlarm.isFollowup()) return alert('Alarm in followup! Cannot modify.');
 
 			var address = $('#incidentAddress').val();
 			MapView.convertAddressToLatLng(address, function (locationData) {
@@ -110,6 +111,7 @@ var Patient = (function ($) {
 			listItem.on('click', function (e) {
 				e.preventDefault();
 				if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+				if (activeAlarm.isFollowup()) return alert('Alarm in followup! Cannot modify.');
 
 				populatePatientInformation(patientList[i]);
 
@@ -133,6 +135,8 @@ var Patient = (function ($) {
 			listItem.attr('id', 'Patient' + activePatient.id);
 			listItem.on('click', function (e) {
 				e.preventDefault();
+				if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+				if (activeAlarm.isFollowup()) return alert('Alarm in followup! Cannot modify.');
 				populatePatientInformation(activePatient);
 
 				// Persist the selection in the database.
@@ -148,11 +152,15 @@ var Patient = (function ($) {
 		var otherPatient = $('<li></li>').html('<a href="#">@Messages.get("patientpane.pill.other.patient")</a>');
 		otherPatient.on('click', function (e) {
 			e.preventDefault();
+			if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+			if (activeAlarm.data.dispatchTime !== null) return alert('Alarm in followup! Cannot modify.');
 			Patient.openPatientSearchModal();
 		});
 		var unknownPatient = $('<li></li>').html('<a href="#">@Messages.get("patientpane.pill.unknown")</a>');
 		unknownPatient.on('click', function (e) {
 			e.preventDefault();
+			if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+			if (activeAlarm.isFollowup()) return alert('Alarm in followup! Cannot modify.');
 			Patient.fillUnknownPatient();
 		});
 		dropDown.append(otherPatient);
@@ -278,6 +286,7 @@ var Patient = (function ($) {
 
 	// Helper that generates a result table of patients in the patient search modal
 	var drawPatientSearchResults = function (results) {
+		var activeAlarm = Alarms.getActiveAlarm();
 		var resultContainer = $('#patient-search-modal-results');
 		var tbl = '<table class="table table-striped table-condensed"><thead><tr>' +
 			'<th>@Messages.get("patientpane.name")</th>' +
@@ -304,6 +313,8 @@ var Patient = (function ($) {
 
 		$('.patientSelection').on('click', function (e) {
 			e.preventDefault();
+			if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+			if (activeAlarm.isFollowup()) return alert('Alarm in followup! Cannot modify.');
 			var patient = results[Number($(this).attr('id').replace('PatientSearch', ''))];
 			populatePatientInformation(patient);
 			// Persist the selection in the database.
@@ -317,7 +328,8 @@ var Patient = (function ($) {
 		init: function () {
 			$('#addPatientModalButton').click(function() {
 				var activeAlarm = Alarms.getActiveAlarm();
-				if (activeAlarm !== null && activeAlarm.protected) return alert('Alarm is protected, cannot modify.');
+				if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+				if (activeAlarm.isFollowup()) return alert('Alarm in followup! Cannot modify.');
 				Patient.addNewPatientFromModal();
 			});
 			$("#closeCaseFromPatientRegButton").click(Patient.closeCaseAtRegistration);
@@ -435,19 +447,22 @@ var Patient = (function ($) {
 				data : JSON.stringify(inputPatient),
 				contentType : 'application/json',
 				success : function (outputPatient) {
+					var activeAlarm = Alarms.getActiveAlarm();
 					// add it to list
 					var patientListItem = '<li id="Patient' + outputPatient.id + '"><a href="#">' + outputPatient.name +'</a></li>';
 					$('#patientDropDownList').prepend(patientListItem);
 					Patient.populatePatient(outputPatient);
 
 					// Persist the selection in the database.
-					setPatientOnAlarm(Alarms.getActiveAlarm().id, outputPatient);
+					setPatientOnAlarm(activeAlarm.id, outputPatient);
 
 					$('#Patient'+outputPatient.id).on('click', function (e) {
 						e.preventDefault();
+						if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+						if (activeAlarm.isFollowup()) return alert('Alarm in followup! Cannot modify.');
 						Patient.populatePatient(outputPatient);
 						// Persist the selection in the database.
-						setPatientOnAlarm(Alarms.getActiveAlarm().id, outputPatient);
+						setPatientOnAlarm(activeAlarm.id, outputPatient);
 					});
 
 				}// end of success
@@ -468,40 +483,3 @@ var Patient = (function ($) {
 		}
 	}
 })(jQuery)
-
-
-
-
-/*	function closeCaseAtRegistration(){
-
- var updatedAlarm = getUpdatedAlarmFromAssesmentPage();
-
- myJsRoutes.controllers.Application.closeCase().ajax({
- data : JSON.stringify(updatedAlarm),
- contentType : 'application/json',
- success : function (data) {
- removeHighlightedAlarmFromList();
- highlightBackListTab ();
- }// end of success
- });// end of ajax call
-
- }
-
- function fromRegistrationToAssesment(){
- var updatedAlarm = getUpdatedAlarmFromAssesmentPage();
-
- myJsRoutes.controllers.Application.saveCase().ajax({
- data : JSON.stringify(updatedAlarm),
- contentType : 'application/json',
- success : function (data) {
- // TODO: possibly move some of this to a function
- highlightArrowHeader("assesmentArrowHeader");
- loadPatientSensor();
- $("#assesment").show();
- $("#assementNotesDiv").show();
- $('#notesDiv').hide();
- $('#assesmentNotesBox').val($('#patientRegistrationNotesBox').val());
- }// end of success
- });// end of ajax call
- }
- */

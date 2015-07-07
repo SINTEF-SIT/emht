@@ -8,9 +8,19 @@ var Actions = (function ($) {
     /* Public methods inside return object */
     return {
         init: function () {
-            $(".dispatch-ring-btn").click(function() { $('#calling_modal').modal("show") });
-            $(".dispatch-send-btn").click(function() {
-                //clear modal
+            $(".dispatch-ring-btn").on('click', function(e) {
+                e.preventDefault();
+                var activeAlarm = Alarms.getActiveAlarm();
+                if (activeAlarm === null) return alert('No active alarm');
+                if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+                $('#calling_modal').modal("show")
+            });
+            $(".dispatch-send-btn").on('click', function(e) {
+                e.preventDefault();
+                var activeAlarm = Alarms.getActiveAlarm();
+                if (activeAlarm === null) return alert('No active alarm');
+                if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+
                 $("#dispatch_data_modal").find(':checkbox').each(
                     function() {
                         $(this).prop("checked", "checked");
@@ -22,8 +32,11 @@ var Actions = (function ($) {
             });
 
             // setting up schedule time modal
-            $(".schedule-btn").click(function() {
-                //clear modal
+            $(".schedule-btn").on('click', function(e) {
+                e.preventDefault();
+                var activeAlarm = Alarms.getActiveAlarm();
+                if (activeAlarm === null) return alert('No active alarm');
+                if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
                 $("#schedule_time_modal").find(':checkbox').each(
                     function() {
                         $(this).prop("checked", "checked");
@@ -104,8 +117,10 @@ var Actions = (function ($) {
         },
 
         saveAndFollowupAtClosing: function (followUp) {
-            if (Alarms.getActiveAlarm() === null) alert('No active alarm');
-            if (Alarms.getActiveAlarm().protected) return alert('Alarm is protected, cannot modify.');
+            var activeAlarm = Alarms.getActiveAlarm();
+            if (activeAlarm === null) return alert('No active alarm');
+            if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+
             var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 
             // If we have a special followUp payload, add it to the alarm

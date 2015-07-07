@@ -200,43 +200,48 @@ var Assessment = (function ($) {
 	// Due to some strange behaviour of radio buttons not altering checked state while hidden,
 	// we need a generator function. This will also serve as an easy point of entry to alter
 	// when custom question set is implemented.
-	var generateAssessmentRadioButtons = function() {
+	var generateAssessmentRadioButtons = function () {
+		var activeAlarm = Alarms.getActiveAlarm();
+		var disabled = "";
+		if (activeAlarm === null || activeAlarm === undefined || activeAlarm.protected || activeAlarm.isFollowup()) {
+			disabled = "disabled";
+		}
 		var radioTable =
 			'<table class="table"><tbody>' +
 			'<tr><td>@Messages.get("assessment.tab.question.conscious")</td><td>' +
 			'<label class="radio-inline">' +
-			'<input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">@Messages.get("button.yes")</label>' +
+			'<input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious" '+disabled+'>@Messages.get("button.yes")</label>' +
 			'</td><td>' +
 			'<label class="radio-inline">' +
-			'<input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious">@Messages.get("button.no")</label>' +
+			'<input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious" '+disabled+'>@Messages.get("button.no")</label>' +
 			'</td></tr>' +
 			'<tr><td>@Messages.get("assessment.tab.question.breathing")</td><td>' +
 			'<label class="radio-inline">' +
-			'<input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normally">@Messages.get("button.yes")</label>' +
+			'<input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normally" '+disabled+'>@Messages.get("button.yes")</label>' +
 			'</td><td>' +
 			'<label class="radio-inline">' +
-			'<input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breathe normally">@Messages.get("button.no")</label>' +
+			'<input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breathe normally" '+disabled+'>@Messages.get("button.no")</label>' +
 			'</td></tr>' +
 			'<tr><td>@Messages.get("assessment.tab.question.move")</td><td>' +
 			'<label class="radio-inline">' +
-			'<input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">@Messages.get("button.yes")</label>' +
+			'<input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move" '+disabled+'>@Messages.get("button.yes")</label>' +
 			'</td><td>' +
 			'<label class="radio-inline">' +
-			'<input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3N" value="Patient cant move">@Messages.get("button.no")</label>' +
+			'<input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3N" value="Patient cant move" '+disabled+'>@Messages.get("button.no")</label>' +
 			'</td></tr>' +
 			'<tr><td>@Messages.get("assessment.tab.question.standup")</td><td>' +
 			'<label class="radio-inline">' +
-			'<input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">@Messages.get("button.yes")</label>' +
+			'<input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up" '+disabled+'>@Messages.get("button.yes")</label>' +
 			'</td><td>' +
 			'<label class="radio-inline">' +
-			'<input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4N" value="Patient cant stand up">@Messages.get("button.no")</label>' +
+			'<input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4N" value="Patient cant stand up" '+disabled+'>@Messages.get("button.no")</label>' +
 			'</td></tr>' +
 			'<tr><td>@Messages.get("assessment.tab.question.talk")</td><td>' +
 			'<label class="radio-inline">' +
-			'<input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">@Messages.get("button.yes")</label>' +
+			'<input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk" '+disabled+'>@Messages.get("button.yes")</label>' +
 			'</td><td>' +
 			'<label class="radio-inline">' +
-			'<input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5N" value="Patient cant talk">@Messages.get("button.no")</label>' +
+			'<input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5N" value="Patient cant talk" '+disabled+'>@Messages.get("button.no")</label>' +
 			'</td></tr></tbody></table>';
 
 		// Replace existing radio buttons with new ones
@@ -296,12 +301,22 @@ var Assessment = (function ($) {
 			bindRadioButtons();
 
 			// Add log actions to tabs
-			$("#infoTablink").click(function () {
+			$("#infoTablink").on('click', function (e) {
+				var activeAlarm = Alarms.getActiveAlarm();
+				if (activeAlarm === null || activeAlarm.protected || activeAlarm.isFollowup()) {
+					// Just return if we shall not modify the DOM
+					return
+				}
 				currentAssessment.patientInformationChecked = true;
 				$("#informationSensorlabel").show();
 			});
 
-			$("#sensorTablink").click(function () {
+			$("#sensorTablink").on('click', function (e) {
+				var activeAlarm = Alarms.getActiveAlarm();
+				if (activeAlarm === null || activeAlarm.protected || activeAlarm.isFollowup()) {
+					// Just return if we shall not modify the DOM
+					return
+				}
 				currentAssessment.sensorsChecked = true;
 				$("#assedmentSensorlabel").show();
 			});

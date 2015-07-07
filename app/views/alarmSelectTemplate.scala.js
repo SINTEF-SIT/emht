@@ -361,6 +361,11 @@ var Alarms = (function ($) {
 				handleResetAlarmCount();
 			},
 
+			resetNotes: function () {
+				$("#globalNotesBox").val("");
+				$('#notesLog').text('');
+			},
+
 			populateAlarmDetails: function (alarmIndex) {
 				var a = getAlarm(alarmIndex);
 				Patient.generatePatientContainer();
@@ -422,9 +427,8 @@ var Alarms = (function ($) {
 				Patient.clearUpPatientData();
 				Assessment.reset();
 				Actions.reset();
-				$("#globalNotesBox").val("");
-				$('#notesLog').text('');
 				Alarms.gui.resetAlarmCount();
+				Alarms.gui.resetNotes();
 			},
 
 			getCurrentSelectedAlarmIndex: function () {

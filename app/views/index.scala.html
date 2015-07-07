@@ -52,7 +52,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 										<img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 									}
 									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
-									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
+									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber}</p>
 									<div class="assignedTo"></div>
 									</a>
 								}
@@ -76,7 +76,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 											<img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 										}
 										<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
-										<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber} ;</p>
+										<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber}</p>
 										<div class="assignedTo"></div>
 									</a>
 								}
@@ -103,7 +103,7 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 										<img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 									}
 									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm")</h4>
-									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber};
+									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber}
 									<div class="assignedTo">
 									@if(alarm.mobileCareTaker != null){
 										Assigned to: <strong>@{alarm.mobileCareTaker.username}</strong>
@@ -136,11 +136,11 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 						<div class="tab-content" id="assessmentTabs">
 							<div class="tab-pane active" id="nmiTab" >
 								<table class="table"><tbody>
-									<tr><td>@Messages.get("assessment.tab.question.conscious") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious">@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious">@Messages.get("button.no")</label>       </td></tr>
-									<tr><td>@Messages.get("assessment.tab.question.breathing") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normly">@Messages.get("button.yes")</label></td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breath normly">@Messages.get("button.no")</label> </td></tr>
-									<tr><td>@Messages.get("assessment.tab.question.move")      </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move">@Messages.get("button.yes")</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox3N" name="NMIcheckBox3radio" value="Patient cant move">@Messages.get("button.no")</label>              </td></tr>
-									<tr><td>@Messages.get("assessment.tab.question.standup")   </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up">@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox4N" name="NMIcheckBox4radio" value="Patient cant stand up">@Messages.get("button.no")</label>          </td></tr>
-									<tr><td>@Messages.get("assessment.tab.question.talk")       </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk">@Messages.get("button.yes")</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox5N" name="NMIcheckBox5radio" value="Patient cant talk">@Messages.get("button.no")</label>              </td></tr>
+									<tr><td>@Messages.get("assessment.tab.question.conscious") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1Y" value="Patient is conscious" disabled>@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox1radio" id="NMIcheckBox1N" value="Patient is not conscious" disabled>@Messages.get("button.no")</label>       </td></tr>
+									<tr><td>@Messages.get("assessment.tab.question.breathing") </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2Y" value="Patient breaths normally" disabled>@Messages.get("button.yes")</label></td><td><label class="radio-inline"><input type="radio" name="NMIcheckBox2radio" id="NMIcheckBox2N" value="Patient does not breath normally" disabled>@Messages.get("button.no")</label> </td></tr>
+									<tr><td>@Messages.get("assessment.tab.question.move")      </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox3radio" id="NMIcheckBox3Y" value="Patient can move" disabled>@Messages.get("button.yes")</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox3N" name="NMIcheckBox3radio" value="Patient cant move" disabled>@Messages.get("button.no")</label>              </td></tr>
+									<tr><td>@Messages.get("assessment.tab.question.standup")   </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox4radio" id="NMIcheckBox4Y" value="Patient can stand up" disabled>@Messages.get("button.yes")</label>  </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox4N" name="NMIcheckBox4radio" value="Patient cant stand up" disabled>@Messages.get("button.no")</label>          </td></tr>
+									<tr><td>@Messages.get("assessment.tab.question.talk")       </td><td>  <label class="radio-inline"><input type="radio" name="NMIcheckBox5radio" id="NMIcheckBox5Y" value="Patient can talk" disabled>@Messages.get("button.yes")</label>      </td><td><label class="radio-inline"><input type="radio" id="NMIcheckBox5N" name="NMIcheckBox5radio" value="Patient cant talk" disabled>@Messages.get("button.no")</label>              </td></tr>
 								</tbody></table>
 							</div>
 							<div class="tab-pane" id="infoTab" >
