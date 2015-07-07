@@ -43,6 +43,8 @@ var Alarms = (function ($) {
 
 		isFollowup: function () { return this.state === 'followup'; },
 
+		isFinished: function () { return this.state === 'finished'; },
+
 		isClosed: function () { return this.state === 'closed'; },
 
 		// We treat open alarms as basically belonging to 'everyone' until assigned to an operator
@@ -147,6 +149,7 @@ var Alarms = (function ($) {
 			this.select();
 			this.protected = true;
 			Alarms.gui.selectFollowUpAlarm(this.id);
+			return this;
 		},
 
 		deselect: function () {
@@ -319,7 +322,7 @@ var Alarms = (function ($) {
 				$("#calleeLogTableDiv").html(htmlTable);
 			}
 		);
-	}
+	};
 
 	/* Public methods inside return object */
 	return {

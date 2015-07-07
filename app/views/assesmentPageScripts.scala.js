@@ -285,11 +285,6 @@ var Assessment = (function ($) {
 				updateAssessmentInfo(this);
 			});
 		});
-	}
-
-	var removeImageFromSensorTab = function () {
-		$(".assesment-graph").remove();
-		$("#ampliphied-graph").attr("src", "");
 	};
 
 	/* Public methods inside the return object */
@@ -386,55 +381,3 @@ var Assessment = (function ($) {
 		}
 	}
 })(jQuery);
-
-
-
-/*
- function closeCaseAtAssesment(){
-
- // TODO: retrieve and save logs
- var notes = $('#assesmentNotesBox').val();
- var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
-
- var updatedAlarm = {
- 'alarmId' : alarmId,
- 'notes' : notes,
- };
-
- myJsRoutes.controllers.Application.closeCase().ajax({
- data : JSON.stringify(updatedAlarm),
- contentType : 'application/json',
- success : function (data) {
- removeHighlightedAlarmFromList();
- highlightBackListTab ();
- }// end of success
- });// end of ajax call
-
- }
-
- function fromAssementToClosing(){
-
- // TODO: retrieve and save logs
- var notes = $('#assesmentNotesBox').val();
- var alarmId = $('#assignedAlarmList').find('.list-group-item.active').attr("idnum");
-
- var updatedAlarm = {
- 'alarmId' : alarmId,
- 'notes' : notes,
- };
-
- myJsRoutes.controllers.Application.saveCase().ajax({
- data : JSON.stringify(updatedAlarm),
- contentType : 'application/json',
- success : function (data) {
- // TODO: possibly move some of this to a function
- highlightArrowHeader("closingArrowHeader");
- $("#assesment").show();
- $('#assementNotesDiv').hide();
- $("#extraActionButtonsDiv").show();
- $("#closingNotesAndButtons").show();
- $('#closingNotesBox').val($('#assesmentNotesBox').val());
- }// end of success
- });// end of ajax call
- }
- */
