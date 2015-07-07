@@ -465,10 +465,11 @@ public class Application extends Controller {
 
 		// Do we have a provided assessment from attendant?
 		if (json.hasNonNull("assessment")) {
-			a.assessment.sensorsChecked = json.findPath("sensorsChecked").asBoolean();
-			a.assessment.patientInformationChecked = json.findPath("patientInformationChecked").asBoolean();
-			if (json.findPath("assessment").hasNonNull("nmi")) {
-				JsonNode nmi = json.findPath("nmi");
+			JsonNode attendantAssessment = json.get("assessment");
+			a.assessment.sensorsChecked = attendantAssessment.get("sensorsChecked").asBoolean();
+			a.assessment.patientInformationChecked = attendantAssessment.get("patientInformationChecked").asBoolean();
+			if (attendantAssessment.hasNonNull("nmi")) {
+				JsonNode nmi = attendantAssessment.get("nmi");
 				if (!nmi.get("conscious").isNull()) a.assessment.nmi.conscious = nmi.get("conscious").asBoolean();
 				else a.assessment.nmi.conscious = null;
 				if (!nmi.get("breathing").isNull()) a.assessment.nmi.breathing = nmi.get("breathing").asBoolean();
@@ -484,10 +485,11 @@ public class Application extends Controller {
 
 		// Do we have a provided assessment from field operator?
 		if (json.hasNonNull("fieldAssessment")) {
-			a.fieldAssessment.sensorsChecked = json.findPath("sensorsChecked").asBoolean();
-			a.fieldAssessment.patientInformationChecked = json.findPath("patientInformationChecked").asBoolean();
-			if (json.findPath("assessment").hasNonNull("nmi")) {
-				JsonNode nmi = json.findPath("nmi");
+			JsonNode fieldOperatorAssessment = json.get("fieldAssessment");
+			a.fieldAssessment.sensorsChecked = fieldOperatorAssessment.get("sensorsChecked").asBoolean();
+			a.fieldAssessment.patientInformationChecked = fieldOperatorAssessment.get("patientInformationChecked").asBoolean();
+			if (fieldOperatorAssessment.hasNonNull("nmi")) {
+				JsonNode nmi = fieldOperatorAssessment.get("nmi");
 				if (!nmi.get("conscious").isNull()) a.fieldAssessment.nmi.conscious = nmi.get("conscious").asBoolean();
 				else a.fieldAssessment.nmi.conscious = null;
 				if (!nmi.get("breathing").isNull()) a.fieldAssessment.nmi.breathing = nmi.get("breathing").asBoolean();

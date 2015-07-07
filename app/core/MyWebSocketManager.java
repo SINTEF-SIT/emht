@@ -4,7 +4,10 @@ import java.util.*;
 
 import static core.event.EventType.*;
 
+import core.event.Event;
+import core.event.EventHandler;
 import core.event.EventType;
+import core.event.EventListener;
 import models.Alarm;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,7 +19,7 @@ import play.libs.F.Callback;
 import play.libs.F.Callback0;
 import play.mvc.WebSocket;
 
-public class MyWebSocketManager {
+public class MyWebSocketManager implements EventListener {
 
 	private static boolean _invoked;
 	private static MyWebSocketManager _singleton;
@@ -46,6 +49,9 @@ public class MyWebSocketManager {
 		actionMap.put(ALARM_DISPATCHED, "alarmDispatched");
 		actionMap.put(ALARM_FINISHED, "alarmFinished");
 		actionMap.put(PATIENT_NEW, "patientNew");
+
+		// Register ourselves as interested in events from the central EventHandler
+		EventHandler.getInstance().addEventListener(this);
 
 		_invoked = true;
 	}
@@ -116,6 +122,19 @@ public class MyWebSocketManager {
 		for (ConnectionTuple connection : connections.values()) {
 			connection.out.write(message);
 		}
+	}
+
+	/* Event listener support */
+
+	@Override
+	public void newEvent(Event e) {
+
+	}
+
+	@Override
+	public Set<EventType> listenFor() {
+		// Just tell the event handler that we are interested in the entire event set
+		return actionMap.keySet();
 	}
 
 	/* Support classes */

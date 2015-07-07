@@ -13,7 +13,10 @@ public interface EventListener {
     void newEvent(Event e);
 
     /**
-     * Must return a Set of all EventTypes this listener is interested in receiving events for
+     * Must return a Set of all EventTypes this listener is interested in receiving events for. This
+     * allows listeners to change their interests at runtime without having to remove and re-add themselves
+     * as event listeners.
+     * 
      * @return A Set of EventTypes
      */
     Set<EventType> listenFor();
