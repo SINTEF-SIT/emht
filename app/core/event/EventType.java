@@ -16,4 +16,5 @@ public enum EventType {
     ALARM_DISPATCHED,
     ALARM_FINISHED,
     PATIENT_NEW,
+    MONITOR_STATISTICS
 }

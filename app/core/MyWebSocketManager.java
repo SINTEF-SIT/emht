@@ -49,6 +49,7 @@ public class MyWebSocketManager implements EventListener {
 		actionMap.put(ALARM_DISPATCHED, "alarmDispatched");
 		actionMap.put(ALARM_FINISHED, "alarmFinished");
 		actionMap.put(PATIENT_NEW, "patientNew");
+		actionMap.put(MONITOR_STATISTICS, "monitorStatistics");
 
 		// Register ourselves as interested in events from the central EventHandler
 		EventHandler.getInstance().addEventListener(this);
@@ -59,7 +60,7 @@ public class MyWebSocketManager implements EventListener {
 	/**
 	 * Instance factory method
 	 */
-	public static MyWebSocketManager getInstance() {
+	public synchronized static MyWebSocketManager getInstance() {
 		if (!_invoked) _singleton = new MyWebSocketManager();
 		return _singleton;
 	}
@@ -128,7 +129,7 @@ public class MyWebSocketManager implements EventListener {
 
 	@Override
 	public void newEvent(Event e) {
-
+		Logger.debug("[WS] Received event: " + e);
 	}
 
 	@Override
@@ -167,9 +168,9 @@ public class MyWebSocketManager implements EventListener {
 	}
 
 	@Deprecated
-	public void addTimeIconToAlarm(long id){
+	public void addTimeIconToAlarm(long id) {
 		ObjectNode jsonNotification = Json.newObject();
-		ObjectNode  action = Json.newObject();
+		ObjectNode action = Json.newObject();
 		jsonNotification.put("action", action);
 		action.put("action", "addTimeNotification");
 		jsonNotification.put("alarmId", id);
@@ -178,9 +179,9 @@ public class MyWebSocketManager implements EventListener {
 	}
 
 	@Deprecated
-	public void notifyCloseAlarm(Alarm al){
+	public void notifyCloseAlarm(Alarm al) {
 		ObjectNode jsonNotification = Json.newObject();
-		ObjectNode  action = Json.newObject();
+		ObjectNode action = Json.newObject();
 		jsonNotification.put("action", action);
 		action.put("action", "removeAlarm");
 		jsonNotification.put("alarmId", al.id);
@@ -189,9 +190,9 @@ public class MyWebSocketManager implements EventListener {
 	}
 
 	@Deprecated
-	public void notifyFollowUpAlarm(long alarmId){
+	public void notifyFollowUpAlarm(long alarmId) {
 		ObjectNode jsonNotification = Json.newObject();
-		ObjectNode  action = Json.newObject();
+		ObjectNode action = Json.newObject();
 		jsonNotification.put("action", action);
 		action.put("action", "notifyFollowup");
 		jsonNotification.put("alarmId", alarmId);
