@@ -452,7 +452,10 @@ public class Application extends Controller {
 	public static Result saveAndFollowupCase() {
 		AlarmAttendant at = AlarmAttendant.find.byId(Long.parseLong(session().getOrDefault("id", "0")));
 		JsonNode json = request().body().asJson();
-		long patientId = json.get("patient").get("id").asLong();
+		long patientId;
+		JsonNode patient = json.get("patient");
+		if (!patient.isNull()) patientId = patient.get("id").asLong();
+		else patientId = 0;
 		String notes = json.findPath("notes").asText();
 		String alarmOccurance = json.findPath("occuranceAddress").asText();
 		long alarmId = json.findPath("id").asLong();
@@ -548,6 +551,7 @@ public class Application extends Controller {
 	 * @param id The ID of the Alarm in question
 	 * @return 200 OK or Bad request if state of the Alarm is non-existent, not dispatched or closed.
 	 */
+	@BodyParser.Of(BodyParser.Json.class)
 	public static Result notifyFollowup(Long id) {
 		JsonNode alarmNotes = request().body().asJson();
 		String notes = alarmNotes.findPath("notes").asText();

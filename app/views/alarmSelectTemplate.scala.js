@@ -387,12 +387,14 @@ var Alarms = (function ($) {
 			},
 
 			selectFollowUpAlarm: function (alarmIndex) {
+				var a = getAlarm(alarmIndex);
+				a.select();
+
 				if (DEBUG) {
 					console.log("selectFollowupAlarm called on index: " + alarmIndex);
 					console.log("state of alarm cache is: " + alarms);
+					if (DEBUG) console.log("Selected MyAlarm: ", JSON.stringify(a.data, null, 4));
 				}
-				var a = getAlarm(alarmIndex);
-				a.select();
 
 				// Update the alarm with new data from the backend
 				a.update(function (alarm) {
@@ -419,6 +421,7 @@ var Alarms = (function ($) {
 
 			selectMyAlarm: function (alarmIndex) {
 				getAlarm(alarmIndex).select();
+				if (DEBUG) console.log("Selected MyAlarm: ", JSON.stringify(getAlarm(alarmIndex).data, null, 4));
 				Alarms.gui.populateAlarmDetails(alarmIndex);
 			},
 

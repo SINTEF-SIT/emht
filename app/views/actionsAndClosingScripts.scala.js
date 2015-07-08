@@ -108,7 +108,7 @@ var Actions = (function ($) {
             };
             console.log('Close Case called on alarm: ' + activeAlarm);
             // Add confirmation dialog box if there is an attempt to close a non-finished alarm assigned to caretaker
-            if (activeAlarm.mobileCareTaker !== null && activeAlarm.isFollowup()) {
+            if (activeAlarm.data.mobileCareTaker !== null && activeAlarm.isFollowup()) {
                 if (confirm('@Messages.get("actions.button.close.closenonfinished")')) {
                     closeCase();
                 }
@@ -120,6 +120,7 @@ var Actions = (function ($) {
         saveAndFollowupAtClosing: function (followUp) {
             var activeAlarm = Alarms.getActiveAlarm();
             if (activeAlarm === null) return alert('No active alarm');
+            if (activeAlarm.data.patient === null) return alert('No patient selected!');
             if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
 
             var updatedAlarm = Actions.getUpdatedAlarmFromPage();

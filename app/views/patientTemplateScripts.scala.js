@@ -153,7 +153,7 @@ var Patient = (function ($) {
 		otherPatient.on('click', function (e) {
 			e.preventDefault();
 			if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
-			if (activeAlarm.data.dispatchTime !== null) return alert('Alarm in followup! Cannot modify.');
+			if (activeAlarm.isFollowup()) return alert('Alarm in followup! Cannot modify.');
 			Patient.openPatientSearchModal();
 		});
 		var unknownPatient = $('<li></li>').html('<a href="#">@Messages.get("patientpane.pill.unknown")</a>');
