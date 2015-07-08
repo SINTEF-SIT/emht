@@ -420,7 +420,7 @@ var Patient = (function ($) {
 		retrievePatientsByAddress: function (alarmIndex) {
 			if ($('#dynamicPatientInfo').length === 1) {
 				$.getJSON("/prospectPatient/" + alarmIndex,
-					function (data) { generateProspectPatients(data.patientArray) }
+					function (data) { generateProspectPatients(data.patients) }
 				);
 			}
 		},

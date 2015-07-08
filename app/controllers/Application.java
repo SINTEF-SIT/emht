@@ -307,25 +307,11 @@ public class Application extends Controller {
 		List<Patient> patientList = Patient.prospectPatientsFromAlarm(id);
 
 		ObjectNode result = Json.newObject();
-
-		ArrayNode patientArray = new ArrayNode(JsonNodeFactory.instance);
-		if (null != patientList) {
-			for (Patient temp : patientList) {
-				ObjectNode  patient = Json.newObject();
-				patient.put("id", temp.id);
-				patient.put("name", temp.name);
-				patient.put("personalNumber", temp.personalNumber);
-				patient.put("phoneNumber", temp.phoneNumber);
-				patient.put("address", temp.address);
-				patient.put("age", temp.age);
-				if (null != temp.obs)
-					patient.put("obs", temp.obs);
-				else
-					patient.put("obs", "");
-				patientArray.add(patient);
-			}
+		ArrayNode patients = result.putArray("patients");
+		for (Patient p : patientList) {
+			patients.add(Patient.toJson(p));
 		}
-		result.put("patientArray",patientArray);
+		result.put("patients", patients);
 
 		return ok(result);
 	}
