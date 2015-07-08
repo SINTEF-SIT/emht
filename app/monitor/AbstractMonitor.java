@@ -37,6 +37,9 @@ public abstract class AbstractMonitor implements EventListener {
             case ALARM_NEW:
                 handleAlarmNew(e);
                 break;
+            case ALARM_DELETE:
+                handleAlarmDelete(e);
+                break;
             case ALARM_LOCATION_VERIFIED:
                 handleAlarmLocationVerified(e);
                 break;
@@ -45,6 +48,9 @@ public abstract class AbstractMonitor implements EventListener {
                 break;
             case ALARM_FIELD_ASSESSMENT_SET:
                 handleAlarmFieldAssessmentSet(e);
+                break;
+            case ALARM_EXTERNAL_FOLLOWUP_NOTIFY:
+                handleAlarmExternalFollowupNotify(e);
                 break;
             case ALARM_OPEN_EXPIRED:
                 handleAlarmOpenExpired(e);
@@ -82,9 +88,11 @@ public abstract class AbstractMonitor implements EventListener {
     protected abstract void handleAlarmAssessmentSet(Event e);
     protected abstract void handleAlarmAssigned(Event e);
     protected abstract void handleAlarmNew(Event e);
+    protected abstract void handleAlarmDelete(Event e);
     protected abstract void handleAlarmLocationVerified(Event e);
     protected abstract void handleAlarmPatientSet(Event e);
     protected abstract void handleAlarmFieldAssessmentSet(Event e);
+    protected abstract void handleAlarmExternalFollowupNotify(Event e);
     protected abstract void handleAlarmOpenExpired(Event e);
     protected abstract void handleAlarmResolutionExpired(Event e);
     protected abstract void handleAlarmClosed(Event e);

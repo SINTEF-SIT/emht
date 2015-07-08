@@ -1,9 +1,5 @@
 package models;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,18 +8,13 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.Global;
-import core.GoogleCloudMessaging;
 import core.MyWebSocketManager;
 
 import core.event.EventHandler;
 import core.event.EventType;
 import core.event.MonitorEvent;
-import play.Logger;
 import play.db.ebean.Model;
-import play.libs.F;
 import play.libs.Json;
-import play.libs.WS;
-import static play.mvc.Controller.*;
 
 @Entity
 public class Alarm extends Model { // the model extension serves for having access to Play built-in Ebean helper, such as the Finder
@@ -98,8 +89,6 @@ public class Alarm extends Model { // the model extension serves for having acce
 		alarm.assessment.nmi = new NMI();
 		alarm.fieldAssessment.nmi = new NMI();
 		alarm.save();
-		Global.alarmList.list.put(alarm.id, alarm);
-		Global.localMonitor.registerNewAlert(alarm.id);
 		MyWebSocketManager.getInstance().notifyNewAlarm(alarm);
 		// Dispatch the event
 		EventHandler.dispatch(new MonitorEvent(EventType.ALARM_NEW, alarm, null, null));
@@ -107,8 +96,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 	}
 
 	public static void delete(Long id) {
-		find.ref(id).delete();
-		Global.alarmList.list.remove(id);
+		Alarm a = find.ref(id);
+		EventHandler.dispatch(new MonitorEvent(EventType.ALARM_DELETE, a, null, null));
+		a.delete();
 	}
 
 	public static Alarm get(Long id) {
@@ -156,11 +146,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 		Alarm a = find.ref(alarmId);
 		a.attendant = attendant;
 		a.save();
-		Global.alarmList.list.put(a.id, a);// it will replace the alarm in the list with a new one with attendant and
-		// clean expired flag
-		Global.localMonitor.registerAssignment(alarmId);
-		// TODO: possibly add checks
-		// TODO: add websocket call in the case of a real multi-user
+
+		// Trigger the event
+		EventHandler.dispatch(new MonitorEvent(EventType.ALARM_ASSIGNED, a, null, null));
 
 		return a;
 	}
@@ -179,6 +167,10 @@ public class Alarm extends Model { // the model extension serves for having acce
 		a.occuranceAddress = location;
 		updateFromDummy(a);
 		a.save();
+
+		// Trigger the event
+		EventHandler.dispatch(new MonitorEvent(EventType.ALARM_LOCATION_VERIFIED, a, null, null));
+
 		return a;
 	}
 
@@ -189,9 +181,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 	private static Alarm updateFromDummy(Alarm dummy) {
 		Alarm a = Alarm.get(dummy.id);
 		if (null != dummy.patient) {
-			if (null == a.patient || (a.patient.id != dummy.patient.id)) { // no patient assigned to alarm, or different patient assgined
-				Patient p = Patient.getFromId(dummy.patient.id);
-				a.patient = p;
+			if (null == a.patient || !a.patient.id.equals(dummy.patient.id)) { // no patient assigned to alarm, or different patient assgined
+				a.patient = Patient.getFromId(dummy.patient.id);
 			}
 		}
 		if (null != dummy.notes) { // Im assuming Ill alwasy update the notes
@@ -225,10 +216,10 @@ public class Alarm extends Model { // the model extension serves for having acce
 			a.closingTime = dummy.closingTime;
 
 		// If we have latitude and longitude set and they differ from local monitor, update them
-		if (dummy.latitude != null && a.latitude != dummy.latitude) {
+		if (dummy.latitude != null && a.latitude != null && !a.latitude.equals(dummy.latitude)) {
 			a.latitude = dummy.latitude;
 		}
-		if (dummy.longitude != null && a.longitude != dummy.longitude) {
+		if (dummy.longitude != null && a.longitude != null && !a.longitude.equals(dummy.longitude)) {
 			a.longitude = dummy.longitude;
 		}
 		a.finished = dummy.finished;
@@ -242,26 +233,19 @@ public class Alarm extends Model { // the model extension serves for having acce
 	}
 
 	public static void saveAndFollowupAlarm(Alarm dummy) {
-		Date dispatchTime = new Date();
-		dummy.dispatchingTime = dispatchTime;
+		dummy.dispatchingTime = new Date();
 		// TODO: we should not update the dispatching time, if an incident is being save for followup
 		// more than once. Conceptually this would be wrong. However, since such behavior will not affect
 		// the demo, it has not been implemented
 		Alarm a = Alarm.updateFromDummy(dummy);
 		a.save();
-		Alarm listItem = Global.alarmList.list.get(dummy.id);
-		listItem.dispatchingTime = dispatchTime;
-		Global.localMonitor.registerFollowUp(listItem.id);
 
+		// Trigger the event
+		EventHandler.dispatch(new MonitorEvent(EventType.ALARM_DISPATCHED, a, null, null));
 	}
 
 	public static void closeAlarm(Alarm dummy) {
 		dummy.closingTime = new Date();
-
-		// since we are already closing the alarm, we will automatically remove it from the list
-		// in the future TODO: we should rather repalce the hash item and delete when the item is closed
-		Global.localMonitor.registerClosing(dummy.id);
-		Global.alarmList.list.remove(dummy.id);
 
 		Alarm a = Alarm.updateFromDummy(dummy);
 
@@ -269,7 +253,8 @@ public class Alarm extends Model { // the model extension serves for having acce
 		//though in a real multi user environment Id need to do it for everyone
 		// and handle the GUI just based on the websocket
 		MyWebSocketManager.getInstance().notifyCloseAlarm(dummy);
-		// Fire the event
+
+		// Trigger the event
 		EventHandler.dispatch(new MonitorEvent(EventType.ALARM_CLOSED, a, null, null));
 		a.save();
 	}
@@ -342,5 +327,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 		}
 
 		return alarm;
+	}
+
+	public String toString() {
+		return "Alarm[" + this.id + "]";
 	}
 }

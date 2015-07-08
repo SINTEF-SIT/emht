@@ -133,27 +133,29 @@
     talking:          null
 
  - &nmi004 !!models.NMI
-    conscious:        true
-    breathing:        true
-    movement:         false
-    standing:         false
-    talking:          true
+    conscious:        null
+    breathing:        null
+    movement:         null
+    standing:         null
+    talking:          null
 
 # Assessments
 
  - &assessment001 !!models.Assessment
     nmi:             *nmi001
+    sensorsChecked: false
+    patientInformationChecked: false
 
  - &assessment002 !!models.Assessment
     nmi:             *nmi002
+    sensorsChecked: false
+    patientInformationChecked: false
 
  - &assessment003 !!models.Assessment
     nmi:             *nmi003
+    sensorsChecked: false
+    patientInformationChecked: false
 
- - &assessment004 !!models.Assessment
-    nmi:             *nmi004
-    sensorsChecked:  true
-    patientInformationChecked: true
 
 # Alarms
 
@@ -174,24 +176,14 @@
     attendant:        *myth
     mobileCareTaker:  *iver
     assessment:       *assessment002
-    fieldAssessment:  *assessment004
+    fieldAssessment:  *assessment003
+    latitude:         63.418157
+    longitude:        10.405580
     patient:          *patient6
     openingTime:      2014-09-15 21:02:57
     dispatchingTime:  2015-06-18 10:30:30
     closingTime:      null
     occuranceAddress: Høgskoleringen 3, 7048 Trondheim
-
- - &alarm105 !!models.Alarm
-    type:             safety_alarm
-    callee:           *callee2
-    attendant:        *myth
-    mobileCareTaker:  *iver
-    assessment:       *assessment003
-    patient:          *patient7
-    openingTime:      2014-09-15 20:02:57
-    dispatchingTime:  2015-06-18 10:30:40
-    closingTime:      null
-    occuranceAddress: Brøsetvegen 168, 7048 Trondheim
 
 # closed alarms
 

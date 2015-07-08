@@ -43,6 +43,7 @@ public class MyWebSocketManager implements EventListener {
 		actionMap.put(ALARM_LOCATION_VERIFIED, "alarmLocationVerified");
 		actionMap.put(ALARM_PATIENT_SET, "alarmPatientSet");
 		actionMap.put(ALARM_FIELD_ASSESSMENT_SET, "alarmFieldAssessmentSet");
+		actionMap.put(ALARM_EXTERNAL_FOLLOWUP_NOTIFY, "alarmExternalFollowupNotify");
 		actionMap.put(ALARM_OPEN_EXPIRED, "alarmOpenExpired");
 		actionMap.put(ALARM_RESOLUTION_EXPIRED, "alarmResolutionExpired");
 		actionMap.put(ALARM_CLOSED, "alarmClosed");

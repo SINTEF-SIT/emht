@@ -4,6 +4,7 @@ import core.Global;
 import core.MyWebSocketManager;
 import core.event.Event;
 import models.Alarm;
+import play.Logger;
 
 import java.time.Instant;
 import java.util.Date;
@@ -60,6 +61,11 @@ public class LocalMonitor extends AbstractMonitor {
             t.cancel();
             tasks.remove(t.alarmId);
         }
+
+        String debug = "[MONITOR] Alarm " + e.getAlarm().id + " was assigned. ";
+        if (responseTime > ASSIGNMENT_TIME_THRESHOLD) debug += "Alarm was above assignment threshold.";
+        if (t != null) debug += "Alarm was removed from timer tasks.";
+        Logger.debug(debug);
     }
 
     /**
@@ -72,7 +78,18 @@ public class LocalMonitor extends AbstractMonitor {
         tasks.put(e.getAlarm().id, t);
         timer.schedule(t, ASSIGNMENT_TIME_THRESHOLD);
 
+        Logger.debug("[MONITOR] Scheduling new alarm trigger in " + ASSIGNMENT_TIME_THRESHOLD / 1000 + " seconds.");
+
         stats.incrementTotalIncidents();
+    }
+
+    /**
+     * Handles Events of type ALARM_DELETE
+     * @param e Event object containing relevant data for the event type
+     */
+    @Override
+    protected void handleAlarmDelete(Event e) {
+
     }
 
     /**
@@ -99,6 +116,15 @@ public class LocalMonitor extends AbstractMonitor {
      */
     @Override
     protected void handleAlarmFieldAssessmentSet(Event e) {
+
+    }
+
+    /**
+     * Handles Events of type ALARM_EXTERNAL_NOTIFY_FOLLOWUP
+     * @param e Event object containing relevant data for the event type
+     */
+    @Override
+    protected void handleAlarmExternalFollowupNotify(Event e) {
 
     }
 
@@ -132,6 +158,8 @@ public class LocalMonitor extends AbstractMonitor {
         }
         Long resolutionTime = new Date().getTime() - e.getAlarm().openingTime.getTime();
         stats.incrementTotalResolutionWaitingTimeBy(resolutionTime);
+
+        Logger.debug("[MONITOR] Removed Alarm " + e.getAlarm().id + " from tasks.");
     }
 
     /**
@@ -144,6 +172,9 @@ public class LocalMonitor extends AbstractMonitor {
             ResolutionReminderTask t = new ResolutionReminderTask(this, e.getAlarm().id);
             tasks.put(e.getAlarm().id, t);
             timer.schedule(t, RESOLUTION_TIME_THRESHOLD);
+
+            Logger.debug("[MONITOR] Scheduled Alarm " + e.getAlarm().id + " for resolution expiry in " +
+            RESOLUTION_TIME_THRESHOLD / 1000 + " seconds.");
         }
     }
 
@@ -183,6 +214,9 @@ public class LocalMonitor extends AbstractMonitor {
             mon.tasks.remove(alarmId);
             Alarm expiredAlarm = Alarm.get(this.alarmId);
             expiredAlarm.expired = true;
+
+            Logger.debug("[MONITOR] Triggering AssignmentReminder for Alarm " + alarmId);
+
             MyWebSocketManager.getInstance().addTimeIconToAlarm(alarmId);
 
             mon.stats.incrementTotalIncidentsAboveAssignmentThreshold();
@@ -206,6 +240,8 @@ public class LocalMonitor extends AbstractMonitor {
             Alarm expiredAlarm = Alarm.get(this.alarmId);
             expiredAlarm.expired = true;
             MyWebSocketManager.getInstance().addTimeIconToAlarm(alarmId);
+
+            Logger.debug("[MONITOR] Triggering ResolutionReminder for Alarm " + alarmId);
 
             mon.stats.incrementTotalIncidentsAboveResolutionThreshold();
         }
