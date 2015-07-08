@@ -451,6 +451,7 @@ public class Application extends Controller {
 	@BodyParser.Of(BodyParser.Json.class)
 	public static Result saveAndFollowupCase() {
 		AlarmAttendant at = AlarmAttendant.find.byId(Long.parseLong(session().getOrDefault("id", "0")));
+		Logger.debug(request().body().toString());
 		JsonNode json = request().body().asJson();
 		long patientId;
 		JsonNode patient = json.get("patient");
