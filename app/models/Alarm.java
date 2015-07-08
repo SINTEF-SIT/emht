@@ -8,7 +8,6 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.Global;
-import core.MyWebSocketManager;
 
 import core.event.EventHandler;
 import core.event.EventType;
@@ -89,9 +88,10 @@ public class Alarm extends Model { // the model extension serves for having acce
 		alarm.assessment.nmi = new NMI();
 		alarm.fieldAssessment.nmi = new NMI();
 		alarm.save();
-		MyWebSocketManager.getInstance().notifyNewAlarm(alarm);
+
 		// Dispatch the event
 		EventHandler.dispatch(new MonitorEvent(EventType.ALARM_NEW, alarm, null, null));
+
 		return alarm;
 	}
 
@@ -249,13 +249,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 
 		Alarm a = Alarm.updateFromDummy(dummy);
 
-		// ill just call the websocket if the attendant id is null,
-		//though in a real multi user environment Id need to do it for everyone
-		// and handle the GUI just based on the websocket
-		MyWebSocketManager.getInstance().notifyCloseAlarm(dummy);
-
 		// Trigger the event
 		EventHandler.dispatch(new MonitorEvent(EventType.ALARM_CLOSED, a, null, null));
+
 		a.save();
 	}
 

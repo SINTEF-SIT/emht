@@ -109,123 +109,12 @@
     age:             79
     obs:             null
 
-# NMI
-
- - &nmi001 !!models.NMI
-    conscious:        null
-    breathing:        null
-    movement:         null
-    standing:         null
-    talking:          null
-
- - &nmi002 !!models.NMI
-    conscious:        null
-    breathing:        null
-    movement:         null
-    standing:         null
-    talking:          null
-
- - &nmi003 !!models.NMI
-    conscious:        null
-    breathing:        null
-    movement:         null
-    standing:         null
-    talking:          null
-
- - &nmi004 !!models.NMI
-    conscious:        null
-    breathing:        null
-    movement:         null
-    standing:         null
-    talking:          null
-
-# Assessments
-
- - &assessment001 !!models.Assessment
-    nmi:             *nmi001
-    sensorsChecked: false
-    patientInformationChecked: false
-
- - &assessment002 !!models.Assessment
-    nmi:             *nmi002
-    sensorsChecked: false
-    patientInformationChecked: false
-
- - &assessment003 !!models.Assessment
-    nmi:             *nmi003
-    sensorsChecked: false
-    patientInformationChecked: false
-
 
 # Alarms
 
-# open alarms
-
- - &alarm103 !!models.Alarm
-    type:            safety_alarm
-    callee:          *callee1
-    patient:         *patient6
-    assessment:      *assessment001
-    openingTime:     2015-09-10 11:02:57
-    dispatchingTime: null
-    closingTime:     null
-
- - &alarm104 !!models.Alarm
-    type:             safety_alarm
-    callee:           *callee1
-    attendant:        *myth
-    mobileCareTaker:  *iver
-    assessment:       *assessment002
-    fieldAssessment:  *assessment003
-    latitude:         63.418157
-    longitude:        10.405580
-    patient:          *patient6
-    openingTime:      2014-09-15 21:02:57
-    dispatchingTime:  2015-06-18 10:30:30
-    closingTime:      null
-    occuranceAddress: Høgskoleringen 3, 7048 Trondheim
-
-# closed alarms
-
- - &alarm106 !!models.Alarm
-    type:            safety_alarm
-    callee:          *callee1
-    patient:         *patient6
-    openingTime:     2014-09-16 11:52:15
-    dispatchingTime: 2014-09-16 11:06:57
-    closingTime:     2014-09-16 11:56:15
-
- - &alarm107 !!models.Alarm
-    type:            safety_alarm
-    callee:          *callee1
-    patient:         *patient6
-    openingTime:     2014-09-16 07:52:15
-    dispatchingTime: 2014-09-16 07:06:57
-    closingTime:     2014-09-16 07:56:15
-    
- - &alarm108 !!models.Alarm
-    type:            safety_alarm
-    callee:          *callee1
-    patient:         *patient6
-    openingTime:     2014-09-17 07:52:15
-    dispatchingTime: 2014-09-17 07:06:57
-    closingTime:     2014-09-17 07:56:15
-    
- - &alarm109 !!models.Alarm
-    type:            safety_alarm
-    callee:          *callee1
-    patient:         *patient6
-    openingTime:     2014-09-17 08:52:15
-    dispatchingTime: 2014-09-17 08:06:57
-    closingTime:     2014-09-17 08:56:15
-    
- - &alarm110 !!models.Alarm
-    type:            safety_alarm
-    callee:          *callee1
-    patient:         *patient6
-    openingTime:     2014-09-17 09:52:15
-    dispatchingTime: 2014-09-17 09:06:57
-    closingTime:     2014-09-17 09:56:15
+# Initial alarms will make life difficult for the LocalMonitor
+# Hence we do not add initial alarms. Instead, posting new alarms through requests
+# is preferred to start the monitor at a blank state for each new run.
 
 
 # Sensors

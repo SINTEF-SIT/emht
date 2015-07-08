@@ -13,6 +13,7 @@ import models.Alarm;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import models.Patient;
 import play.Logger;
 import play.libs.Json;
 import play.libs.F.Callback;
@@ -128,11 +129,44 @@ public class MyWebSocketManager implements EventListener {
 
 	/* Event listener support */
 
+	/**
+	 * Interface method triggered when a new event occurs
+	 * @param e The Event object containing the relevant data
+	 */
 	@Override
 	public void newEvent(Event e) {
-		Logger.debug("[WS] Received event: " + e);
+		switch (e.getType()) {
+			case ALARM_NEW:
+				handleAlarmEvent(e);
+				break;
+			case ALARM_OPEN_EXPIRED:
+				handleAlarmEvent(e);
+				break;
+			case ALARM_RESOLUTION_EXPIRED:
+				handleAlarmEvent(e);
+				break;
+			case ALARM_CLOSED:
+				handleAlarmEvent(e);
+				break;
+			case ALARM_EXTERNAL_FOLLOWUP_NOTIFY:
+				handleAlarmEvent(e);
+				break;
+			case ALARM_FINISHED:
+				handleAlarmEvent(e);
+				break;
+			case PATIENT_NEW:
+				handlePatientEvent(e);
+				break;
+			case MONITOR_STATISTICS:
+				handleStatsEvent(e);
+				break;
+		}
 	}
 
+	/**
+	 * Interface method called by the EventHandler to check what events is in the interest set at runtime
+	 * @return A Set of EventTypes
+	 */
 	@Override
 	public Set<EventType> listenFor() {
 		// Just tell the event handler that we are interested in the entire event set
@@ -154,61 +188,34 @@ public class MyWebSocketManager implements EventListener {
 		}
 	}
 
-	/* Deprecated methods */
+	/* Event handler methods */
 
-	@Deprecated
-	public void notifyNewAlarm(Alarm al) {
+	/**
+	 * Handler method that accepts all events that have an associated Alarm and notifies all WebSocket clients
+	 * @param e An Event object
+	 */
+	public void handleAlarmEvent(Event e) {
+		if (e.getAlarm() == null) throw new IllegalArgumentException("Event object did not contain an Alarm");
 		ObjectNode wrapper = Json.newObject();
-		ObjectNode action = Json.newObject();
-		ObjectNode alarm = Alarm.toJson(al);
-		action.put("action", "addAlarm");
-		wrapper.put("action", action);
-		wrapper.put("alarm", alarm);
+		wrapper.put("action", actionMap.get(e.getType()));
+		wrapper.put("alarm", Alarm.toJson(e.getAlarm()));
 
 		notifyAll(wrapper);
 	}
 
-	@Deprecated
-	public void addTimeIconToAlarm(long id) {
-		ObjectNode jsonNotification = Json.newObject();
-		ObjectNode action = Json.newObject();
-		jsonNotification.put("action", action);
-		action.put("action", "addTimeNotification");
-		jsonNotification.put("alarmId", id);
-
-		notifyAll(jsonNotification);
-	}
-
-	@Deprecated
-	public void notifyCloseAlarm(Alarm al) {
-		ObjectNode jsonNotification = Json.newObject();
-		ObjectNode action = Json.newObject();
-		jsonNotification.put("action", action);
-		action.put("action", "removeAlarm");
-		jsonNotification.put("alarmId", al.id);
-
-		notifyAll(jsonNotification);
-	}
-
-	@Deprecated
-	public void notifyFollowUpAlarm(long alarmId) {
-		ObjectNode jsonNotification = Json.newObject();
-		ObjectNode action = Json.newObject();
-		jsonNotification.put("action", action);
-		action.put("action", "notifyFollowup");
-		jsonNotification.put("alarmId", alarmId);
-
-		notifyAll(jsonNotification);
-	}
-
-	@Deprecated
-	public void notifyFinishedAlarm(Alarm a) {
+	public void handleStatsEvent(Event e) {
 		ObjectNode wrapper = Json.newObject();
-		ObjectNode alarmJson = Alarm.toJson(a);
-		ObjectNode action = Json.newObject();
-		wrapper.put("action", action);
-		action.put("action", "finishedAlarm");
-		wrapper.put("alarm", alarmJson);
+		wrapper.put("action", actionMap.get(e.getType()));
+		wrapper.put("stats", Global.localMonitor.getStats().toJson());
+
+		notifyAll(wrapper);
+	}
+
+	public void handlePatientEvent(Event e) {
+		if (e.getPatient() == null) throw new IllegalArgumentException("Event object did not contain a Patient");
+		ObjectNode wrapper = Json.newObject();
+		wrapper.put("action", actionMap.get(e.getType()));
+		wrapper.put("patient", Patient.toJson(e.getPatient()));
 
 		notifyAll(wrapper);
 	}

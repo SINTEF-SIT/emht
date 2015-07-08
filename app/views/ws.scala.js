@@ -9,22 +9,24 @@ var WebSocketManager = (function ($, WS) {
     // Event handling function
     var writeMessages = function (event) {
         var data = JSON.parse(event.data);
-        var action = data.action.action;
+        var action = data.action;
 
         console.log("[WS] Event received: " + action);
         console.log("[WS] Event data: " + JSON.stringify(data, null, 4));
 
         if (null != action) {
             switch (action) {
-                case "addAlarm":
+                case "alarmNew":
                     var alarm = data.alarm;
                     Alarms.addAlarm(alarm);
                     break;
-                case "removeAlarm":
-                    Alarms.removeAlarm(Alarms.getAlarm(data.alarmId));
+
+                case "alarmClosed":
+                    Alarms.removeAlarm(Alarms.getAlarm(data.alarm.id));
                     break;
-                case "notifyFollowup":
-                    var id = data.alarmId;
+
+                case "alarmExternalFollowupNotify":
+                    var id = data.alarm.id;
                     var elementId ="#Alarm" + id;
                     // check if alarm does not have a recurring icon
                     if($(elementId).find('.recurring-icon').length == 0){
@@ -33,13 +35,22 @@ var WebSocketManager = (function ($, WS) {
                         $(elementId).parent().prepend($(elementId));// move it to top of the list
                     }
                     break;
-                case "addTimeNotification":
+
+                case "alarmOpenExpired":
 
                     var clockImage = '<img src="/assets/images/clock.png" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>';
-                    var alarm = $("#Alarm" + data.alarmId).children(":first").after(clockImage); // find list item and add the timer after its type symbol
+                    var alarm = $("#Alarm" + data.alarm.id).children(":first").after(clockImage); // find list item and add the timer after its type symbol
 
                     break;
-                case "finishedAlarm":
+
+                case "alarmResolutionExpired":
+
+                    var clockImage = '<img src="/assets/images/clock.png" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>';
+                    var alarm = $("#Alarm" + data.alarm.id).children(":first").after(clockImage); // find list item and add the timer after its type symbol
+
+                    break;
+
+                case "alarmFinished":
                     console.log("finishedAlarm received on alarm id: " + data.alarm.id);
 
                     var id = data.alarm.id;
@@ -57,6 +68,14 @@ var WebSocketManager = (function ($, WS) {
                     a.state = 'finished';
 
                     break;
+
+                case "monitorStatistics":
+                    var stats = data.stats;
+
+                    $('#stats-total').text(stats.totalIncidents)
+                    $('#stats-total-above-assignment-threshold').text(stats.totalIncidentsAboveAssignmentThreshold);
+                    $('#stats-max-response-time').text(stats.maximumAssignmentTime / 1000);
+                    $('#stats-average-response-time').text(stats.averageResponseTime / 1000);
             }
         }
     }

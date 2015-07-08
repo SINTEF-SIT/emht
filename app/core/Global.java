@@ -6,12 +6,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
+import core.event.Event;
 import core.event.EventHandler;
+import core.event.EventType;
+import core.event.MonitorEvent;
 import models.Alarm;
 import models.AlarmAttendant;
 import monitor.LocalMonitor;
 import play.Application;
 import play.GlobalSettings;
+import play.Logger;
 import play.Play;
 import play.libs.Yaml;
 
@@ -34,14 +38,28 @@ public class Global extends GlobalSettings {
             Ebean.save((List) Yaml.load("initial-data.yml"));
         }
 
-    	// Fire up the event handler
-		event = EventHandler.getInstance();
-		event.start();
+		// Due to dynamic reloading, we need to check this
+		if (event == null) {
+			Logger.debug("[SYSTEM] OnStart debug: EventHandler was null, initializing...");
+			// Fire up the event handler
+			event = EventHandler.getInstance();
+			event.start();
+		}
 
-		// Initialize the local monitor and register it to the event handler
-		localMonitor = new LocalMonitor();
-		event.addEventListener(localMonitor);
+		// Due to dynamic reloading, we need to check this
+		if (localMonitor == null) {
+			Logger.debug("[SYSTEM] OnStart debug: LocalMonitor was null, initializing...");
+			// Initialize the local monitor and register it to the event handler
+			localMonitor = new LocalMonitor();
+			event.addEventListener(localMonitor);
+		}
     }
+
+	@Override
+	public void onStop(Application app) {
+		// We need to signal that we are stopping / restarting to allow threads to shut down.
+		EventHandler.dispatch(new MonitorEvent(EventType.SYSTEM_SHUTDOWN, null, null, null));
+	}
 
 	/**
 	 * Helper method that translates a Date object into an ISO8601 format

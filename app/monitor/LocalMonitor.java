@@ -1,16 +1,19 @@
 package monitor;
 
-import core.Global;
-import core.MyWebSocketManager;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.event.Event;
+import core.event.EventHandler;
+import core.event.EventType;
+import core.event.MonitorEvent;
 import models.Alarm;
 import play.Logger;
+import play.libs.Json;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Aleksander Skraastad (myth) on 7/7/15.
@@ -19,8 +22,10 @@ public class LocalMonitor extends AbstractMonitor {
 
     private static final Long ASSIGNMENT_TIME_THRESHOLD = 30L * 1000L;          // 30 Seconds
     private static final Long RESOLUTION_TIME_THRESHOLD = 120L * 60L * 1000L;   // 2 Hours
+    private static final Long STATISTICS_UPDATE_INTERVAL = 15L * 1000L;
 
     private Timer timer;
+    private ScheduledExecutorService periodic;
     // Mapping between Alarm ID and TimerTask associated with it
     private HashMap<Long, TimerTask> tasks;
     private MonitorStatistics stats;
@@ -32,6 +37,32 @@ public class LocalMonitor extends AbstractMonitor {
         timer = new Timer(this.getClass().getName());
         tasks = new HashMap<>();
         stats = new MonitorStatistics();
+        periodic = Executors.newSingleThreadScheduledExecutor();
+
+        periodic.scheduleAtFixedRate(
+            new Runnable() {
+                @Override
+                public void run() {
+                    EventHandler.dispatch(new MonitorEvent(EventType.MONITOR_STATISTICS, null, null, null));
+                }
+            },
+            STATISTICS_UPDATE_INTERVAL,
+            STATISTICS_UPDATE_INTERVAL,
+            TimeUnit.MILLISECONDS
+        );
+
+        // We need to see if there are any open alarms in the database (Could be system crash and restart etc)
+        for (Alarm a : Alarm.allOpenAlarms()) {
+            stats.incrementTotalIncidents();
+        }
+    }
+
+    /**
+     * Fetch monitor statistics object
+     * @return A MonitorStatistics object
+     */
+    public MonitorStatistics getStats() {
+        return stats;
     }
 
     /* METHODS INHERITED FROM AbstractMonitor */
@@ -54,15 +85,16 @@ public class LocalMonitor extends AbstractMonitor {
         AssignmentReminderTask t = (AssignmentReminderTask) tasks.get(e.getAlarm().id);
         Long responseTime = new Date().getTime() - e.getAlarm().openingTime.getTime();
 
+        Logger.debug("Handle alarm assignment responseTime: " + responseTime);
+
         stats.incrementTotalAssignmentWaitingTimeBy(responseTime);
-        if (responseTime > ASSIGNMENT_TIME_THRESHOLD) stats.incrementTotalIncidentsAboveAssignmentThreshold();
 
         if (t != null) {
             t.cancel();
             tasks.remove(t.alarmId);
         }
 
-        String debug = "[MONITOR] Alarm " + e.getAlarm().id + " was assigned. ";
+        String debug = "[MONITOR] " + e.getAlarm() + " was assigned. ";
         if (responseTime > ASSIGNMENT_TIME_THRESHOLD) debug += "Alarm was above assignment threshold.";
         if (t != null) debug += "Alarm was removed from timer tasks.";
         Logger.debug(debug);
@@ -159,7 +191,7 @@ public class LocalMonitor extends AbstractMonitor {
         Long resolutionTime = new Date().getTime() - e.getAlarm().openingTime.getTime();
         stats.incrementTotalResolutionWaitingTimeBy(resolutionTime);
 
-        Logger.debug("[MONITOR] Removed Alarm " + e.getAlarm().id + " from tasks.");
+        Logger.debug("[MONITOR] Removed " + e.getAlarm() + " from tasks.");
     }
 
     /**
@@ -173,7 +205,7 @@ public class LocalMonitor extends AbstractMonitor {
             tasks.put(e.getAlarm().id, t);
             timer.schedule(t, RESOLUTION_TIME_THRESHOLD);
 
-            Logger.debug("[MONITOR] Scheduled Alarm " + e.getAlarm().id + " for resolution expiry in " +
+            Logger.debug("[MONITOR] Scheduled " + e.getAlarm() + " for resolution expiry in " +
             RESOLUTION_TIME_THRESHOLD / 1000 + " seconds.");
         }
     }
@@ -196,6 +228,19 @@ public class LocalMonitor extends AbstractMonitor {
 
     }
 
+    /**
+     * Handles Events of type SYSTEM_SHUTDOWN
+     * @param e Event object containing relevant data for the event type
+     */
+    @Override
+    protected void handleSystemShutdown(Event e) {
+        // We need to turn off our scheduled tasks and clear timers
+        periodic.shutdown();
+        for (Map.Entry<Long, TimerTask> task : tasks.entrySet()) {
+            task.getValue().cancel();
+        }
+    }
+
     /* SUPPORT CLASSES */
 
     public static class AssignmentReminderTask extends TimerTask {
@@ -215,9 +260,10 @@ public class LocalMonitor extends AbstractMonitor {
             Alarm expiredAlarm = Alarm.get(this.alarmId);
             expiredAlarm.expired = true;
 
-            Logger.debug("[MONITOR] Triggering AssignmentReminder for Alarm " + alarmId);
+            Logger.debug("[MONITOR] Triggering AssignmentReminder for " + expiredAlarm);
 
-            MyWebSocketManager.getInstance().addTimeIconToAlarm(alarmId);
+            // Trigger the event
+            EventHandler.dispatch(new MonitorEvent(EventType.ALARM_OPEN_EXPIRED, expiredAlarm, null, null));
 
             mon.stats.incrementTotalIncidentsAboveAssignmentThreshold();
         }
@@ -239,9 +285,11 @@ public class LocalMonitor extends AbstractMonitor {
             mon.tasks.remove(alarmId);
             Alarm expiredAlarm = Alarm.get(this.alarmId);
             expiredAlarm.expired = true;
-            MyWebSocketManager.getInstance().addTimeIconToAlarm(alarmId);
 
-            Logger.debug("[MONITOR] Triggering ResolutionReminder for Alarm " + alarmId);
+            Logger.debug("[MONITOR] Triggering ResolutionReminder for " + expiredAlarm);
+
+            // Trigger the event
+            EventHandler.dispatch(new MonitorEvent(EventType.ALARM_RESOLUTION_EXPIRED, expiredAlarm, null, null));
 
             mon.stats.incrementTotalIncidentsAboveResolutionThreshold();
         }
@@ -294,13 +342,13 @@ public class LocalMonitor extends AbstractMonitor {
         }
 
         public Double getAverageResponseTime() {
-            if (totalAssignmentWaitingTime == 0) return 0d;
-            return totalIncidents.doubleValue() / totalAssignmentWaitingTime.doubleValue();
+            if (totalIncidents == 0) return 0d;
+            return totalAssignmentWaitingTime.doubleValue() / totalIncidents.doubleValue();
         }
 
         public Double getAverageResolutionTime() {
-            if (totalResolutionWaitingTime == 0) return 0d;
-            return totalIncidents.doubleValue() / totalResolutionWaitingTime.doubleValue();
+            if (totalIncidents == 0) return 0d;
+            return totalResolutionWaitingTime.doubleValue() / totalIncidents.doubleValue();
         }
 
         public void incrementTotalIncidents() {
@@ -322,6 +370,23 @@ public class LocalMonitor extends AbstractMonitor {
 
         public void incrementTotalResolutionWaitingTimeBy(Long amount) {
             this.totalResolutionWaitingTime += amount;
+        }
+
+        /**
+         * Transform this MonitorStatistics object into a JSON ObjectNode representation
+         * @return A JSON ObjectNode containing the state of the object
+         */
+        public ObjectNode toJson() {
+            ObjectNode stats = Json.newObject();
+            stats.put("totalIncidents", getTotalIncidents());
+            stats.put("totalIncidentsAboveAssignmentThreshold", getTotalIncidentsAboveAssignmentThreshold());
+            stats.put("totalIncidentsAboveResolutionThreshold", getTotalIncidentsAboveResolutionThreshold());
+            stats.put("totalAssignmentWaitingTime", getTotalAssignmentWaitingTime());
+            stats.put("totalResolutionWaitingTime", getTotalResolutionWaitingTime());
+            stats.put("maximumAssignmentTime", getMaximumAssignmentTime());
+            stats.put("averageResponseTime", getAverageResponseTime());
+            stats.put("averageResolutionTime", getAverageResolutionTime());
+            return stats;
         }
     }
 }

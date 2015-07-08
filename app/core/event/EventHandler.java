@@ -4,8 +4,8 @@ import play.Logger;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
+import static core.event.EventType.*;
 
 /**
  * Created by Aleksander Skraastad (myth) on 7/3/15.
@@ -48,6 +48,7 @@ public class EventHandler extends Thread {
                 Logger.warn("Event thread got interrupted while fetching next event from queue.");
             }
         }
+        Logger.info("[EVENT] EventHandler stopped.");
     }
 
     /**
@@ -88,6 +89,10 @@ public class EventHandler extends Thread {
             if (listener.listenFor().contains(e.getType())) {
                 listener.newEvent(e);
             }
+        }
+        // SYSTEM EVENTS
+        if (e.getType() == SYSTEM_SHUTDOWN) {
+            _running = false;
         }
     }
 }

@@ -6,6 +6,10 @@ import java.util.List;
 
 import controllers.auth.Authorization;
 import core.GoogleCloudMessaging;
+import core.event.Event;
+import core.event.EventHandler;
+import core.event.EventType;
+import core.event.MonitorEvent;
 import models.*;
 import models.sensors.ComponentReading;
 import models.sensors.Sensor;
@@ -379,6 +383,9 @@ public class Application extends Controller {
 		Patient retObj = Patient.getOrCreate(p);
 		ObjectNode patient = Patient.toJson(retObj);
 
+		// Trigger the event
+		EventHandler.dispatch(new MonitorEvent(EventType.PATIENT_NEW, null, null, retObj));
+
 		return ok(patient);
 	}
 
@@ -436,7 +443,10 @@ public class Application extends Controller {
 			a.finished = true;
 			a.mobileCareTaker = null;
 			a.save();
-			WS.notifyFinishedAlarm(a);
+
+			// Trigger the event
+			EventHandler.dispatch(new MonitorEvent(EventType.ALARM_FINISHED, a, null, null));
+
 			return ok(Alarm.toJson(a));
 		} else {
 			Logger.debug("Attempt to finish a non-existant case: " + id);
@@ -566,7 +576,10 @@ public class Application extends Controller {
 				a.setNotes(session().getOrDefault("username", "unknown"), notes);
 				a.save();
 			}
-			WS.notifyFollowUpAlarm(id);
+
+			// Trigger the event
+			EventHandler.dispatch(new MonitorEvent(EventType.ALARM_EXTERNAL_FOLLOWUP_NOTIFY, a, null, null));
+
 			return ok(Alarm.toJson(a));
 		}
 	}
@@ -579,12 +592,9 @@ public class Application extends Controller {
 		response().setContentType("text/javascript");
 		return ok(
 			Routes.javascriptRouter("myJsRoutes",
-				//controllers.routes.javascript.Application.deleteAlarm(),
 				controllers.routes.javascript.Application.getPastAlarmsFromCallee(),
-				//controllers.routes.javascript.Application.assignAlarm(),
 				controllers.routes.javascript.Application.saveAndFollowupCase(),
 				controllers.routes.javascript.Application.closeCase(),
-				//controllers.routes.javascript.Application.saveCase(),
 				controllers.routes.javascript.Application.insertPatientFromJson(),
 				controllers.routes.javascript.Application.setPatientOfAlarm(),
 				controllers.routes.javascript.Application.assignAlarmFromJson(),

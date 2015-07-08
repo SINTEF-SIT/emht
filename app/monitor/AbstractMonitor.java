@@ -70,6 +70,9 @@ public abstract class AbstractMonitor implements EventListener {
             case PATIENT_NEW:
                 handlePatientNew(e);
                 break;
+            case SYSTEM_SHUTDOWN:
+                handleSystemShutdown(e);
+                break;
         }
     }
 
@@ -99,4 +102,5 @@ public abstract class AbstractMonitor implements EventListener {
     protected abstract void handleAlarmDispatched(Event e);
     protected abstract void handleAlarmFinished(Event e);
     protected abstract void handlePatientNew(Event e);
+    protected abstract void handleSystemShutdown(Event e);
 }

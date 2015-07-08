@@ -189,10 +189,10 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			</div>
 			<div class="row" id="notesRow">
 				<div class="col-md-3" id="statisticsDiv">
-					<h4>@Messages.get("statistics.avgresp"): 20,1 @Messages.get("statistics.timeunit")</h4>
-					<h4>@Messages.get("statistics.maxresptime"): 59 @Messages.get("statistics.timeunit")</h4>
-					<h4>@Messages.get("statistics.numberRespAbov30sec"): 15</h4>
-					<h4>@Messages.get("statistics.numberResponseToday"): 250 </h4>
+					<h4>@Messages.get("statistics.avgresp"): <span id="stats-average-response-time">0</span> @Messages.get("statistics.timeunit")</h4>
+					<h4>@Messages.get("statistics.maxresptime"): <span id="stats-max-response-time">0</span> @Messages.get("statistics.timeunit")</h4>
+					<h4>@Messages.get("statistics.numberRespAbov30sec"): <span id="stats-total-above-assignment-threshold">0</span></h4>
+					<h4>@Messages.get("statistics.numberResponseToday"): <span id="stats-total">0</span></h4>
 				</div>
 				<div class="col-md-9" id="globalNotesDiv">
 					<u>@Messages.get("actions.popup.send.notes"):</u>

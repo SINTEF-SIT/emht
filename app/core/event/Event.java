@@ -81,6 +81,6 @@ public abstract class Event {
      * @return A String representation of this Event
      */
     public String toString() {
-        return "Event [" + getType() + "] " + alarm + " " + attendant + " " + patient;
+        return "Event " + getType() + " " + alarm + " " + attendant + " " + patient;
     }
 }
