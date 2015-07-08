@@ -602,6 +602,10 @@ var Alarms = (function ($) {
 				Alarms.gui.clearUpData();
 				Alarms.gui.resetAlarmCount();
 			}
+		},
+
+		me: function () {
+			return ME;
 		}
 	}
 })(jQuery);

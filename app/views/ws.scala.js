@@ -17,12 +17,32 @@ var WebSocketManager = (function ($, WS) {
         if (null != action) {
             switch (action) {
                 case "alarmNew":
-                    var alarm = data.alarm;
-                    Alarms.addAlarm(alarm);
+                    Alarms.addAlarm(data.alarm);
                     break;
 
                 case "alarmClosed":
                     Alarms.removeAlarm(Alarms.getAlarm(data.alarm.id));
+                    break;
+
+                case "alarmAssigned":
+                    var alarm = Alarms.getAlarm(data.alarm.id);
+                    if (data.alarm.attendant.id !== Alarms.me().id) {
+                        alarm.DOM.hide();
+                        alarm.DOM = [];
+                        alarm.data = data.alarm;
+                        alarm.state = 'assigned';
+                        Alarms.gui.resetAlarmCount();
+                    }
+                    break;
+
+                case "alarmDispatched":
+                    var alarm = Alarms.getAlarm(data.alarm.id);
+                    if (data.alarm.attendant.id !== Alarms.me().id) {
+                        alarm.DOM = [];
+                        alarm.data = data.alarm;
+                        alarm.state = 'followup';
+                        Alarms.gui.resetAlarmCount();
+                    }
                     break;
 
                 case "alarmExternalFollowupNotify":

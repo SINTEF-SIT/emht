@@ -142,6 +142,12 @@ public class MyWebSocketManager implements EventListener {
 			case ALARM_OPEN_EXPIRED:
 				handleAlarmEvent(e);
 				break;
+			case ALARM_ASSIGNED:
+				handleAlarmEvent(e);
+				break;
+			case ALARM_DISPATCHED:
+				handleAlarmEvent(e);
+				break;
 			case ALARM_RESOLUTION_EXPIRED:
 				handleAlarmEvent(e);
 				break;
