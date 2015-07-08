@@ -538,6 +538,8 @@ public class Application extends Controller {
 		JsonNode json = request().body().asJson();
 		Long alarmId =  json.findPath("alarmId").asLong();
 		AlarmAttendant a = AlarmAttendant.getAttendantFromUsername(session().get("username"));
+		Alarm alarm = Alarm.get(alarmId);
+		if (alarm.attendant != null) return forbidden("Alarm already assigned!");
 
 		return ok(Alarm.toJson(Alarm.assignAttendantToAlarm(alarmId, a)));
 	}
