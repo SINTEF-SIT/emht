@@ -27,6 +27,7 @@ var WebSocketManager = (function ($, WS) {
                 case "alarmAssigned":
                     var alarm = Alarms.getAlarm(data.alarm.id);
                     if (data.alarm.attendant.id !== Alarms.me().id) {
+                        $('#callee_info_modal').modal('hide');
                         alarm.DOM.hide();
                         alarm.DOM = [];
                         alarm.data = data.alarm;

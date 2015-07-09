@@ -160,7 +160,6 @@ var Alarms = (function ($) {
 
 		selectProtected: function () {
 			this.protected = true;
-			this.select();
 			Alarms.gui.selectFollowUpAlarm(this.id);
 			return this;
 		},
