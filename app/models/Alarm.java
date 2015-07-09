@@ -38,7 +38,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 	@Transient
 	public boolean expired = false;
 
+	@OneToMany(cascade = CascadeType.PERSIST)
 	public AlarmAttendant attendant;
+	@OneToMany(cascade = CascadeType.PERSIST)
 	public AlarmAttendant mobileCareTaker;
 
 	@OneToOne(cascade = CascadeType.ALL)
@@ -49,7 +51,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 	@Lob
 	public String notes;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	public Patient patient;
 
 	/**
