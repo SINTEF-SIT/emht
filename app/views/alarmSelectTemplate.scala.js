@@ -99,6 +99,10 @@ var Alarms = (function ($) {
 			// Remove the clock icon if it was set
 			this.DOM.children('.clock-icon').remove();
 
+			// Update assignment label
+			this.DOM.children('.assignedTo')
+				.html('Attendant: <strong>' + ME.username + ' </stong>');
+
 			// Prepend the new DOM object to the assigned alarm list.
 			$('#assignedAlarmList').prepend(newAlarmItem);
 
@@ -292,7 +296,7 @@ var Alarms = (function ($) {
 			alarm.type + '" width="48" height="48"/>' +
 			'<h4 class="list-group-item-heading"> @Messages.get("listitem.arrived") ' +
 			formattedTime  +' </h4><p class="list-group-item-text">@Messages.get("listitem.callee") ' +
-			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '<br /><span class="assignedTo">';
+			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '</p><span class="assignedTo">';
 
 		if (alarm.attendant !== null) {
 			listItem += 'Attendant: <strong>' + alarm.attendant.username + '</strong>';
@@ -305,7 +309,7 @@ var Alarms = (function ($) {
 			listItem += 'Assigned to: <strong>' + alarm.mobileCareTaker.username + '</strong>';
 		}
 
-		listItem += '</span></p>';
+		listItem += '</span>';
 
 		if (updateFunction === null || updateFunction === undefined) {
 			return listItem;
