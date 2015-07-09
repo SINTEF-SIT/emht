@@ -63,7 +63,7 @@ var Alarms = (function ($) {
 		},
 
 		moveToAssigned: function () {
-			if (this.protected) return alert('Alarm is protected, cannot modify.');
+			if (this.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
 
 			// If we already are in assigned, just ignore the call
 			if (this.isAssigned()) return;
@@ -107,7 +107,7 @@ var Alarms = (function ($) {
 		},
 
 		moveToFollowup: function () {
-			if (this.protected) return alert('Alarm is protected, cannot modify.');
+			if (this.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
 
 			// Check if we have an assignment to care taker, if so we must set the value in the list item
 			if (this.data.mobileCareTaker !== null) {
@@ -524,7 +524,7 @@ var Alarms = (function ($) {
 		assign: function (alarmIndex) {
 			if (DEBUG) console.log("assign called on index: " + alarmIndex);
 
-			if (this.protected) return alert('Alarm is protected, cannot modify.');
+			if (this.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
 
 			var assignAlarmReq = {
 				'alarmId' : alarmIndex

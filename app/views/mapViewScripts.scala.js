@@ -111,7 +111,7 @@ var MapView = (function ($) {
         $('.map-field-operator').find('.dispatch-ring-btn').on('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
-            alert('Calling Field Operator...');
+            alert('@Messages.get("actions.popup.call.title")');
         })
     };
 

@@ -265,7 +265,7 @@ var Assessment = (function ($) {
 				// We need this to indicate state to operator if protected mode alarm is selected
 				var activeAlarm = Alarms.getActiveAlarm();
 				if (activeAlarm !== null) {
-					if (Alarms.getActiveAlarm().protected) return alert('Alarm is protected, no changes will be saved.');
+					if (Alarms.getActiveAlarm().protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
 				}
 
 				var radioId = $(this).attr('id');

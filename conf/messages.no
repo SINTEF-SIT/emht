@@ -128,6 +128,16 @@ actions.popup.send.notes=Notat
 actions.popup.send.confirmation=Informasjonen er oversendt
 actions.popup.appointment.title=Velg tidspunkt og informasjon som skal sendes
 actions.popup.appointment.date=Dato
+# Alert popups
+actions.alerts.no_active_alarm=Det er ingen valgt alarm!
+actions.alerts.alarm_protected=Alarmen er ikke tilegnet deg, kan ikke modifisere!
+actions.alerts.alarm_followup=Alarmen er i oppfølgingsmodus, kan ikke modifisere!
+actions.alerts.location_verified=Addressen for hendelse ble lokalisert og lagret.
+actions.alerts.location_failed=Lokasjonen for hendelse kunne ikke bli verifisert!\n\nVennligst bruk følgende format: Gatenavn og nummer, Postnummer (valgfritt), By
+actions.alerts.location_failed_server_error=En uventet feil oppstod i et forsøk på å lagre lokasjonen til databasen! Vennligst kontakt systemadministrator!
+actions.alerts.no_active_patient=Du har ikke valgt en pasient!
+actions.alerts.patient_store_error=En feil oppstod under lagring av pasient! Vennligst kontakt systemadministrator!
+actions.alerts.patient_search_error=En feil oppstud under søk etter pasient! Vennligst kontakt systemadministrator!
 
 notes.title=Notater
 notes.placeholder=Skriv inn ytterligere notater her

@@ -11,15 +11,15 @@ var Actions = (function ($) {
             $(".dispatch-ring-btn").on('click', function(e) {
                 e.preventDefault();
                 var activeAlarm = Alarms.getActiveAlarm();
-                if (activeAlarm === null) return alert('No active alarm');
-                if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+                if (activeAlarm === null) return alert('@Messages.get("actions.alerts.no_active_alarm")');
+                if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
                 $('#calling_modal').modal("show")
             });
             $(".dispatch-send-btn").on('click', function(e) {
                 e.preventDefault();
                 var activeAlarm = Alarms.getActiveAlarm();
-                if (activeAlarm === null) return alert('No active alarm');
-                if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+                if (activeAlarm === null) return alert('@Messages.get("actions.alerts.no_active_alarm")');
+                if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
 
                 $("#dispatch_data_modal").find(':checkbox').each(
                     function() {
@@ -35,8 +35,8 @@ var Actions = (function ($) {
             $(".schedule-btn").on('click', function(e) {
                 e.preventDefault();
                 var activeAlarm = Alarms.getActiveAlarm();
-                if (activeAlarm === null) return alert('No active alarm');
-                if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+                if (activeAlarm === null) return alert('@Messages.get("actions.alerts.no_active_alarm")');
+                if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
                 $("#schedule_time_modal").find(':checkbox').each(
                     function() {
                         $(this).prop("checked", "checked");
@@ -93,8 +93,8 @@ var Actions = (function ($) {
 
         closeCaseAtClosing: function () {
             var activeAlarm = Alarms.getActiveAlarm();
-            if (activeAlarm === null) return alert('No active alarm');
-            if (activeAlarm.protected) return alert('Alarm is protected, cannot modify.');
+            if (activeAlarm === null) return alert('@Messages.get("actions.alerts.no_active_alarm")');
+            if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
             var closeCase = function () {
                 var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 
@@ -119,9 +119,9 @@ var Actions = (function ($) {
 
         saveAndFollowupAtClosing: function (followUp) {
             var activeAlarm = Alarms.getActiveAlarm();
-            if (activeAlarm === null) return alert('No active alarm');
-            if (activeAlarm.data.patient === null) return alert('No patient selected!');
-            if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
+            if (activeAlarm === null) return alert('@Messages.get("actions.alerts.no_active_alarm")');
+            if (activeAlarm.data.patient === null) return alert('@Messages.get("actions.alerts.no_active_patient")');
+            if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
 
             var updatedAlarm = Actions.getUpdatedAlarmFromPage();
 

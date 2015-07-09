@@ -130,6 +130,16 @@ actions.popup.send.notes=Notes
 actions.popup.send.confirmation=Data sent
 actions.popup.appointment.title=Select appointment time and data to be sent
 actions.popup.appointment.date=Date
+# Alert popups
+actions.alerts.no_active_alarm=There is no selected alarm!
+actions.alerts.alarm_protected=The alarm is not assigned to you, cannot modify!
+actions.alerts.alarm_followup=The alarm is in followup mode, cannot modify!
+actions.alerts.location_verified=The location of the occurrence was successfully stored.
+actions.alerts.location_failed=The occurrence address could not be located!\n\nPlease use the following format: Street name and number, Postal code (optional), City
+actions.alerts.location_failed_server_error=An unexpected error occurred while attempting to save location data to the server! Please contact system administrator!
+actions.alerts.no_active_patient=There is no patient selected!
+actions.alerts.patient_store_error=Patient could NOT be stored! Please contact system administrator!
+actions.alerts.patient_search_error=There was an error during patient search! Please contact system administrator!
 
 notes.title=Notes
 notes.placeholder=Add additional notes here...
