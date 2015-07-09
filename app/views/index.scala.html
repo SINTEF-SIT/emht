@@ -34,22 +34,29 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 			</div>
 			<div class="row">
 				<section id="allListsSection" class="col-md-3 alarmListSection">
-
-						<!-- <h2>@alarms.size() alarm(s)</h2>-->
-					<div id="unassignedAlarmDiv"  >
+					<div id="unassignedAlarmDiv">
 						<h3><span id="nbOfUnassignedAlarm"></span> @Messages.get("unassignedlist.title")</h3>
 						<div class="list-group" id="unassignedAlarmList" style="overflow-y: scroll; height: 250px;"> <!--index would reference to the iteration index, but we are not using it-->
 							@for((alarm,index) <- alarms.zipWithIndex){
 								@if(null == alarm.attendant){
 									<a href="#" idnum="@{alarm.id}" id="Alarm@{alarm.id}"  onclick="Alarms.gui.selectOpenAlarm(@{alarm.id},@{alarm.callee.id} );return false;" class="list-group-item alarmItem">
-									<!-- <i class="icon-fire pull-left"></i> -->
+
 									<img src="@routes.Assets.at("images/" + alarm.`type` + ".png")" class="img-thumbnail pull-left type-icon" data-type="@{alarm.`type`}" width="48" height="48"/>
 									@if(null != alarm.expired && true == alarm.expired){
 										<img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 									}
 									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
 									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber}</p>
-									<div class="assignedTo"></div>
+									<span class="assignedTo">
+									@if(alarm.attendant != null){
+										Attendant: <strong>@{alarm.attendant.username} </strong>
+									}
+									</span>
+									<span class="dispatchedTo">
+									@if(alarm.mobileCareTaker != null) {
+										Dispatched to: <strong>@{alarm.mobileCareTaker.username}</strong>
+									}
+									</span>
 									</a>
 								}
 							}
@@ -73,7 +80,16 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 										}
 										<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm") </h4>
 										<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber}</p>
-										<div class="assignedTo"></div>
+										<span class="assignedTo">
+										@if(alarm.attendant != null){
+											Attendant: <strong>@{alarm.attendant.username} </strong>
+										}
+										</span>
+										<span class="dispatchedTo">
+										@if(alarm.mobileCareTaker != null) {
+											Dispatched to: <strong>@{alarm.mobileCareTaker.username}</strong>
+										}
+										</span>
 									</a>
 								}
 							}
@@ -99,13 +115,17 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 										<img  src="@routes.Assets.at("images/clock.png")" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>
 									}
 									<h4 class="list-group-item-heading">@Messages.get("listitem.arrived") @alarm.openingTime.format("dd/MM HH:mm")</h4>
-									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber}
-									<div class="assignedTo">
-									@if(alarm.mobileCareTaker != null){
-										Assigned to: <strong>@{alarm.mobileCareTaker.username}</strong>
+									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber}</p>
+									<span class="assignedTo">
+									@if(alarm.attendant != null){
+										Attendant: <strong>@{alarm.attendant.username} </strong>
 									}
-									</div>
-									</p>
+									</span>
+									<span class="dispatchedTo">
+									@if(alarm.mobileCareTaker != null) {
+										Dispatched to: <strong>@{alarm.mobileCareTaker.username}</strong>
+									}
+									</span>
 								</a>
 							}
 						}

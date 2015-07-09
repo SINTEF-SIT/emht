@@ -111,8 +111,8 @@ var Alarms = (function ($) {
 
 			// Check if we have an assignment to care taker, if so we must set the value in the list item
 			if (this.data.mobileCareTaker !== null) {
-				this.DOM.children('.assignedTo')
-					.html('Assigned to: <strong>' + this.data.mobileCareTaker.username + '</strong>');
+				this.DOM.children('.dispatchedTo')
+					.html('Dispatched to: <strong>' + this.data.mobileCareTaker.username + '</strong>');
 			}
 
 			// If we already are in followup, just ignore the rest of the call
@@ -292,14 +292,20 @@ var Alarms = (function ($) {
 			alarm.type + '" width="48" height="48"/>' +
 			'<h4 class="list-group-item-heading"> @Messages.get("listitem.arrived") ' +
 			formattedTime  +' </h4><p class="list-group-item-text">@Messages.get("listitem.callee") ' +
-			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '<div class="assignedTo">';
+			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '<br /><span class="assignedTo">';
+
+		if (alarm.attendant !== null) {
+			listItem += 'Attendant: <strong>' + alarm.attendant.username + '</strong>';
+		}
+
+		listItem += '</span><span class="dispatchedTo">';
 
 		// Pre-fill the Assigned to field if we have a mobile caretaker registered
 		if (alarm.mobileCareTaker !== null) {
 			listItem += 'Assigned to: <strong>' + alarm.mobileCareTaker.username + '</strong>';
 		}
 
-		listItem += '</div></p>';
+		listItem += '</span></p>';
 
 		if (updateFunction === null || updateFunction === undefined) {
 			return listItem;
