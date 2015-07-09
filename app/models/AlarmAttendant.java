@@ -91,6 +91,18 @@ public class AlarmAttendant extends Model {
 	}
 
 	public static void delete(Long id) {
+		// Due to problems with CascadeType for the Alarm FK's (which we could not figure out why, and the docs
+		// did not provide much information, we null out all FK's before delete.
+		AlarmAttendant att = find.ref(id);
+		for (Alarm a : Alarm.all()) {
+			if (a.attendant != null && a.attendant.id.equals(att.id)) {
+				a.attendant = null;
+			}
+			if (a.mobileCareTaker != null && a.mobileCareTaker.id.equals(att.id)) {
+				a.mobileCareTaker = null;
+			}
+			a.save();
+		}
 		find.ref(id).delete();
 	}
 
