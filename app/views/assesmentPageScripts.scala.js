@@ -85,6 +85,7 @@ var Assessment = (function ($) {
 	};
 
 	var updateAssessmentInfo = function (radio) {
+		var activeAlarm = Alarms.getActiveAlarm();
 		var radioId = $(radio).attr('id');
 		console.log("updateAssessmentInfo called on radio: " + radioId);
 		var field = radioId.substring(0, radioId.length - 1);
@@ -105,6 +106,11 @@ var Assessment = (function ($) {
 			case "NMIcheckBox5":
 				currentAssessment.nmi.talking = state;
 				break;
+		}
+
+		// Persist the changes on the client side if possible
+		if (activeAlarm !== null && activeAlarm.isClientSideCacheable()) {
+			activeAlarm.data.assessment = currentAssessment;
 		}
 	};
 
