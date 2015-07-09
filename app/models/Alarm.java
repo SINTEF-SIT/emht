@@ -38,9 +38,9 @@ public class Alarm extends Model { // the model extension serves for having acce
 	@Transient
 	public boolean expired = false;
 
-	@OneToMany(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	public AlarmAttendant attendant;
-	@OneToMany(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	public AlarmAttendant mobileCareTaker;
 
 	@OneToOne(cascade = CascadeType.ALL)
