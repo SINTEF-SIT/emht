@@ -81,7 +81,6 @@ var MapView = (function ($) {
             $('#main-dashboard').show();
             clearInterval(fieldOperatorLocationPeriodicUpdateTimer);
             fieldOperatorLocationPeriodicUpdateTimer = null;
-            if (Alarms.getActiveAlarm() !== null) Alarms.getActiveAlarm().deselect();
         });
         bindAssignButtons();
         bindCallButtons();

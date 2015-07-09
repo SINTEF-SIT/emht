@@ -388,6 +388,8 @@ var Alarms = (function ($) {
 
 			selectFollowUpAlarm: function (alarmIndex) {
 				var a = getAlarm(alarmIndex);
+				// If we click the same alarm, deselect
+				if (Alarms.getActiveAlarm() === a) return a.deselect();
 				a.select();
 
 				if (DEBUG) {
@@ -408,7 +410,10 @@ var Alarms = (function ($) {
 
 			selectOpenAlarm: function (alarmIndex, calleeIndex) {
 				// Select the alarm
-				getAlarm(alarmIndex).select();
+				var a = getAlarm(alarmIndex);
+				// If we click the same alarm, deselect
+				if (Alarms.getActiveAlarm() === a) return a.deselect();
+				a.select();
 
 				// Update past alarms field
 				getPastAlarmsFromCallee(calleeIndex);
@@ -420,7 +425,10 @@ var Alarms = (function ($) {
 			},
 
 			selectMyAlarm: function (alarmIndex) {
-				getAlarm(alarmIndex).select();
+				var a = getAlarm(alarmIndex);
+				// If we click the same alarm, deselect
+				if (Alarms.getActiveAlarm() === a) return a.deselect();
+				a.select();
 				if (DEBUG) console.log("Selected MyAlarm: ", JSON.stringify(getAlarm(alarmIndex).data, null, 4));
 				Alarms.gui.populateAlarmDetails(alarmIndex);
 			},
@@ -474,6 +482,9 @@ var Alarms = (function ($) {
 									// Add click listener
 									domAlarm.on('click', function (e) {
 										e.preventDefault();
+										var a = Alarms.getActiveAlarm();
+										// If we click same item, deselect it
+										if (a === otherAlarm) return otherAlarm.deselect();
 										otherAlarm.selectProtected();
 									});
 								});
