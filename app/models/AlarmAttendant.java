@@ -103,6 +103,13 @@ public class AlarmAttendant extends Model {
 			}
 			a.save();
 		}
+		for (FieldOperatorLocation fol : FieldOperatorLocation.all()) {
+			if (fol.fieldOperator != null && fol.fieldOperator.id.equals(att.id)) {
+				fol.fieldOperator = null;
+				fol.save();
+				fol.delete();
+			}
+		}
 		find.ref(id).delete();
 	}
 

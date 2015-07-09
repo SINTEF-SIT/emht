@@ -21,7 +21,7 @@ public class FieldOperatorLocation extends Model {
     @Id
     public Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     public AlarmAttendant fieldOperator;
     public Date timestamp;
     public Double latitude;
