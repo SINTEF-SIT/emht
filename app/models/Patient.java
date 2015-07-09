@@ -18,6 +18,8 @@ public class Patient extends Model {
 	public Long id;
 	public String name;
 	public String address;
+	public Double latitude;
+	public Double longitude;
 	public Integer age;
 	public String phoneNumber;
 
@@ -44,7 +46,7 @@ public class Patient extends Model {
 			return null;
 		//else
 		Patient p = null;
-		if(null != pat.personalNumber && false == pat.personalNumber.isEmpty())
+		if(null != pat.personalNumber && !pat.personalNumber.isEmpty())
 			p = find.where().ieq("personalNumber", pat.personalNumber).findUnique();
 
 		if(null != p)
@@ -69,14 +71,13 @@ public class Patient extends Model {
 
 	// this function will return: the patient of the Alarm or everybody that lives in the
 	// same address of the callee
-	public static List<Patient> prospectPatientsFromAlarm(Long id){
+	public static List<Patient> prospectPatientsFromAlarm(Long id) {
 		Alarm a = Alarm.get(id);
 		List<Patient> list = new ArrayList<Patient>();
 		String calleeAdr = a.callee.address;
 
-		if (a.patient == null) {
-			list.addAll(find.where().ilike("address", calleeAdr).findList());
-		} else {
+		list.addAll(find.where().ilike("address", "%"+calleeAdr+"%").findList());
+		if (a.patient != null && !a.patient.address.equalsIgnoreCase(calleeAdr)) {
 			list.add(a.patient);
 		}
 
@@ -114,6 +115,8 @@ public class Patient extends Model {
 		wrapper.put("id", p.id);
 		wrapper.put("name", p.name);
 		wrapper.put("address", p.address);
+		wrapper.put("latitude", p.latitude);
+		wrapper.put("longitude", p.longitude);
 		wrapper.put("age", p.age);
 		wrapper.put("phoneNumber", p.phoneNumber);
 		wrapper.put("personalNumber", p.personalNumber);

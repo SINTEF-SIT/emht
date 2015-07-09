@@ -55,6 +55,8 @@ var Patient = (function ($) {
 			var addr = $("#patientAddress").text();
 			if (this.checked) {
 				$("#incidentAddress").val(addr);
+				activeAlarm.data.latitude = activeAlarm.data.patient.latitude;
+				activeAlarm.data.longitude = activeAlarm.data.patient.longitude;
 			} else {
 				$('#incidentAddress').val('');
 			}
@@ -115,48 +117,30 @@ var Patient = (function ($) {
 	var generateProspectPatients = function (patientList) {
 		if (DEBUG) console.log("generateProspectPatients called: " + JSON.stringify(patientList, null, 4));
 		var activeAlarm = Alarms.getActiveAlarm();
-		var activePatient = activeAlarm.data.patient;
-		var patInProspects = false;
 		var dropDown = $('#patientDropDownList');
+		var listItem;
 		for (var i in patientList) {
-			var listItem = $('<li></li>').html('<a href="#">' + patientList[i].name + '</a>');
-			listItem.on('click', function (e) {
-				e.preventDefault();
-				if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
-				if (activeAlarm.isFollowup()) return alert('@Messages.get("actions.alerts.alarm_followup")');
+			// Wrap actions in closure to lock variable refs to inner scope
+			(function () {
+				var pat = patientList[i];
+				listItem = $('<li></li>').html('<a href="#">' + patientList[i].name + '</a>');
+				listItem.on('click', function (e) {
+					e.preventDefault();
+					if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
+					if (activeAlarm.isFollowup()) return alert('@Messages.get("actions.alerts.alarm_followup")');
 
-				populatePatientInformation(patientList[i]);
+					populatePatientInformation(pat);
+				});
+				listItem.attr('id', 'Patient' + patientList[i].id);
 
-				// Persist the selection in the database.
-				setPatientOnAlarm(activeAlarm.id, patientList[i]);
-			});
-			listItem.attr('id', 'Patient' + patientList[i].id);
-
-			// If we have an active patient on the alarm that is in the prospect list, prepend it
-			if (activePatient !== null && activePatient.id === patientList[i].id) {
-				dropDown.prepend(listItem);
-				patInProspects = true;
-			} else {
-				dropDown.append(listItem);
-			}
+				// If we have an active patient on the alarm that is in the prospect list, prepend it
+				if (activeAlarm.data.patient !== null && activeAlarm.data.patient.id === patientList[i].id) {
+					dropDown.prepend(listItem);
+				} else {
+					dropDown.append(listItem);
+				}
+			})()
 		}
-		// If the registered patient was not returned from prospect patients, prepend it into dropdown
-		if (!patInProspects && activePatient !== null) {
-			if (DEBUG) console.log("Registered patient was not in prospect patient list: " + activePatient.name);
-			var listItem = $('<li></li>').html('<a href="#">' + activePatient.name + '</a>');
-			listItem.attr('id', 'Patient' + activePatient.id);
-			listItem.on('click', function (e) {
-				e.preventDefault();
-				if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
-				if (activeAlarm.isFollowup()) return alert('@Messages.get("actions.alerts.alarm_followup")');
-				populatePatientInformation(activePatient);
-
-				// Persist the selection in the database.
-				setPatientOnAlarm(activeAlarm.id, patientList[i]);
-			});
-			dropDown.prepend(listItem);
-		}
-
 
 		if ($.isArray(patientList) && patientList.length != 0) {
 			listItem.append('<li class="divider"></li>');
@@ -245,13 +229,17 @@ var Patient = (function ($) {
             if (pat.address.toLowerCase() === occurrenceAddress.toLowerCase()) $('#sameAddressCheckbox').click();
             else ($('#sameAddressCheckbox').removeAttr('checked'));
 		} else {
-            if (DEBUG) console.log("No occurrence address was found from selected alarm data.");
+            $('#sameAddressCheckbox').click();
+			currentSelected.data.latitude = pat.latitude;
+			currentSelected.data.longitude = pat.longitude;
         }
 
         // Update the dropdown selector
         $('#patientDropDown').find('.selection').html(pat.name);
 
 		populatePastAlarmsFromPatient(pat);
+		// Persist the selection in the database.
+		setPatientOnAlarm(currentSelected.id, pat);
 	};
 
 	// Fetch previous alarms asynchronously and update the alarm history in the patient panel
@@ -330,8 +318,6 @@ var Patient = (function ($) {
 			if (activeAlarm.isFollowup()) return alert('@Messages.get("actions.alerts.alarm_followup")');
 			var patient = results[Number($(this).attr('id').replace('PatientSearch', ''))];
 			populatePatientInformation(patient);
-			// Persist the selection in the database.
-			setPatientOnAlarm(Alarms.getActiveAlarm().id, patient);
 			$('#patient-search-modal').modal('hide');
 		})
 	}
@@ -467,16 +453,11 @@ var Patient = (function ($) {
 					$('#patientDropDownList').prepend(patientListItem);
 					Patient.populatePatient(outputPatient);
 
-					// Persist the selection in the database.
-					setPatientOnAlarm(activeAlarm.id, outputPatient);
-
 					$('#Patient'+outputPatient.id).on('click', function (e) {
 						e.preventDefault();
 						if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
 						if (activeAlarm.isFollowup()) return alert('@Messages.get("actions.alerts.alarm_followup")');
 						Patient.populatePatient(outputPatient);
-						// Persist the selection in the database.
-						setPatientOnAlarm(activeAlarm.id, outputPatient);
 					});
 
 				}// end of success

@@ -91,6 +91,8 @@ create table patient (
   id                        bigint not null,
   name                      varchar(255),
   address                   varchar(255),
+  latitude                  double,
+  longitude                 double,
   age                       integer,
   phone_number              varchar(255),
   personal_number           varchar(255),
