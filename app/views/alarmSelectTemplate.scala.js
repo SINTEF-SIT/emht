@@ -54,11 +54,19 @@ var Alarms = (function ($) {
 
 		isLocationVerified: function () { return this.data.latitude !== null && this.data.longitude !== null; },
 
+		isClientSideCacheable: function () {
+			if (this.protected) return false;
+			if (this.data === null || this.data === undefined) return false;
+			if (this.data.patient === null || this.data.patient === undefined) return false;
+			if (this.isMine() && !this.isFollowup() && !this.isFinished()) return true;
+			return false;
+		},
+
 		moveToAssigned: function () {
 			if (this.protected) return alert('Alarm is protected, cannot modify.');
 
 			// If we already are in assigned, just ignore the call
-			if (this.state === 'assigned') return;
+			if (this.isAssigned()) return;
 			this.DOM.removeAttr('onclick');
 			// Select this Alarm, so previously selected are deselected
 			this.select();
@@ -70,7 +78,7 @@ var Alarms = (function ($) {
 			this.DOM.off('click');
 			this.DOM.unbind('click');
 
-			if (this.state === 'finished') {
+			if (this.isFinished()) {
 				this.DOM.children('.clock-icon').remove();
 				this.DOM.children(':first')
 					.after('<img src="/assets/images/finished.png" class="img-thumbnail pull-left finished-icon">');
@@ -108,7 +116,7 @@ var Alarms = (function ($) {
 			}
 
 			// If we already are in followup, just ignore the rest of the call
-			if (this.state === 'followup') return;
+			if (this.isFollowup()) return;
 			this.DOM.removeAttr('onclick');
 			// We select ourselves to invalidate other potentially selected/active Alarm objects
 			this.select();

@@ -16,6 +16,8 @@ var Patient = (function ($) {
 		var wrapper = $('#dynamicPatientInfo');
 		wrapper.empty();
 
+		var activeAlarm = Alarms.getActiveAlarm();
+
 		// building Patient Drop Down Block
 		var patientDropDownBox =
 			'<u>@Messages.get("patientpane.name"):</u> ' +
@@ -54,9 +56,20 @@ var Patient = (function ($) {
 			if (this.checked) {
 				$("#incidentAddress").val(addr);
 			} else {
-				$('#incidentAddress').val('@Messages.get("patientpane.incident.other")');
+				$('#incidentAddress').val('').attr('placeholder', '@Messages.get("patientpane.incident.other")');
+			}
+			// If patient is set, persist occurrenceAddress on patient object
+			if (activeAlarm.isClientSideCacheable()) {
+				activeAlarm.data.occuranceAddress = $('#incidentAddress').val()
 			}
 		});
+
+		// Update client side alarm data object on every keystroke
+		$('#incidentAddress').on('keyup', function (e) {
+			if (activeAlarm.isClientSideCacheable()) {
+				activeAlarm.data.occuranceAddress = $(this).val();
+			}
+		})
 
 		// Bind the search button
 		$('#patientSearch').on('click', function (e) {
@@ -68,7 +81,6 @@ var Patient = (function ($) {
 		$('#verifyPatientLocation').on('click', function (e) {
 			e.preventDefault();
 
-			var activeAlarm = Alarms.getActiveAlarm();
 			if (activeAlarm.protected) return alert('Alarm is protected. Cannot modify.');
 			if (activeAlarm.isFollowup()) return alert('Alarm in followup! Cannot modify.');
 
@@ -223,7 +235,7 @@ var Patient = (function ($) {
 		// Update notes and set occurrance address if set
 		var notes = currentSelected.data.notes;
 		var occurrenceAddress = currentSelected.data.occuranceAddress;
-		$("#notesLog").text(notes === null ? "" : notes);;
+		$("#notesLog").text(notes === null ? "" : notes);
 		$("#globalNotesBox").val('')
 
         // Check existance and potential equality between occurrence address and patient address
@@ -271,6 +283,7 @@ var Patient = (function ($) {
 		}
 	}
 
+	// Persists patient selection in the back end database
 	var setPatientOnAlarm = function (alarmId, patient) {
 		myJsRoutes.controllers.Application.setPatientOfAlarm(alarmId).ajax({
 			data : JSON.stringify(patient),
@@ -398,6 +411,7 @@ var Patient = (function ($) {
 		openPatientSearchModal: function () {
 			// Clear modal
 			$('#patient-search-modal-query').val('');
+			$('#patient-search-modal-results').html('');
 			$('#patient-search-modal').modal('show');
 		},
 
