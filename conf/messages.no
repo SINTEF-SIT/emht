@@ -129,6 +129,9 @@ actions.popup.send.confirmation=Informasjonen er oversendt
 actions.popup.appointment.title=Velg tidspunkt og informasjon som skal sendes
 actions.popup.appointment.date=Dato
 
+notes.title=Notater
+notes.placeholder=Skriv inn ytterligere notater her
+
 #common
 button.cancel=Avbryt
 button.yes=Ja

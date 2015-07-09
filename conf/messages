@@ -131,6 +131,9 @@ actions.popup.send.confirmation=Data sent
 actions.popup.appointment.title=Select appointment time and data to be sent
 actions.popup.appointment.date=Date
 
+notes.title=Notes
+notes.placeholder=Add additional notes here...
+
 #common
 button.cancel=Cancel
 button.yes=Yes

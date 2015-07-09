@@ -150,12 +150,13 @@ var Alarms = (function ($) {
 			ACTIVE_ALARM = this;
 			this.selected = true;
 			this.DOM.addClass('active');
+
 			return this;
 		},
 
 		selectProtected: function () {
-			this.select();
 			this.protected = true;
+			this.select();
 			Alarms.gui.selectFollowUpAlarm(this.id);
 			return this;
 		},
@@ -342,6 +343,8 @@ var Alarms = (function ($) {
 			$("#calleeBox").show();
 			$("#extraActionButtonsDiv").show();
 			$("#closingNotesAndButtons").show();
+			// We are only interested in displaying notesLog if there might be information there
+			$("#notesLog").hide();
 
 			// Start by fetching the AlarmAttendant object representing ourselves
 			$.getJSON('/me', function (data) {
@@ -375,6 +378,7 @@ var Alarms = (function ($) {
 			resetNotes: function () {
 				$("#globalNotesBox").val("");
 				$('#notesLog').text('');
+				$('#notesLog').hide();
 			},
 
 			populateAlarmDetails: function (alarmIndex) {
@@ -413,6 +417,9 @@ var Alarms = (function ($) {
 					if (recurring != null) recurring.remove();
 
 					Alarms.gui.populateAlarmDetails(alarm.id);
+
+					// We are only interested in displaying the notesLog when there might be information there
+					$('#notesLog').show();
 				});
 			},
 

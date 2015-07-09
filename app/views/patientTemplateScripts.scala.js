@@ -56,7 +56,7 @@ var Patient = (function ($) {
 			if (this.checked) {
 				$("#incidentAddress").val(addr);
 			} else {
-				$('#incidentAddress').val('').attr('placeholder', '@Messages.get("patientpane.incident.other")');
+				$('#incidentAddress').val('');
 			}
 			// If patient is set, persist occurrenceAddress on patient object
 			if (activeAlarm.isClientSideCacheable()) {
