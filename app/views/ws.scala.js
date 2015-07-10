@@ -93,7 +93,7 @@ var WebSocketManager = (function ($, WS) {
                 case "monitorStatistics":
                     var stats = data.stats;
 
-                    $('#stats-total').text(stats.totalIncidents)
+                    $('#stats-total').text(stats.totalIncidents);
                     $('#stats-total-above-assignment-threshold').text(stats.totalIncidentsAboveAssignmentThreshold);
                     $('#stats-max-response-time').text(stats.maximumAssignmentTime / 1000);
                     $('#stats-average-response-time').text(stats.averageResponseTime / 1000);
@@ -105,6 +105,7 @@ var WebSocketManager = (function ($, WS) {
     return {
         init: function () {
             socket.onmessage = writeMessages;
+            socket.ondisconnect
         }
     }
 })(jQuery, window['MozWebSocket'] ? window['MozWebSocket'] : WebSocket)

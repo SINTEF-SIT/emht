@@ -189,7 +189,7 @@ var Patient = (function ($) {
 	// Updates the dynamic patient information with the provided patient object
 	var populatePatientInformation = function (pat) {
 		if (DEBUG) console.log("populatePatientInformation called: ");
-		if (DEBUG) console.log("id:" + pat.id, "name:" + pat.name, "personalNumber:" + pat.personalNumber, "address:"+pat.address);
+		if (DEBUG) console.log(JSON.stringify(pat, null, 4));
 		// Cache the active alarm DOM object
 		var currentSelected = Alarms.getActiveAlarm();
 
@@ -443,36 +443,60 @@ var Patient = (function ($) {
 				'phoneNumber' : phoneNumber,
 				'age' : age
 			};
-			myJsRoutes.controllers.Application.insertPatientFromJson().ajax({
-				data : JSON.stringify(inputPatient),
-				contentType : 'application/json',
-				success : function (outputPatient) {
-					var activeAlarm = Alarms.getActiveAlarm();
-					// add it to list
-					var patientListItem = '<li id="Patient' + outputPatient.id + '"><a href="#">' + outputPatient.name +'</a></li>';
-					$('#patientDropDownList').prepend(patientListItem);
-					Patient.populatePatient(outputPatient);
 
-					$('#Patient'+outputPatient.id).on('click', function (e) {
-						e.preventDefault();
-						if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
-						if (activeAlarm.isFollowup()) return alert('@Messages.get("actions.alerts.alarm_followup")');
+			// Define the ajax call to store patient as a function we can trigger on geolocation success
+			var savePatient = function () {
+				if (DEBUG) console.log("Saving patient to database: " + JSON.stringify(inputPatient, null, 4));
+				myJsRoutes.controllers.Application.insertPatientFromJson().ajax({
+					data : JSON.stringify(inputPatient),
+					contentType : 'application/json',
+					success : function (outputPatient) {
+						var activeAlarm = Alarms.getActiveAlarm();
+						// add it to list
+						var patientListItem = '<li id="Patient' + outputPatient.id + '"><a href="#">' + outputPatient.name +'</a></li>';
+						$('#patientDropDownList').prepend(patientListItem);
 						Patient.populatePatient(outputPatient);
-					});
 
-				}// end of success
-			});// end of ajax call
+						$('#Patient'+outputPatient.id).on('click', function (e) {
+							e.preventDefault();
+							if (activeAlarm.protected) return alert('@Messages.get("actions.alerts.alarm_protected")');
+							if (activeAlarm.isFollowup()) return alert('@Messages.get("actions.alerts.alarm_followup")');
+							Patient.populatePatient(outputPatient);
+						});
+
+						// At this point everything was successful, so we can close the modal
+						$('#add_patient_modal').modal('hide');
+					}
+				});
+			}
+
+			// Geolocate the address, and save on success
+			MapView.convertAddressToLatLng(address, function (locationData) {
+				if (DEBUG) console.log("Received GeoLoc data: " + JSON.stringify(locationData, null, 4));
+				if (locationData === null) {
+					alert('@Messages.get("actions.alerts.location_failed")');
+					$('#modalInputPatientAddress').parent().addClass('has-error');
+				} else {
+					inputPatient.latitude = locationData.latitude;
+					inputPatient.longitude = locationData.longitude;
+					$('#modalInputPatientAddress').parent().removeClass('has-error');
+					savePatient()
+				}
+			});
+
 		},
 
 		fillUnknownPatient: function () {
 			var pat = {
-				'id': '',
-				'name': '@Messages.get("patientpane.pill.unknown")',
-				'address': '',
-				'personalNumber': '',
-				'phoneNumber': '',
-				'age': '',
-				'obs': null
+				id: 1,
+				name: '@Messages.get("patientpane.pill.unknown")',
+				address: '',
+				latitude: 0.0,
+				longitude: 0.0,
+				personalNumber: '',
+				phoneNumber: '',
+				age: '',
+				aobs: null
 			}
 			populatePatientInformation(pat);
 		}

@@ -57,6 +57,7 @@ patientpane.log.type=Type
 #add patient modal
 patientmodal.title=Add Patient
 patientmodal.savebutton=Save Patient Data
+patientmodal.addressformat=Street name and no, postal code, city
 
 #patient search modal
 patientsearchmodal.title=Search for patient

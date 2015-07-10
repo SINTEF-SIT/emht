@@ -56,6 +56,7 @@ patientpane.log.type=Type
 #add patient modal
 patientmodal.title=Legge til pasient
 patientmodal.savebutton=Lagre pasientinformasjon
+patientmodal.addressformat=Gatenavn og nr, postnr, by
 
 #patient search modal
 patientsearchmodal.title=Søk etter pasient

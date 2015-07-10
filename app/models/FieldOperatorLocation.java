@@ -44,6 +44,7 @@ public class FieldOperatorLocation extends Model {
     /**
      * Find helper class
      */
+    @SuppressWarnings("unchecked")
     public static Finder<Long, FieldOperatorLocation> find = new Finder(Long.class, FieldOperatorLocation.class);
 
     /**

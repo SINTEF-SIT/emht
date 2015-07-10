@@ -241,6 +241,8 @@ public class Application extends Controller {
 			p.phoneNumber = patient.findPath("phoneNumber").textValue();
 			p.address = patient.findPath("address").textValue();
 			p.age = patient.findPath("age").asInt();
+			p.latitude = patient.findPath("latitude").asDouble();
+			p.longitude = patient.findPath("longitude").asDouble();
 
 			// inserts on the db and return the db instance (which will include the id of the patient)
 			p = Patient.getOrCreate(p);
@@ -364,6 +366,8 @@ public class Application extends Controller {
 		p.phoneNumber = json.findPath("phoneNumber").textValue();
 		p.address = json.findPath("address").textValue();
 		p.age = json.findPath("age").asInt();
+		p.latitude = json.findPath("latitude").asDouble();
+		p.longitude = json.findPath("longitude").asDouble();
 
 		// inserts on the db and return the db instance (which will include the id of the patient)
 		Patient retObj = Patient.getOrCreate(p);

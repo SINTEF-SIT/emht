@@ -85,7 +85,7 @@ public class LocalMonitor extends AbstractMonitor {
         AssignmentReminderTask t = (AssignmentReminderTask) tasks.get(e.getAlarm().id);
         Long responseTime = new Date().getTime() - e.getAlarm().openingTime.getTime();
 
-        Logger.debug("Handle alarm assignment responseTime: " + responseTime);
+        Logger.debug("[MONITOR] Assignment time was: " + responseTime / 1000 + " seconds.");
 
         stats.incrementTotalAssignmentWaitingTimeBy(responseTime);
 

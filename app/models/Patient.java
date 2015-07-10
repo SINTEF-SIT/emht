@@ -42,18 +42,22 @@ public class Patient extends Model {
 	}
 
 	public static Patient getOrCreate(Patient pat) {
-		if (null == pat)
-			return null;
-		//else
-		Patient p = null;
-		if(null != pat.personalNumber && !pat.personalNumber.isEmpty())
-			p = find.where().ieq("personalNumber", pat.personalNumber).findUnique();
+		Patient p;
+		if (pat == null) return null;
+		if (pat.id != null) {
+			p = find.byId(pat.id);
+			if (p == null || p.id.equals(0)) {
+				p = new Patient();
+				p.save();
+			}
+			else return p;
+		}
+		else {
+			p = pat;
+		}
 
-		if(null != p)
-			return p; // patient is already on db, no need to save it
-		//else
-		pat.save();
-		return pat;
+		p.save();
+		return p;
 	}
 
 	public static List<Patient> patientFromAddress(String address){

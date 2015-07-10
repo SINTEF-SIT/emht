@@ -1,6 +1,7 @@
 package core.event;
 
 import play.Logger;
+import play.Play;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -16,6 +17,7 @@ public class EventHandler extends Thread {
     private static EventHandler _singleton = null;
     private HashSet<EventListener> listeners;
     private LinkedBlockingQueue<Event> eventQueue;
+    private boolean supressMonitorEvents = false;
 
     /**
      * Private constructor, since we are using Singleton pattern
@@ -24,6 +26,7 @@ public class EventHandler extends Thread {
         listeners = new LinkedHashSet<>();
         eventQueue = new LinkedBlockingQueue<>();
         _invoked = true;
+        supressMonitorEvents = Play.application().configuration().getBoolean("events.output.supressmonitorevents");
     }
 
     /**
@@ -84,7 +87,9 @@ public class EventHandler extends Thread {
      * @param e The Event to process
      */
     private void fireEvent(Event e) {
-        Logger.debug("[EVENT] Firing " + e);
+        if (e.getType() != MONITOR_STATISTICS || !supressMonitorEvents) {
+            Logger.debug("[EVENT] Firing " + e);
+        }
         for (EventListener listener : listeners) {
             if (listener.listenFor().contains(e.getType())) {
                 listener.newEvent(e);
