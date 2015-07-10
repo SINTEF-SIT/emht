@@ -11,6 +11,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import controllers.auth.Authentication;
+import controllers.auth.Authorization;
 import play.cache.Cache;
 import play.db.ebean.Model;
 import play.db.ebean.Model.Finder;
@@ -22,6 +23,9 @@ public class AlarmAttendant extends Model {
 	public static final int ADMINISTRATOR = 0;
 	public static final int ATTENDANT = 2;
 	public static final int FIELDOPERATOR = 3;
+	public static final int API_FULL = Authorization.API_FULL;
+	public static final int API_MEDIUM = Authorization.API_MEDIUM;
+	public static final int API_BASIC = Authorization.API_BASIC;
 
 	@Id
 	public Long id;
@@ -64,7 +68,8 @@ public class AlarmAttendant extends Model {
 	public String validate() {
 		if (password.length() < 6) return "Password must be more than 6 characters";
 		if (username.length() < 2) return "Username must be at least 2 characters";
-		if (!(role == ADMINISTRATOR || role == ATTENDANT || role == FIELDOPERATOR)) {
+		if (!(role == ADMINISTRATOR || role == ATTENDANT || role == FIELDOPERATOR ||
+		 	  role == API_FULL || role == API_MEDIUM || role == API_BASIC)) {
 			return "User must be either Administrator, Attendant or Field Operator";
 		}
 		return null;

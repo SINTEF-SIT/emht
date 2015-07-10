@@ -1,4 +1,4 @@
-@(attendants: List[AlarmAttendant], attendantForm: Form[AlarmAttendant]) 
+@(attendants: List[AlarmAttendant], attendantForm: Form[AlarmAttendant], apiKeys: List[ApiKey], apiKeyForm: Form[ApiKey])
 @* alarms and alarmForm are the 2 inputs to this template, where 
 alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 
@@ -26,7 +26,10 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                         @select(attendantForm("role"), options = Seq(
                             "" + AlarmAttendant.ADMINISTRATOR -> "Administrator",
                             "" + AlarmAttendant.ATTENDANT -> "Attendant",
-                            "" + AlarmAttendant.FIELDOPERATOR -> "Field Operator"
+                            "" + AlarmAttendant.FIELDOPERATOR -> "Field Operator",
+                            "" + AlarmAttendant.API_FULL -> "API Full",
+                            "" + AlarmAttendant.API_MEDIUM -> "API Medium",
+                            "" + AlarmAttendant.API_BASIC -> "Api Basic"
                         ), 'class -> "form-control",
                         '_label -> "User role *")
                     </div>
@@ -59,13 +62,59 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
                                 Attendant
                             } else { @if(attendant.role == AlarmAttendant.FIELDOPERATOR) {
                                 Field Operator
-                            }}}</td>
+                            } else { @if(attendant.role == AlarmAttendant.API_FULL) {
+                                Full API Access
+                            } else { @if(attendant.role == AlarmAttendant.API_MEDIUM) {
+                                Medium API Access
+                            } else { @if(attendant.role == AlarmAttendant.API_BASIC) {
+                                Basic API Access
+                            }}}}}}</td>
                             <td class="text-right">@form(routes.AttendantController.deleteAttendant(attendant.id)) {
                                 <input type="submit" value="Delete" class="btn btn-danger" />
                             }</td>
                         </tr>
                     }
                     </tbody>
+                </table>
+            </div>
+        </div>
+        <h2>API Keys</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <h3>Add new</h3>
+                @form(routes.AttendantController.newApiKey()) {
+                    @if(apiKeyForm.hasGlobalErrors) {
+                        <p><i>apiKeyForm.globalError.message</i></p>
+                    }
+                    <div class="form-group">
+                    @select(attendantForm("user"), options = options(attendants.map(v => v.username)), 'class -> "form-control", '_label -> "User *")
+                    </div>
+
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                }
+            </div>
+            <div class="col-md-8">
+                <h3>Overview</h3>
+                <table class="table table-striped table-condensed">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Key</th>
+                            <th class="text-right">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @for(key <- apiKeys) {
+                        <tr>
+                            <td>@key.id</td>
+                            <td>@key.user.username</td>
+                            <td>@key.key</td>
+                            <td>@form(routes.AttendantController.deleteApiKey(key.id)) {
+                                <input type="submit" value="Delete" class="btn btn-danger pull-right" />
+                            }</td>
+                        </tr>
+                    }</tbody>
                 </table>
             </div>
         </div>

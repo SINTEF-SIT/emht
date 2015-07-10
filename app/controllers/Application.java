@@ -154,6 +154,8 @@ public class Application extends Controller {
 	 * Retrieve all open alarms as JSON
 	 * @return A JSON Result
 	 */
+	@Security.Authenticated(Authorization.Authorized.class)
+	@Authorization.PrivilegeLevel(Authorization.API_MEDIUM)
 	public static Result allOpenAlarmsJson() {
 		List<Alarm> alarms = Alarm.allOpenAlarms();
 		ObjectNode wrapper = Json.newObject();

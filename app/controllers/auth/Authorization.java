@@ -3,6 +3,7 @@ package controllers.auth;
 import controllers.routes;
 
 import models.AlarmAttendant;
+import models.ApiKey;
 import play.Logger;
 import play.cache.Cache;
 import play.libs.F;
@@ -60,7 +61,7 @@ public class Authorization {
      */
     public static class Authorized extends Security.Authenticator {
         /**
-         * Base invokation method of the Authenticator decorator. A return value of
+         * Base invocation method of the Authenticator decorator. A return value of
          * null indicates that a user is not logged in, and onUnauthorized will be
          * triggered.
          *
@@ -74,8 +75,30 @@ public class Authorization {
 
             // Do an API-KEY check and return API-key canonical name if valid
             if (id == null) {
-                // TODO: Implement API-Key support
-                return null;
+                String headerApiKey = ctx._requestHeader().headers().toSimpleMap().get("Authorization").get();
+
+                String[] keyParts = headerApiKey.split(" ");
+
+                if (keyParts.length != 2) return null;
+                else headerApiKey = keyParts[1];
+
+                if (headerApiKey != null && !headerApiKey.equals("")) {
+                    ApiKey a = ApiKey.find.where().eq("key", headerApiKey).findUnique();
+
+                    if (a == null || a.id < 1) return null;
+                    else {
+                        AlarmAttendant user = AlarmAttendant.get(a.user.id);
+                        if (user == null) {
+                            ctx.session().clear();
+                            id = null;
+                        } else {
+                            // Update cache if server has restarted
+                            if (Cache.get(user.id.toString()) == null) Cache.set(user.id.toString(), user);
+                            id = user.id.toString();
+                            ctx.session().put("role", Long.toString(user.role));
+                        }
+                    }
+                }
             } else {
                 // TODO: For now, just check if user still exists in database until a proper hook
                 // for per-user session invalidation on user delete is implemented.

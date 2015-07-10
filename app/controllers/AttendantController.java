@@ -1,6 +1,7 @@
 package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import models.ApiKey;
 import controllers.auth.Authorization;
 import models.AlarmAttendant;
 import play.Logger;
@@ -10,10 +11,13 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Security;
 
+import java.util.Map;
+
 @Security.Authenticated(Authorization.Authorized.class)
 public class AttendantController extends Controller {
 
 	static Form<AlarmAttendant> attendantForm = Form.form(AlarmAttendant.class);
+	static Form<ApiKey> apiKeyForm = Form.form(ApiKey.class);
 
 	/**
 	 * Main controller of the /attendants endpoint
@@ -31,7 +35,7 @@ public class AttendantController extends Controller {
 	 */
 	@Authorization.PrivilegeLevel(Authorization.ADMINISTRATOR)
 	public static Result attendants() {
-		return ok(views.html.attendantAdmin.render(AlarmAttendant.all(), attendantForm));
+		return ok(views.html.attendantAdmin.render(AlarmAttendant.all(), attendantForm, ApiKey.all(), apiKeyForm));
 	}
 
 	/**
@@ -44,7 +48,7 @@ public class AttendantController extends Controller {
 		Form<AlarmAttendant> filledForm = attendantForm.bindFromRequest();
 
 		if (filledForm.hasErrors()) {
-			return badRequest(views.html.attendantAdmin.render(AlarmAttendant.all(), filledForm));
+			return badRequest(views.html.attendantAdmin.render(AlarmAttendant.all(), attendantForm, ApiKey.all(), apiKeyForm));
 		} else {
 			AlarmAttendant.create(filledForm.get());
 			return redirect(controllers.routes.AttendantController.attendants());
@@ -58,6 +62,34 @@ public class AttendantController extends Controller {
 	@Authorization.PrivilegeLevel(Authorization.ADMINISTRATOR)
 	public static Result deleteAttendant(Long id) {
 		AlarmAttendant.delete(id);
+		return redirect(controllers.routes.AttendantController.attendants());
+	}
+
+	/**
+	 * ApiKey creation controller of the /attendants endpoint
+	 * @return A Result object containing the HTTP response
+	 */
+	@Authorization.PrivilegeLevel(Authorization.ADMINISTRATOR)
+	public static Result newApiKey() {
+		ApiKey a = new ApiKey();
+		AlarmAttendant attendant = AlarmAttendant.getAttendantFromUsername(
+			request().body().asFormUrlEncoded().get("user")[0]
+		);
+		a.user = attendant;
+		ApiKey.create(a);
+
+		return redirect(controllers.routes.AttendantController.attendants());
+
+	}
+
+	/**
+	 * ApiKey deleteion controller of the /attendants endpoint
+	 * @param id The ID of the ApiKye
+	 * @return A Result object containing the HTTP response
+	 */
+	@Authorization.PrivilegeLevel(Authorization.ADMINISTRATOR)
+	public static Result deleteApiKey(Long id) {
+		ApiKey.find.byId(id).delete();
 		return redirect(controllers.routes.AttendantController.attendants());
 	}
 

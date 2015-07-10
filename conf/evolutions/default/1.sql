@@ -42,6 +42,13 @@ create table alarm_attendant (
   constraint pk_alarm_attendant primary key (id))
 ;
 
+create table api_key (
+  id                        bigint not null,
+  user_id                   bigint,
+  key                       varchar(255),
+  constraint pk_api_key primary key (id))
+;
+
 create table assessment (
   id                        bigint not null,
   nmi_id                    bigint,
@@ -106,6 +113,8 @@ create sequence alarm_seq;
 
 create sequence alarm_attendant_seq;
 
+create sequence api_key_seq;
+
 create sequence assessment_seq;
 
 create sequence callee_seq;
@@ -132,12 +141,14 @@ alter table alarm add constraint fk_alarm_fieldAssessment_6 foreign key (field_a
 create index ix_alarm_fieldAssessment_6 on alarm (field_assessment_id);
 alter table alarm add constraint fk_alarm_patient_7 foreign key (patient_id) references patient (id) on delete restrict on update restrict;
 create index ix_alarm_patient_7 on alarm (patient_id);
-alter table assessment add constraint fk_assessment_nmi_8 foreign key (nmi_id) references nmi (id) on delete restrict on update restrict;
-create index ix_assessment_nmi_8 on assessment (nmi_id);
-alter table component_reading add constraint fk_component_reading_component_9 foreign key (component_id) references AALComponent (id) on delete restrict on update restrict;
-create index ix_component_reading_component_9 on component_reading (component_id);
-alter table field_operator_location add constraint fk_field_operator_location_fi_10 foreign key (field_operator_id) references alarm_attendant (id) on delete restrict on update restrict;
-create index ix_field_operator_location_fi_10 on field_operator_location (field_operator_id);
+alter table api_key add constraint fk_api_key_user_8 foreign key (user_id) references alarm_attendant (id) on delete restrict on update restrict;
+create index ix_api_key_user_8 on api_key (user_id);
+alter table assessment add constraint fk_assessment_nmi_9 foreign key (nmi_id) references nmi (id) on delete restrict on update restrict;
+create index ix_assessment_nmi_9 on assessment (nmi_id);
+alter table component_reading add constraint fk_component_reading_componen_10 foreign key (component_id) references AALComponent (id) on delete restrict on update restrict;
+create index ix_component_reading_componen_10 on component_reading (component_id);
+alter table field_operator_location add constraint fk_field_operator_location_fi_11 foreign key (field_operator_id) references alarm_attendant (id) on delete restrict on update restrict;
+create index ix_field_operator_location_fi_11 on field_operator_location (field_operator_id);
 
 
 
@@ -150,6 +161,8 @@ drop table if exists AALComponent;
 drop table if exists alarm;
 
 drop table if exists alarm_attendant;
+
+drop table if exists api_key;
 
 drop table if exists assessment;
 
@@ -170,6 +183,8 @@ drop sequence if exists AALComponent_seq;
 drop sequence if exists alarm_seq;
 
 drop sequence if exists alarm_attendant_seq;
+
+drop sequence if exists api_key_seq;
 
 drop sequence if exists assessment_seq;
 

@@ -55,6 +55,8 @@ GET         /attendants                                           controllers.At
 POST        /attendants                                           controllers.AttendantController.newAttendant()
 POST        /attendants/setGcmRegId                               controllers.AttendantController.setGcmRegId()
 POST        /attendants/:id/delete                                controllers.AttendantController.deleteAttendant(id: Long)
+POST        /attendants/apikey                                    controllers.AttendantController.newApiKey()
+POST        /attendants/apikey/:id/delete                         controllers.AttendantController.deleteApiKey(id: Long)
 
 # ComponentReading          
 GET         /component/startSimulator                             controllers.ComponentReadingController.startSimulator()
