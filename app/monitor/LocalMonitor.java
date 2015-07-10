@@ -208,6 +208,8 @@ public class LocalMonitor extends AbstractMonitor {
             tasks.put(e.getAlarm().id, t);
             timer.schedule(t, RESOLUTION_TIME_THRESHOLD);
 
+            if (e.getAlarm().mobileCareTaker != null) stats.incrementTotalIncidentsAssignedToFieldOperator();
+
             Logger.debug("[MONITOR] Scheduled " + e.getAlarm() + " for resolution expiry in " +
             RESOLUTION_TIME_THRESHOLD / 1000 + " seconds.");
         }
@@ -219,7 +221,13 @@ public class LocalMonitor extends AbstractMonitor {
      */
     @Override
     protected void handleAlarmFinished(Event e) {
+        if (e.getAlarm().mobileCareTaker != null) {
+            Long workingTime = new Date().getTime() - e.getAlarm().dispatchingTime.getTime();
+            stats.incrementTotalFieldOperatorWorkingTimeBy(workingTime);
 
+            Logger.debug("[MONITOR] " + e.getAlarm().mobileCareTaker.username + " finished " + e.getAlarm() +
+                         " in " + (workingTime / 1000) + " seconds.");
+        }
     }
 
     /**

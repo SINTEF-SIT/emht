@@ -13,18 +13,22 @@ import play.libs.Json;
 public class MonitorStatistics {
 
     private Integer totalIncidents;
+    private Integer totalIncidentsAssignedToFieldOperator;
     private Integer totalIncidentsAboveAssignmentThreshold;
     private Integer totalIncidentsAboveResolutionThreshold;
     private Long totalAssignmentWaitingTime;
     private Long totalResolutionWaitingTime;
+    private Long totalFieldOperatorWorkingTime;
     private Long maximumAssignmentTime;
 
     public MonitorStatistics() {
         this.totalIncidents = 0;
+        this.totalIncidentsAssignedToFieldOperator = 0;
         this.totalIncidentsAboveAssignmentThreshold = 0;
         this.totalIncidentsAboveResolutionThreshold = 0;
         this.totalAssignmentWaitingTime = 0L;
         this.totalResolutionWaitingTime = 0L;
+        this.totalFieldOperatorWorkingTime = 0L;
         this.maximumAssignmentTime = 0L;
     }
 
@@ -49,6 +53,8 @@ public class MonitorStatistics {
         return totalResolutionWaitingTime;
     }
 
+    public Long getTotalFieldOperatorWorkingTime() { return totalFieldOperatorWorkingTime; }
+
     public Long getMaximumAssignmentTime() {
         return maximumAssignmentTime;
     }
@@ -63,6 +69,11 @@ public class MonitorStatistics {
         return totalResolutionWaitingTime.doubleValue() / totalIncidents.doubleValue();
     }
 
+    public Double getAverageFieldOperatorWorkingTime() {
+        if (totalIncidentsAssignedToFieldOperator == 0) return 0d;
+        return totalFieldOperatorWorkingTime.doubleValue() / totalIncidentsAssignedToFieldOperator.doubleValue();
+    }
+
     public void incrementTotalIncidents() {
         this.totalIncidents++;
     }
@@ -75,6 +86,8 @@ public class MonitorStatistics {
         this.totalIncidentsAboveResolutionThreshold++;
     }
 
+    public void incrementTotalIncidentsAssignedToFieldOperator() { this.totalIncidentsAssignedToFieldOperator++; }
+
     public void incrementTotalAssignmentWaitingTimeBy(Long amount) {
         this.totalAssignmentWaitingTime += amount;
         if (amount > maximumAssignmentTime) maximumAssignmentTime = amount;
@@ -83,6 +96,8 @@ public class MonitorStatistics {
     public void incrementTotalResolutionWaitingTimeBy(Long amount) {
         this.totalResolutionWaitingTime += amount;
     }
+
+    public void incrementTotalFieldOperatorWorkingTimeBy(Long amount) { this.totalFieldOperatorWorkingTime += amount; }
 
     /**
      * Transform this MonitorStatistics object into a JSON ObjectNode representation
@@ -95,9 +110,11 @@ public class MonitorStatistics {
         stats.put("totalIncidentsAboveResolutionThreshold", getTotalIncidentsAboveResolutionThreshold());
         stats.put("totalAssignmentWaitingTime", getTotalAssignmentWaitingTime());
         stats.put("totalResolutionWaitingTime", getTotalResolutionWaitingTime());
+        stats.put("totalFieldOperatorWorkingTime", getTotalFieldOperatorWorkingTime());
         stats.put("maximumAssignmentTime", getMaximumAssignmentTime());
         stats.put("averageResponseTime", getAverageResponseTime());
         stats.put("averageResolutionTime", getAverageResolutionTime());
+        stats.put("averageFieldOperatorWorkingTime", getAverageFieldOperatorWorkingTime());
         return stats;
     }
 }

@@ -430,16 +430,25 @@ public class Application extends Controller {
 				return unauthorized("Attempt to finish a case not designated for that user");
 			}
 			*/
+			AlarmAttendant fieldOperator = a.mobileCareTaker;
+
 			a.finished = true;
 			a.mobileCareTaker = null;
 			a.save();
 
+			// Pre-generate the JSON object before re-applying mobile caretaker
+			ObjectNode jsonAlarm = Alarm.toJson(a);
+
+			// We apply the mobile care taker field again without saving, so that event listeners
+			// know which field operator finished the alarm
+			a.mobileCareTaker = fieldOperator;
+
 			// Trigger the event
 			EventHandler.dispatch(new MonitorEvent(EventType.ALARM_FINISHED, a, null, null));
 
-			return ok(Alarm.toJson(a));
+			return ok(jsonAlarm);
 		} else {
-			Logger.debug("Attempt to finish a non-existant case: " + id);
+			Logger.debug("Attempt to finish a non-existent case: " + id);
 			return notFound();
 		}
 	}
@@ -459,6 +468,8 @@ public class Application extends Controller {
 		else patientId = 0;
 		String notes = json.findPath("notes").asText();
 		String alarmOccurance = json.findPath("occuranceAddress").asText();
+		Double latitude = json.get("latitude").asDouble();
+		Double longitude = json.get("longitude").asDouble();
 		long alarmId = json.findPath("id").asLong();
 		Long mobileCareTaker = json.findPath("mobileCareTaker").asLong();
 		boolean finished = json.findPath("finished").asBoolean();
@@ -523,6 +534,11 @@ public class Application extends Controller {
 		// If we have addition to the notes, append and template it
 		if (notes != null && notes.length() > 0) {
 			a.setNotes(session().getOrDefault("username", "unknown"), notes);
+		}
+
+		if (latitude > 0 && longitude > 0) {
+			a.latitude = latitude;
+			a.longitude = longitude;
 		}
 
 		Alarm.saveAndFollowupAlarm(a);

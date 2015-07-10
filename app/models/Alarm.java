@@ -216,10 +216,10 @@ public class Alarm extends Model { // the model extension serves for having acce
 			a.closingTime = dummy.closingTime;
 
 		// If we have latitude and longitude set and they differ from local monitor, update them
-		if (dummy.latitude != null && a.latitude != null && !a.latitude.equals(dummy.latitude)) {
+		if (dummy.latitude != null && (a.latitude == null || !a.latitude.equals(dummy.latitude))) {
 			a.latitude = dummy.latitude;
 		}
-		if (dummy.longitude != null && a.longitude != null && !a.longitude.equals(dummy.longitude)) {
+		if (dummy.longitude != null && (a.longitude == null || !a.longitude.equals(dummy.longitude))) {
 			a.longitude = dummy.longitude;
 		}
 		a.finished = dummy.finished;
