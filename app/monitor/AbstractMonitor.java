@@ -88,6 +88,7 @@ public abstract class AbstractMonitor implements EventListener {
 
     /* Abstract methods */
 
+    protected abstract MonitorStatistics getStats();
     protected abstract void handleAlarmAssessmentSet(Event e);
     protected abstract void handleAlarmAssigned(Event e);
     protected abstract void handleAlarmNew(Event e);

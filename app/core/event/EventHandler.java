@@ -26,7 +26,7 @@ public class EventHandler extends Thread {
         listeners = new LinkedHashSet<>();
         eventQueue = new LinkedBlockingQueue<>();
         _invoked = true;
-        supressMonitorEvents = Play.application().configuration().getBoolean("events.output.supressmonitorevents");
+        supressMonitorEvents = Play.application().configuration().getBoolean("events.output.supressmonitorstatsevents");
     }
 
     /**
@@ -44,14 +44,15 @@ public class EventHandler extends Thread {
     @Override
     public void run() {
         _running = true;
+        Logger.info("[EVENT] EventHandler started");
         while (_running) {
             try {
                 fireEvent(eventQueue.take());
             } catch (InterruptedException e) {
-                Logger.warn("Event thread got interrupted while fetching next event from queue.");
+                Logger.warn("Event thread got interrupted while fetching next event from queue");
             }
         }
-        Logger.info("[EVENT] EventHandler stopped.");
+        Logger.info("[EVENT] EventHandler stopped");
     }
 
     /**

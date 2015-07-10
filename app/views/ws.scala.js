@@ -80,12 +80,17 @@ var WebSocketManager = (function ($, WS) {
                         console.log("finishedAlarm alarm id was invalid for this client.");
                         return;
                     }
-                    if (a.DOM.children('.finished-icon').length > 0) return;
-                    var finishedImage = '<img src="/assets/images/finished.png" class="img-thumbnail pull-left finished-icon" width="48" heigh="48"/>';
-                    a.DOM.children('.clock-icon').remove();
-                    a.DOM.children(':first').after(finishedImage);
+                    // We need to check this since we can have alarms not assigned to us that might not have
+                    // a DOM object initialized yet.
+                    if (a.DOM !== null && a.DOM !== undefined) {
+                        if (a.DOM.children('.finished-icon').length > 0) return;
+                        var finishedImage = '<img src="/assets/images/finished.png" class="img-thumbnail pull-left finished-icon" width="48" heigh="48"/>';
+                        a.DOM.children('.clock-icon').remove();
+                        a.DOM.children(':first').after(finishedImage);
 
-                    a.DOM.children('.dispatchedTo').html('');
+                        a.DOM.children('.dispatchedTo').html('');
+                    }
+
                     a.state = 'finished';
 
                     break;
@@ -105,7 +110,6 @@ var WebSocketManager = (function ($, WS) {
     return {
         init: function () {
             socket.onmessage = writeMessages;
-            socket.ondisconnect
         }
     }
 })(jQuery, window['MozWebSocket'] ? window['MozWebSocket'] : WebSocket)
