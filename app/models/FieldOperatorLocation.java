@@ -4,6 +4,7 @@ import com.avaje.ebean.Ebean;
 import com.avaje.ebean.RawSql;
 import com.avaje.ebean.RawSqlBuilder;
 import com.avaje.ebean.SqlRow;
+import core.Global;
 import play.Logger;
 import play.db.ebean.Model;
 
@@ -105,7 +106,7 @@ public class FieldOperatorLocation extends Model {
             if (loc == null) continue;
             // If the entry is more than a day old, ignore it.
             Date yesterday = new Date();
-            yesterday.setTime(yesterday.getTime() - 24L * 60L * 1000L);
+            yesterday.setTime(yesterday.getTime() - (24L * 60L * 60L * 1000L));
             if (loc.timestamp.before(yesterday)) continue;
 
             locs.add(loc);
