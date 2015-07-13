@@ -2,6 +2,9 @@ package monitor.external.ibm;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import core.event.Event;
+import core.event.EventHandler;
+import core.event.EventType;
+import core.event.MonitorEvent;
 import models.Alarm;
 import monitor.AbstractMonitor;
 import monitor.MonitorStatistics;
@@ -12,15 +15,19 @@ import play.libs.Json;
 import play.libs.WS;
 
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.TimeZone;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Aleksander Skraastad (myth) on 7/10/15.
  */
 public class IBMMonitor extends AbstractMonitor {
+
+    private static final Long STATISTICS_UPDATE_INTERVAL = 15000L;
 
     private MonitorStatistics stats;
     private HashSet<Long> assigned, dispatched;
@@ -28,6 +35,7 @@ public class IBMMonitor extends AbstractMonitor {
     private Integer monitorPort;
     private String monitorEndpoint;
     private Integer monitorResponseTimeout;
+    private ScheduledExecutorService periodic;
 
     public IBMMonitor() {
         stats = new MonitorStatistics();
@@ -38,6 +46,25 @@ public class IBMMonitor extends AbstractMonitor {
         monitorPort = Play.application().configuration().getInt("monitor.external.ibm.port");
         monitorEndpoint = Play.application().configuration().getString("monitor.external.ibm.endpoint");
         monitorResponseTimeout = Play.application().configuration().getInt("monitor.external.ibm.timeout");
+
+        // Set up our stats update mechanism
+        periodic = Executors.newSingleThreadScheduledExecutor();
+        periodic.scheduleAtFixedRate(
+            new Runnable() {
+                @Override
+                public void run() {
+                    EventHandler.dispatch(new MonitorEvent(EventType.MONITOR_STATISTICS, null, null, null));
+                }
+            },
+            STATISTICS_UPDATE_INTERVAL,
+            STATISTICS_UPDATE_INTERVAL,
+            TimeUnit.MILLISECONDS
+        );
+
+        // We need to see if there are any open alarms in the database (Could be system crash and restart etc)
+        for (Alarm a : Alarm.allOpenAlarms()) {
+            stats.incrementTotalIncidents();
+        }
 
         Logger.info("[MONITOR] IBM Monitor started");
     }
@@ -257,6 +284,7 @@ public class IBMMonitor extends AbstractMonitor {
 
     @Override
     protected void handleSystemShutdown(Event e) {
-
+        // We need to turn off our scheduled tasks and clear timers
+        periodic.shutdown();
     }
 }
