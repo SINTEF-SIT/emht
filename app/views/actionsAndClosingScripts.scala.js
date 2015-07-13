@@ -129,6 +129,10 @@ var Actions = (function ($) {
             if (followUp !== null && followUp !== undefined) {
                 console.log("saveAndFollowUpAtClosing received payload: ", followUp);
                 if (followUp.type === 'mobileCareTaker') {
+                    if (activeAlarm.data.occuranceAddress === null || activeAlarm.data.occuranceAddress === undefined ||
+                        activeAlarm.data.occuranceAddress.length < 2) {
+                            return alert('@Messages.get("actions.alerts.no_occurrence_address")');
+                    }
                     updatedAlarm.mobileCareTaker = followUp.id;
                     console.log("saveAndFollowUpAtClosing type was mobileCareTaker with ID: " + updatedAlarm.mobileCareTaker);
                 }

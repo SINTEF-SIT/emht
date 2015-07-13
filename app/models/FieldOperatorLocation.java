@@ -101,7 +101,13 @@ public class FieldOperatorLocation extends Model {
         List<FieldOperatorLocation> locs = new ArrayList<>();
         for (AlarmAttendant a: AlarmAttendant.getMobileCareTakers()) {
             FieldOperatorLocation loc = current(a.id);
+
             if (loc == null) continue;
+            // If the entry is more than a day old, ignore it.
+            Date yesterday = new Date();
+            yesterday.setTime(yesterday.getTime() - 24L * 60L * 1000L);
+            if (loc.timestamp.before(yesterday)) continue;
+
             locs.add(loc);
         }
         return locs;

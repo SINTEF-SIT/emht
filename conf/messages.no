@@ -139,6 +139,7 @@ actions.alerts.location_failed_server_error=En uventet feil oppstod i et forsøk
 actions.alerts.no_active_patient=Du har ikke valgt en pasient!
 actions.alerts.patient_store_error=En feil oppstod under lagring av pasient! Vennligst kontakt systemadministrator!
 actions.alerts.patient_search_error=En feil oppstud under søk etter pasient! Vennligst kontakt systemadministrator!
+actions.alerts.no_occurrence_address=Hendelsesaddresse mangler! Mobile hjelpepleiere krever at en hendelseslokasjon er spesifisert!
 
 notes.title=Notater
 notes.placeholder=Skriv inn ytterligere notater her

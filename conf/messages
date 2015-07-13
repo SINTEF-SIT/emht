@@ -141,6 +141,7 @@ actions.alerts.location_failed_server_error=An unexpected error occurred while a
 actions.alerts.no_active_patient=There is no patient selected!
 actions.alerts.patient_store_error=Patient could NOT be stored! Please contact system administrator!
 actions.alerts.patient_search_error=There was an error during patient search! Please contact system administrator!
+actions.alerts.no_occurrence_address=No occurrence address specified! Field operators need an occurrence address set!
 
 notes.title=Notes
 notes.placeholder=Add additional notes here...

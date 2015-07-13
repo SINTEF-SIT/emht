@@ -8,11 +8,13 @@ import play.Logger;
 import play.cache.Cache;
 import play.libs.F;
 import play.mvc.*;
+import scala.collection.immutable.Map;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Aleksander Skraastad (myth) on 6/8/15.
@@ -44,9 +46,9 @@ public class Authorization {
     public static class PrivilegeLevelAction extends Action<PrivilegeLevel> {
         @Override
         public F.Promise<SimpleResult> call(Http.Context ctx) throws Throwable {
-            Long role = Long.parseLong(ctx.session().get("role"));
+            Long role = Long.parseLong(ctx.session().getOrDefault("role", "999"));
             // Perform the ACL check
-            if (role == null || role > configuration.value()) {
+            if (role > configuration.value()) {
                 Logger.debug("Failed authorization for user ID " + ctx.session().get("id") + " on " + ctx.request().uri());
                 return F.Promise.pure(unauthorized("Insufficient access privileges."));
             }
@@ -71,11 +73,17 @@ public class Authorization {
         @Override
         public String getUsername(Http.Context ctx) {
 
-            String id = ctx.session().get("id");
+            String id = ctx.session().getOrDefault("id", null);
 
             // Do an API-KEY check and return API-key canonical name if valid
             if (id == null) {
-                String headerApiKey = ctx._requestHeader().headers().toSimpleMap().get("Authorization").get();
+                Map headerMap = ctx._requestHeader().headers().toSimpleMap();
+                String headerApiKey;
+                try {
+                    headerApiKey = (String) headerMap.get("Authorization").get();
+                } catch (NoSuchElementException e) {
+                    headerApiKey = "";
+                }
 
                 String[] keyParts = headerApiKey.split(" ");
 

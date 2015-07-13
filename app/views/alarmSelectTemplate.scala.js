@@ -303,7 +303,7 @@ var Alarms = (function ($) {
 			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '</p><span class="assignedTo">';
 
 		if (alarm.attendant !== null) {
-			listItem += 'Attendant: <strong>' + alarm.attendant.username + '</strong>';
+			listItem += 'Attendant: <strong>' + alarm.attendant.username + '</strong> ';
 		}
 
 		listItem += '</span><span class="dispatchedTo">';
@@ -627,7 +627,7 @@ var Alarms = (function ($) {
 			var tot = 0;
 			for (var i in alarms) {
 				if (alarms.hasOwnProperty(i) &&
-					alarms[i].state === 'followup' &&
+					(alarms[i].state === 'followup' || alarms[i].state === 'finished') &&
 					alarms[i].data.attendant.id === ME.id) tot++;
 			}
 			return tot;
@@ -636,7 +636,8 @@ var Alarms = (function ($) {
 		removeAlarm: function (alarm) {
 			if (alarm !== null && alarm !== undefined) {
 				alarm.deselect();
-				alarm.DOM.remove();
+				// We might not have alarm rendered, so check for DOM object first
+				if (alarm.DOM !== null && alarm.DOM !== undefined) alarm.DOM.remove();
 				alarms.splice(alarms.indexOf(alarm), 1);
 				alarms.sort(sortByTime);
 				Alarms.gui.clearUpData();
