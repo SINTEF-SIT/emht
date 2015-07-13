@@ -49,21 +49,21 @@ public class Global extends GlobalSettings {
 			event.start();
 		}
 
-		/* Due to dynamic reloading, we need to check this
+		// Due to dynamic reloading, we need to check this
 		if (localMonitor == null) {
 			Logger.debug("[SYSTEM] OnStart debug: LocalMonitor was null, initializing...");
 			// Initialize the local monitor and register it to the event handler
 			localMonitor = new LocalMonitor();
 			event.addEventListener(localMonitor);
-		}*/
+		}
 
-		// UNCOMMENT this and comment out localMonitor to enable IBM External Monitor
+		/* UNCOMMENT this and comment out localMonitor to enable IBM External Monitor
 		// Due to dynamic reloading, we need ot check this
 		if (externalMonitor == null) {
 			Logger.debug("[SYSTEM] OnStart debug: ExternalMonitor was null, initializing...");
 			externalMonitor = new IBMMonitor();
 			event.addEventListener(externalMonitor);
-		}
+		}*/
     }
 
 	@Override
