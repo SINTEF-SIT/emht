@@ -91,7 +91,7 @@ public class IBMMonitor extends AbstractMonitor {
         payload.put("name", "EmergencyHandling");
         payload.put("sourceAssetId", a.id.toString());
         payload.put("sourceAssetType", a.type);
-        payload.put("detectionTime", IBMMonitor.toIBMDateTimeFormat(new Date()));
+        payload.put("occurrenceTime", IBMMonitor.toIBMDateTimeFormat(new Date()));
 
         return payload;
     }
@@ -116,7 +116,7 @@ public class IBMMonitor extends AbstractMonitor {
      * @return
      */
     @Override
-    protected MonitorStatistics getStats() {
+    public MonitorStatistics getStats() {
         return stats;
     }
 

@@ -12,7 +12,9 @@ import core.event.EventType;
 import core.event.MonitorEvent;
 import models.Alarm;
 import models.AlarmAttendant;
+import monitor.AbstractMonitor;
 import monitor.LocalMonitor;
+import monitor.external.ibm.IBMMonitor;
 import play.Application;
 import play.GlobalSettings;
 import play.Logger;
@@ -26,6 +28,7 @@ public class Global extends GlobalSettings {
 
 	public static EventHandler event;
 	public static LocalMonitor localMonitor;
+	public static IBMMonitor externalMonitor;
 	// The API Key needed to use the Google Cloud Messaging Service
 	public static String GCM_API_KEY;
 	
@@ -46,12 +49,20 @@ public class Global extends GlobalSettings {
 			event.start();
 		}
 
-		// Due to dynamic reloading, we need to check this
+		/* Due to dynamic reloading, we need to check this
 		if (localMonitor == null) {
 			Logger.debug("[SYSTEM] OnStart debug: LocalMonitor was null, initializing...");
 			// Initialize the local monitor and register it to the event handler
 			localMonitor = new LocalMonitor();
 			event.addEventListener(localMonitor);
+		}*/
+
+		// UNCOMMENT this and comment out localMonitor to enable IBM External Monitor
+		// Due to dynamic reloading, we need ot check this
+		if (externalMonitor == null) {
+			Logger.debug("[SYSTEM] OnStart debug: ExternalMonitor was null, initializing...");
+			externalMonitor = new IBMMonitor();
+			event.addEventListener(externalMonitor);
 		}
     }
 
@@ -71,5 +82,14 @@ public class Global extends GlobalSettings {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 		df.setTimeZone(tz);
 		return df.format(date);
+	}
+
+	/**
+	 * If external monitor is null, we use the internal
+	 * @return A Monitor object
+	 */
+	public static AbstractMonitor getMonitor() {
+		if (externalMonitor == null) return localMonitor;
+		return externalMonitor;
 	}
 }

@@ -212,7 +212,7 @@ public class MyWebSocketManager implements EventListener {
 	public void handleStatsEvent(Event e) {
 		ObjectNode wrapper = Json.newObject();
 		wrapper.put("action", actionMap.get(e.getType()));
-		wrapper.put("stats", Global.localMonitor.getStats().toJson());
+		wrapper.put("stats", Global.getMonitor().getStats().toJson());
 
 		notifyAll(wrapper);
 	}

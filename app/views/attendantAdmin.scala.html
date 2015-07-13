@@ -12,9 +12,9 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
         <div class="row">
             <div class="col-sm-12 col-md-6 col-lg-4">
                 <h3>Add a new user</h3>
-                @form(routes.AttendantController.newAttendant()) {
-                    @if(attendantForm.hasGlobalErrors) {
-                        <p><i>attendantForm.globalError.message</i></p>
+                @form(action = routes.AttendantController.newAttendant()) {
+                    @if(attendantForm.hasErrors || attendantForm.hasGlobalErrors) {
+                        <p style="color: red">Username must be > 2 characters and password must be > 6 characters.</p>
                     }
                     <div class="form-group">
                         @inputText(attendantForm("username"), 'class -> "form-control", '_label -> "Username *")

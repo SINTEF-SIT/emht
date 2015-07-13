@@ -48,7 +48,7 @@ public class AttendantController extends Controller {
 		Form<AlarmAttendant> filledForm = attendantForm.bindFromRequest();
 
 		if (filledForm.hasErrors()) {
-			return badRequest(views.html.attendantAdmin.render(AlarmAttendant.all(), attendantForm, ApiKey.all(), apiKeyForm));
+			return badRequest(views.html.attendantAdmin.render(AlarmAttendant.all(), filledForm, ApiKey.all(), apiKeyForm));
 		} else {
 			AlarmAttendant.create(filledForm.get());
 			return redirect(controllers.routes.AttendantController.attendants());
