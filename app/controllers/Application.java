@@ -1,6 +1,7 @@
 package controllers;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -272,7 +273,9 @@ public class Application extends Controller {
 	 * @return A pre-formatted alarm log as JSON
 	 */
 	public static Result getPastAlarmsFromPatient(Long patientId) {
-		List<Alarm> alarmList = Alarm.pastAlarmsFromPatient(patientId);
+		List<Alarm> alarmList;
+		if (patientId < 2) alarmList = new ArrayList<>();
+		else alarmList = Alarm.pastAlarmsFromPatient(patientId);
 		return alarmListToJsonAlarmLog(alarmList);
 	}
 

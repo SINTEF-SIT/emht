@@ -81,7 +81,7 @@ public class Patient extends Model {
 		String calleeAdr = a.callee.address;
 
 		list.addAll(find.where().ilike("address", "%"+calleeAdr+"%").findList());
-		if (a.patient != null && !a.patient.address.equalsIgnoreCase(calleeAdr)) {
+		if (a.patient != null && a.patient.address != null && !a.patient.address.equalsIgnoreCase(calleeAdr)) {
 			list.add(a.patient);
 		}
 

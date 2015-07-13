@@ -292,8 +292,13 @@ var Alarms = (function ($) {
 			'<a href="#" idnum="' + alarm.id + '" id="Alarm' + alarm.id +
 			'" class="list-group-item alarmItem"><img src="/assets/images/' +
 			alarm.type + '.png" class="img-thumbnail pull-left type-icon" data-type="'+
-			alarm.type + '" width="48" height="48"/>' +
-			'<h4 class="list-group-item-heading"> @Messages.get("listitem.arrived") ' +
+			alarm.type + '" width="48" height="48"/>';
+
+		if (a.expired) {
+			listItem += '<img src="/assets/images/clock.png" class="img-thumbnail pull-left clock-icon" width="48" height="48"/>';
+		}
+		
+		listItem += '<h4 class="list-group-item-heading"> @Messages.get("listitem.arrived") ' +
 			formattedTime  +' </h4><p class="list-group-item-text">@Messages.get("listitem.callee") ' +
 			alarm.callee.name + ' ' + alarm.callee.phoneNumber + '</p><span class="assignedTo">';
 

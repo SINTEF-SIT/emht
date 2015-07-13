@@ -199,17 +199,17 @@ var Patient = (function ($) {
 
 		// for the personalNumber, if it is more than 6 digits, we add a space after the first 6 digits
 		var formattedPersonalNumber;
-		if (pat.personalNumber.length > 6) {
+		if (pat.personalNumber !== null && pat.personalNumber !== undefined && pat.personalNumber.length > 6) {
 			formattedPersonalNumber = pat.personalNumber.substring(0, 6) + " " + pat.personalNumber.substring(6);
 		} else {
 			formattedPersonalNumber = pat.personalNumber;
 		}
 
 		// Update fields
-		$('#patientAddress').text(pat.address);
-		$('#patientPersonalNumber').text(formattedPersonalNumber);
-		$('#patientPhoneNumber').text(pat.phoneNumber);
-		$('#patientAge').text(pat.age);
+		$('#patientAddress').text(pat.address === null ? "" : pat.address);
+		$('#patientPersonalNumber').text(formattedPersonalNumber === null ? "" : pat.personalNumber);;
+		$('#patientPhoneNumber').text(pat.phoneNumber === null ? "" : pat.phoneNumber);
+		$('#patientAge').text(pat.age === null ? "" : pat.age);
 		$('#patientId').val(pat.id);
 		// Set the obs field in the Assessment page
 		if (pat.obs != null) $('#obsBody').text(pat.obs);
@@ -226,7 +226,7 @@ var Patient = (function ($) {
         if (occurrenceAddress !== null) {
 			$("#incidentAddress").val(occurrenceAddress);
             // Just click the checkbox if it is the same
-            if (pat.address.toLowerCase() === occurrenceAddress.toLowerCase()) $('#sameAddressCheckbox').click();
+            if ($('#patientAddress').val().toLowerCase() === occurrenceAddress.toLowerCase()) $('#sameAddressCheckbox').click();
             else ($('#sameAddressCheckbox').removeAttr('checked'));
 		} else {
             $('#sameAddressCheckbox').click();
@@ -496,7 +496,7 @@ var Patient = (function ($) {
 				personalNumber: '',
 				phoneNumber: '',
 				age: '',
-				aobs: null
+				obs: null
 			}
 			populatePatientInformation(pat);
 		}

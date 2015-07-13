@@ -35,7 +35,6 @@ public class Alarm extends Model { // the model extension serves for having acce
 	public Double latitude;
 	public Double longitude;
 
-	@Transient
 	public boolean expired = false;
 
 	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH})
@@ -269,6 +268,7 @@ public class Alarm extends Model { // the model extension serves for having acce
 		alarm.put("longitude", a.longitude);
 		alarm.put("notes", a.notes);
 		alarm.put("type", a.type);
+		alarm.put("expired", a.expired);
 		alarm.put("openingTime", a.openingTime != null ? Global.formatDateAsISO(a.openingTime) : null);
 		alarm.put("dispatchingTime", a.dispatchingTime != null ? Global.formatDateAsISO(a.dispatchingTime) : null);
 		alarm.put("closingTime", a.closingTime != null ? Global.formatDateAsISO(a.closingTime) : null);

@@ -64,6 +64,9 @@ GET         /component/stopSimulator                              controllers.Co
 GET         /component/:patientId                                 controllers.ComponentReadingController.getReadingsForPatient(patientId: Long)
 POST        /component                                            controllers.ComponentReadingController.newSensorReading()
 
+# Monitor
+POST        /monitor/external/ibm/reportTWBehaviour               monitor.external.ibm.IBMController.monitorCallback()
+
 # User
 GET         /me                                                   controllers.Application.me()
 

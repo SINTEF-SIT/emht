@@ -22,6 +22,7 @@ create table alarm (
   occurance_address         varchar(255),
   latitude                  double,
   longitude                 double,
+  expired                   boolean,
   attendant_id              bigint,
   mobile_care_taker_id      bigint,
   assessment_id             bigint,

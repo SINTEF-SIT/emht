@@ -90,6 +90,8 @@ public class LocalMonitor extends AbstractMonitor {
 
         Logger.debug("[MONITOR] Assignment time was: " + responseTime / 1000 + " seconds.");
 
+        e.getAlarm().expired = false;
+        e.getAlarm().save();
         stats.incrementTotalAssignmentWaitingTimeBy(responseTime);
 
         if (t != null) {
@@ -270,6 +272,7 @@ public class LocalMonitor extends AbstractMonitor {
             mon.tasks.remove(alarmId);
             Alarm expiredAlarm = Alarm.get(this.alarmId);
             expiredAlarm.expired = true;
+            expiredAlarm.save();
 
             Logger.debug("[MONITOR] Triggering AssignmentReminder for " + expiredAlarm);
 
@@ -296,6 +299,7 @@ public class LocalMonitor extends AbstractMonitor {
             mon.tasks.remove(alarmId);
             Alarm expiredAlarm = Alarm.get(this.alarmId);
             expiredAlarm.expired = true;
+            expiredAlarm.save();
 
             Logger.debug("[MONITOR] Triggering ResolutionReminder for " + expiredAlarm);
 
