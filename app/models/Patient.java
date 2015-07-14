@@ -106,6 +106,8 @@ public class Patient extends Model {
 			results.put(p.id, p);
 		}
 
+		if (results.containsKey(1L)) results.remove(1L);
+
 		return new ArrayList<>(results.values());
 	}
 
