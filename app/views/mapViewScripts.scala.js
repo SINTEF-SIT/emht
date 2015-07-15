@@ -271,7 +271,7 @@ var MapView = (function ($) {
         if (activeAlarm !== null) {
             bindAssignButtons();
 
-            html = '<h4>Active alarm</h4>';
+            html = '<h4>@Messages.get("map.sidebar.active_alarm.title")</h4>';
             html += '@Messages.get("patientpane.name"): <strong>' + activeAlarm.data.patient.name + '</strong><br />';
             html += '@Messages.get("patientpane.incident.location"): <strong>' + activeAlarm.data.occuranceAddress + '</strong><br />';
             html += '@Messages.get("patientpane.phonenumber"): <strong>' + activeAlarm.data.patient.phoneNumber + '</strong>';

@@ -55,12 +55,12 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber}</p>
 									<span class="assignedTo">
 									@if(alarm.attendant != null){
-										Attendant: <strong>@{alarm.attendant.username} </strong>
+										@Messages.get("listitem.attendant"): <strong>@{alarm.attendant.username} </strong>
 									}
 									</span>
 									<span class="dispatchedTo">
 									@if(alarm.mobileCareTaker != null) {
-										Dispatched to: <strong>@{alarm.mobileCareTaker.username}</strong>
+										@Messages.get("listitem.dispatched_to"): <strong>@{alarm.mobileCareTaker.username}</strong>
 									}
 									</span>
 									</a>
@@ -88,12 +88,12 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 										<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber}</p>
 										<span class="assignedTo">
 										@if(alarm.attendant != null){
-											Attendant: <strong>@{alarm.attendant.username} </strong>
+											@Messages.get("listitem.attendant"): <strong>@{alarm.attendant.username} </strong>
 										}
 										</span>
 										<span class="dispatchedTo">
 										@if(alarm.mobileCareTaker != null) {
-											Dispatched to: <strong>@{alarm.mobileCareTaker.username}</strong>
+											@Messages.get("listitem.dispatched_to"): <strong>@{alarm.mobileCareTaker.username}</strong>
 										}
 										</span>
 									</a>
@@ -124,12 +124,12 @@ alarms is of the type List[Alarm] and alarmForm of the type Form[Alarm]*@
 									<p class="list-group-item-text">@{Messages.get("listitem.callee")} @{alarm.callee.name} @{alarm.callee.phoneNumber}</p>
 									<span class="assignedTo">
 									@if(alarm.attendant != null){
-										Attendant: <strong>@{alarm.attendant.username} </strong>
+										@Messages.get("listitem.attendant"): <strong>@{alarm.attendant.username} </strong>
 									}
 									</span>
 									<span class="dispatchedTo">
 									@if(alarm.mobileCareTaker != null) {
-										Dispatched to: <strong>@{alarm.mobileCareTaker.username}</strong>
+										@Messages.get("listitem.dispatched_to"): <strong>@{alarm.mobileCareTaker.username}</strong>
 									}
 									</span>
 								</a>
