@@ -324,7 +324,7 @@ var Alarms = (function ($) {
 
 	// Retrieves a JSON array of all past alarms from a specific callee (represented by Callee ID)
 	var getPastAlarmsFromCallee = function (calleeIndex) {
-		$.getJSON("/pastAlarmsFromCalle/" + calleeIndex,
+		$.getJSON("/pastAlarmsFromCallee/" + calleeIndex,
 			function(data) {
 				// TODO: check if the json is full before creating the table
 				$("#calleeLogTableDiv").empty();
